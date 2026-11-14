@@ -84,15 +84,16 @@ its value until a later key frame changes it. Times are in seconds.
 
 - Parts: any `type` that is a wokwi-elements tag, for example `wokwi-led` or
   `wokwi-esp32-devkit-v1`. `src/parts.js` draws the types that
-  wokwi-elements does not have: `wokwi-vcc`, `wokwi-gnd`, `spice-capacitor`,
-  `spice-diode`, `spice-npn` and the boards `board-esp32-devkit-c-v4`,
-  `board-esp32-s3-devkitc-1`, `board-esp32-c3-devkitm-1` and
-  `board-esp32-c6-devkitc-1`. The boards use Wokwi's pin names and pin
-  positions, so Wokwi diagrams keep their wires. Their drawings in
-  `src/boards/` are from [ESPboards](https://www.espboards.dev/), under
-  CC BY-NC 4.0, so pages and pictures that show them must credit ESPboards
-  and must not be for commercial use. Other types show as a dashed box, with
-  a labeled pin on its edge for each wire.
+  wokwi-elements does not have: `wokwi-vcc`, `wokwi-gnd`, the `spice-*`
+  types in [docs/circuit-format.md](../docs/circuit-format.md#supported-parts),
+  and the boards `board-esp32-devkit-c-v4`, `board-esp32-s3-devkitc-1`,
+  `board-esp32-c3-devkitm-1` and `board-esp32-c6-devkitc-1`. The boards use
+  Wokwi's pin names and pin positions, so Wokwi diagrams keep their wires.
+  Their drawings in `src/boards/` are from
+  [ESPboards](https://www.espboards.dev/), under CC BY-NC 4.0, so pages and
+  pictures that show them must credit ESPboards and must not be for
+  commercial use. Other types show as a dashed box, with a labeled pin on its
+  edge for each wire.
 - A wire to a pin that the part does not have ends at the part center, with a
   red "?" badge. The renderer logs a warning for each unknown part and pin.
 

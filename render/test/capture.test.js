@@ -117,6 +117,24 @@ test('draws on a dark grey panel in dark mode', async () => {
   assert.notDeepEqual(shots[0], shots[1]);
 });
 
+test('draws the analog examples with no warnings', async () => {
+  const names = ['zener-regulator', 'opamp-amplifier', 'rlc-resonance'];
+  const warn = mock.method(console, 'warn', () => {});
+  const error = mock.method(console, 'error', () => {});
+  try {
+    for (const name of names) {
+      const dir = new URL(`../../examples/${name}/`, import.meta.url);
+      const view = await openCircuit(await readJson('diagram.json', dir));
+      await view.close();
+    }
+    assert.deepEqual(warn.mock.calls.map((c) => c.arguments), []);
+    assert.deepEqual(error.mock.calls.map((c) => c.arguments), []);
+  } finally {
+    warn.mock.restore();
+    error.mock.restore();
+  }
+});
+
 test('draws wires to unknown parts and pins, with warnings', async () => {
   const dir = new URL('../examples/missing-pins/', import.meta.url);
   const diagram = await readJson('diagram.json', dir);
