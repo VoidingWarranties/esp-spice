@@ -1,91 +1,98 @@
 /**
- * @fileoverview Runs ngspice in the page and connects it to the drawn parts.
+ * @fileoverview Draws a demo and connects its parts to web/sim-worker.js.
+ *
+ * The page URL names the demo folder, for example
+ * web/?demo=examples/led-button. The folder has a diagram.json, and a
+ * firmware.bin (a merged ESP32 flash image) if the demo has firmware.
  */
 
-import {Simulation} from 'eecircuit-engine';
-
-import {toNetlist} from '../circuit/netlist.js';
-import {PARTS} from '../circuit/parts.js';
 import {renderCircuit} from '../render/src/circuit.js';
+
+const DEFAULT_DEMO = 'examples/esp32-pot-button-leds';
 
 const status = document.querySelector('#status');
 const readout = document.querySelector('#readout');
 const netlistView = document.querySelector('#netlist');
+const serialView = document.querySelector('#serial');
 
-const sim = new Simulation();
-const simReady = sim.start();
-const diagram = await (await fetch('diagram.json')).json();
+const demo = new URLSearchParams(location.search).get('demo') ?? DEFAULT_DEMO;
+const demoUrl = new URL(`../${demo}/`, location.href);
+document.querySelector('#demo').textContent = demo;
+
+const diagram = await (await fetch(new URL('diagram.json', demoUrl))).json();
+const firmwareUrl = new URL('firmware.bin', demoUrl);
+const hasFirmware = (await fetch(firmwareUrl, {method: 'HEAD'})).ok;
+serialView.hidden = !hasFirmware;
 const {elements: parts} =
     await renderCircuit(document.querySelector('#circuit'), diagram);
 
-const controls = {};
+const worker = new Worker('sim-worker.js', {type: 'module'});
+const control = (name, value) => worker.postMessage({type: 'control', name, value});
 for (const [id, el] of parts) {
-  const set = (name, value) => {
-    controls[`${id}.${name}`] = value;
-    solve();
-  };
   switch (el.localName) {
     case 'wokwi-potentiometer':
-      el.value = 512;
-      controls[`${id}.value`] = el.value;
-      el.addEventListener('input', () => set('value', el.value));
+    case 'wokwi-slide-potentiometer':
+      el.addEventListener('input', () => control(`${id}.value`, el.value));
       break;
     case 'wokwi-pushbutton':
-      el.addEventListener('button-press', () => set('pressed', 1));
-      el.addEventListener('button-release', () => set('pressed', 0));
+    case 'wokwi-pushbutton-6mm':
+      el.addEventListener('button-press', () => control(`${id}.pressed`, 1));
+      el.addEventListener('button-release', () => control(`${id}.pressed`, 0));
       break;
   }
 }
 
-status.textContent = 'Loading ngspice…';
-await simReady;
+// Inputs keep their own value, so that a state does not move a pot that the
+// user drags.
+const INPUT_PROPS = new Set(['value', 'pressed']);
+const INPUT_TYPES = new Set([
+  'wokwi-potentiometer', 'wokwi-slide-potentiometer', 'wokwi-pushbutton',
+  'wokwi-pushbutton-6mm',
+]);
 
-let running = false;
-let pending = false;
+worker.onmessage = ({data}) => {
+  switch (data.type) {
+    case 'status':
+      status.textContent = data.text;
+      break;
+    case 'error':
+      status.textContent = `Error: ${data.message}`;
+      break;
+    case 'serial':
+      serialView.textContent += data.text;
+      serialView.scrollTop = serialView.scrollHeight;
+      break;
+    case 'state':
+      show(data);
+      if (!hasFirmware) status.textContent = `Solved in ${data.ms.toFixed(1)} ms`;
+      break;
+  }
+};
+worker.postMessage({
+  type: 'start',
+  diagram,
+  firmwareUrl: hasFirmware ? firmwareUrl.href : null,
+});
 
 /**
- * Solves the circuit for the current inputs and shows the result.
+ * Sets the part props and fills the readout table.
  *
- * Only one solve runs at a time. Changes during a solve cause one more solve,
- * so a fast pot drag does not queue a solve for each step.
+ * @param {{parts: !Object, values: !Object, netlist: string}} state
  */
-async function solve() {
-  if (running) {
-    pending = true;
-    return;
+function show({parts: states, values, netlist}) {
+  for (const [id, props] of Object.entries(states)) {
+    const el = parts.get(id);
+    if (!INPUT_TYPES.has(el.localName)) {
+      Object.assign(el, props);
+      continue;
+    }
+    for (const [key, value] of Object.entries(props)) {
+      if (!INPUT_PROPS.has(key)) el[key] = value;
+    }
   }
-  running = true;
-  do {
-    pending = false;
-    const circuit = toNetlist(diagram, {analysis: '.op', controls});
-    netlistView.textContent = circuit.netlist;
-    sim.setNetList(circuit.netlist);
-    const start = performance.now();
-    const result = await sim.runSim();
-    const ms = performance.now() - start;
-    show(circuit, result);
-    status.textContent = `Solved in ${ms.toFixed(1)} ms`;
-  } while (pending);
-  running = false;
-}
-
-/**
- * Updates the parts and the readout table from an .op result.
- *
- * @param {!Object} circuit The toNetlist() result.
- * @param {!Object} result The eecircuit-engine result.
- */
-function show(circuit, result) {
-  const values = new Map(result.data.map((d) => [d.name, d.values[0]]));
-  const read = {
-    v: (node) => node === '0' ? 0 : values.get(`v(${node})`) ?? 0,
-    i: (source) => values.get(`i(${source})`) ?? 0,
-  };
-  for (const {id, type} of diagram.parts) {
-    if (PARTS[type]?.state) Object.assign(parts.get(id), circuit.state(id, read));
-  }
+  netlistView.textContent = netlist;
   // Nodes with "__" are inside parts, so they do not help the reader.
-  const shown = [...values].filter(([name]) => !name.includes('__'));
+  const shown = Object.entries(values).filter(([name]) => !name.includes('__'));
   readout.replaceChildren(...shown.map(([name, value]) => {
     const row = document.createElement('tr');
     const unit = name.startsWith('i(') ? 'A' : 'V';
@@ -108,5 +115,3 @@ function formatSi(value, unit) {
       prefixes.find(([s]) => Math.abs(value) >= s) ?? prefixes.at(-1);
   return `${(value / scale).toFixed(2)} ${prefix}${unit}`;
 }
-
-solve();

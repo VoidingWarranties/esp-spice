@@ -29,17 +29,29 @@ it.
 
 ## Web demo
 
-`web/` is a static page that runs ngspice in the browser, through the
-[eecircuit-engine] WebAssembly build. It makes the netlist with `circuit/` and draws `web/diagram.json` with
-`render/` and [wokwi-elements]. Turn the pot or push the button, and the
-page solves the circuit again and sets the LED brightness from the current.
+`web/` is a static page that runs a demo in the browser. A demo is a folder
+with a `diagram.json`, and a `firmware.bin` if it has an ESP32.
+
+- ngspice runs in a worker, through the [eecircuit-engine] WebAssembly
+  build. `circuit/` makes the netlist.
+- The ESP32 runs in the same worker: `web/esp32` builds `bridge/` to
+  WebAssembly.
+- `render/` draws the parts with [wokwi-elements].
+
+Turn the pot or push the button, and the page solves the circuit again.
 
 ```sh
+tools/build-web.sh    # the ESP32 module and the ROM, into web/dist
 python3 -m http.server 8790
-# Open http://127.0.0.1:8790/web/
+# Open http://127.0.0.1:8790/web/?demo=examples/esp32-pot-button-leds
 ```
 
-The page loads its libraries from a CDN, so it needs a network connection.
+Without `?demo`, the page opens `examples/esp32-pot-button-leds`. Demos
+without firmware do not need `tools/build-web.sh`. The page loads ngspice
+and wokwi-elements from a CDN, so it needs a network connection.
+
+`.github/workflows/pages.yml` publishes the demo to GitHub Pages on each
+push to `main`, when Pages is set to deploy from GitHub Actions.
 
 [eecircuit-engine]: https://github.com/eelab-dev/EEcircuit-engine
 [wokwi-elements]: https://github.com/wokwi/wokwi-elements
