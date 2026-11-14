@@ -77,6 +77,24 @@ test('unsupported parts give a warning, not an error', () => {
   assert.equal(circuit.nodes['lcd:VSS'], circuit.nodes['r1:1']);
 });
 
+test('unknown LED colors give one warning for each part', () => {
+  const circuit = toNetlist(
+    diagram(
+      [
+        {type: 'wokwi-led', id: 'led1', attrs: {color: 'pink'}},
+        {type: 'wokwi-led', id: 'led2', attrs: {color: 'Lime'}},
+        {type: 'wokwi-led-bar-graph', id: 'bar1', attrs: {color: 'teal'}},
+        {type: 'wokwi-led-bar-graph', id: 'bar2', attrs: {color: 'BCYR'}},
+      ],
+      [],
+    ),
+  );
+  assert.deepEqual(circuit.warnings, [
+    'led1: unknown LED color "pink", using 2 V',
+    'bar1: unknown LED color "teal", using 2 V',
+  ]);
+});
+
 test('bad diagrams give clear errors', () => {
   const r1 = {type: 'wokwi-resistor', id: 'r1'};
   assert.throws(

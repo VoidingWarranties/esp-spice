@@ -88,6 +88,8 @@ its value until a later key frame changes it. Times are in seconds.
   `spice-diode` and `spice-npn`. Other types show as a dashed box.
 - `wokwi-slide-potentiometer` gets `max` 1023, because the sim gives pot
   values as 0..1023.
+- A `wokwi-led-bar-graph` segment with a value between 0 and 1 shows dim,
+  as a `wokwi-led` does.
 - `top`, `left`, `rotate` and `attrs` are supported.
 - Parts with `"hide": true` are still in the sim, so they and their wires
   show greyed out. The viewer has a "Show hidden parts" toggle, and pages can

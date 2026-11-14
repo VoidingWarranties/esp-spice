@@ -11,13 +11,15 @@ the Apache License 2.0, in [LICENSES/Apache-2.0.txt](LICENSES/Apache-2.0.txt).
 `examples/esp32-s3-button-led/firmware.bin` (ESP32-S3),
 `examples/esp32-c3-button-led/firmware.bin` (ESP32-C3) and
 `examples/esp32-c6-button-led/firmware.bin` (ESP32-C6) are builds of
-[`examples/esp32-button-led/firmware`](examples/esp32-button-led/firmware)
-with the pioarduino platform-espressif32 55.03.38-1.
-`examples/esp32-pot-button-leds/firmware.bin` is a link to the first.
-`examples/esp32-heap-leak/firmware.bin` and its `firmware.elf` are a build
-of [`examples/esp32-heap-leak/firmware`](examples/esp32-heap-leak/firmware)
-for the ESP32, with the same platform. The repository and the web demo
-distribute these images. Each contains:
+[`examples/esp32-button-led/firmware`](examples/esp32-button-led/firmware).
+`examples/esp32-gpio`, `examples/esp32-pwm` and `examples/esp32-adc` each
+have a `firmware.bin` that is a build of the `firmware` folder next to it.
+`examples/esp32-heap-leak` has a `firmware.bin` and its `firmware.elf`,
+built from the `firmware` folder next to them.
+All use the pioarduino platform-espressif32 55.03.38-1.
+`examples/esp32-pot-button-leds/firmware.bin` is a link to the first, and
+`examples/esp32-rectifier/firmware.bin` is a link to the esp32-pwm image. The
+repository and the web demo both distribute these images. Each contains:
 
 - [Arduino-ESP32 3.3.8](https://github.com/espressif/arduino-esp32/tree/3.3.8),
   Copyright Espressif Systems and others. Parts are under the GNU Lesser
@@ -32,7 +34,7 @@ distribute these images. Each contains:
   Systems, Apache-2.0. These include Espressif binary libraries (Apache-2.0)
   and the third-party parts in the
   [ESP-IDF copyright list](https://github.com/espressif/esp-idf/blob/v5.5.4/docs/en/COPYRIGHT.rst#firmware-components).
-  Of those, the image has:
+  Of those, each image has:
   - FreeRTOS Kernel V10.5.1, Copyright (C) 2021 Amazon.com, Inc. or its
     affiliates, MIT.
   - Xtensa header files and HAL, Copyright (C) 2003-2013 Tensilica Inc., MIT
@@ -42,8 +44,8 @@ distribute these images. Each contains:
 - The GCC runtime libraries, under GPL-3.0 with the GCC Runtime Library
   Exception 3.1.
 
-To use a changed Arduino-ESP32 core, build `examples/esp32-button-led/firmware`
-with it, as its [README](examples/esp32-button-led/README.md) tells.
+To use a changed Arduino-ESP32 core, build the `firmware` folder of an
+example with it, as [examples/README.md](examples/README.md#firmware) tells.
 
 ## ESP32 mask ROM
 
@@ -84,9 +86,9 @@ The web demo has `web/dist/esp_spice_web.wasm`. It contains:
 
 ## wokwi-elements
 
-The pictures in `render/examples` and `web/screenshot.png` show drawings from
-[wokwi-elements](https://github.com/wokwi/wokwi-elements), Copyright (c) 2020
-Uri Shaked, MIT.
+The pictures in `render/examples` and on the `pr-assets` branch show drawings
+from [wokwi-elements](https://github.com/wokwi/wokwi-elements), Copyright (c)
+2020 Uri Shaked, MIT.
 
 The web demo loads wokwi-elements and
 [eecircuit-engine](https://github.com/eelab-dev/EEcircuit-engine) (MIT, with

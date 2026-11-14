@@ -103,3 +103,22 @@ test('draws on a dark grey panel in dark mode', async () => {
   }
   assert.notDeepEqual(shots[0], shots[1]);
 });
+
+test('dims bar graph segments by brightness', async () => {
+  const diagram = {
+    version: 1,
+    parts: [{type: 'wokwi-led-bar-graph', id: 'bar1', attrs: {}}],
+    connections: [],
+  };
+  const shots = [];
+  for (const value of [0, 0.2, 1]) {
+    const values = [value, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    const trace = {parts: {bar1: [{t: 0, values}]}};
+    const view = await openCircuit(diagram, trace, {scale: 1});
+    shots.push(await view.shoot(0));
+    await view.close();
+  }
+  const [off, dim, full] = shots;
+  assert.notDeepEqual(dim, off);
+  assert.notDeepEqual(dim, full);
+});

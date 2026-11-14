@@ -1,12 +1,14 @@
 //! Runs ESP32 firmware against the circuit in a diagram.json.
 //!
 //! esp-spice-run DIAGRAM FIRMWARE [--seconds S] [--set T:NAME=VALUE]...
-//!     [--trace FILE] [--server circuit/server.js] [--elf FILE]
-//!     [--heap-interval S] [--heap-csv FILE] [--heap-min-free BYTES]
+//!     [--trace FILE] [--probe PIN]... [--server circuit/server.js]
+//!     [--elf FILE] [--heap-interval S] [--heap-csv FILE]
+//!     [--heap-min-free BYTES]
 //!
 //! FIRMWARE is a merged flash image. `--set 0.5:btn1.pressed=1` changes a
 //! control at 0.5 s. The serial output goes to stdout. `--trace` writes the
-//! circuit trace (docs/circuit-format.md) at the end.
+//! circuit trace (docs/circuit-format.md) at the end. `--probe esp:D18`
+//! adds the net voltage of a pin to the trace.
 //!
 //! `--elf`, the ELF of the app, turns on free heap samples every
 //! `--heap-interval` seconds (default 0.1). `--heap-csv` writes the
@@ -20,8 +22,9 @@ use esp_bridge::{rom_elf, Bridge, Heap, ProcessCircuit};
 use serde_json::{json, Value};
 
 const USAGE: &str = "usage: esp-spice-run DIAGRAM FIRMWARE [--seconds S] \
-    [--set T:NAME=VALUE]... [--trace FILE] [--server circuit/server.js] \
-    [--elf FILE] [--heap-interval S] [--heap-csv FILE] [--heap-min-free BYTES]";
+    [--set T:NAME=VALUE]... [--trace FILE] [--probe PIN]... \
+    [--server circuit/server.js] [--elf FILE] [--heap-interval S] \
+    [--heap-csv FILE] [--heap-min-free BYTES]";
 
 struct Options {
     diagram: String,
@@ -29,6 +32,7 @@ struct Options {
     seconds: f64,
     sets: Vec<(f64, String, Value)>,
     trace: Option<String>,
+    probes: Vec<String>,
     server: String,
     elf: Option<String>,
     heap_interval: Option<f64>,
@@ -62,6 +66,7 @@ fn parse(mut args: impl Iterator<Item = String>) -> Result<Options, String> {
         seconds: 1.0,
         sets: Vec::new(),
         trace: None,
+        probes: Vec::new(),
         server: "circuit/server.js".into(),
         elf: None,
         heap_interval: None,
@@ -74,6 +79,7 @@ fn parse(mut args: impl Iterator<Item = String>) -> Result<Options, String> {
             "--seconds" => options.seconds = value()?.parse().map_err(|_| "bad --seconds")?,
             "--trace" => options.trace = Some(value()?),
             "--server" => options.server = value()?,
+            "--probe" => options.probes.push(value()?),
             "--set" => options.sets.push(parse_set(&value()?).ok_or("bad --set")?),
             "--elf" => options.elf = Some(value()?),
             "--heap-interval" => {
@@ -128,8 +134,12 @@ fn run(options: &Options) -> Result<Option<String>, String> {
         "no {rom_name}: run tools/fetch-esp32-rom.sh and set ESP32SIM_ROM_DIR"
     ))?;
     let rom = read(&rom_path.to_string_lossy())?;
-    let circuit =
-        ProcessCircuit::spawn(Command::new("node").args([&options.server, &options.diagram]))?;
+    let mut node = Command::new("node");
+    node.args([&options.server, &options.diagram]);
+    for pin in &options.probes {
+        node.args(["--probe", pin]);
+    }
+    let circuit = ProcessCircuit::spawn(&mut node)?;
     let mut bridge = Bridge::new(&diagram, &flash, &rom, circuit)?;
     if let Some(path) = &options.elf {
         bridge.load_elf(&read(path)?)?;

@@ -32,6 +32,8 @@ cargo run --release --manifest-path bridge/Cargo.toml -- \
 The firmware is a merged flash image, such as PlatformIO's
 `firmware.factory.bin`. `--set T:NAME=VALUE` changes a circuit control at
 time T. The serial output goes to stdout. `--trace` writes the circuit trace.
+`--probe PIN` adds the voltage of a pin's net to the trace, for example
+`--probe c1:1`.
 
 ## Free heap
 
