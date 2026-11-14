@@ -9,23 +9,28 @@ distributes. Each keeps its own license.
 `examples/esp32-button-led/firmware.bin` is a build of
 [`examples/esp32-button-led/firmware`](examples/esp32-button-led/firmware)
 with the pioarduino platform-espressif32 55.03.38-1.
-`examples/esp32-pot-button-leds/firmware.bin` is a link to it. The image
-contains:
+`examples/esp32-pot-button-leds/firmware.bin` is a link to it. The
+repository and the web demo both distribute this image. It contains:
 
 - [Arduino-ESP32 3.3.8](https://github.com/espressif/arduino-esp32/tree/3.3.8),
   Copyright Espressif Systems and others. Parts are under the GNU Lesser
   General Public License 2.1 or later, in
-  [LICENSE.LGPL-2.1](examples/esp32-button-led/LICENSE.LGPL-2.1). Other
-  parts are under Apache-2.0. The source is at the 3.3.8 tag and in
-  `esp32-core-3.3.8.tar.xz` on the
-  [3.3.8 release](https://github.com/espressif/arduino-esp32/releases/tag/3.3.8).
+  [LICENSES/LGPL-2.1.txt](LICENSES/LGPL-2.1.txt). Other parts are under
+  Apache-2.0. Its source is `esp32-core-3.3.8.tar.xz`: the web demo serves
+  it at `web/dist/esp32-core-3.3.8.tar.xz`, and the
+  [3.3.8 release](https://github.com/espressif/arduino-esp32/releases/tag/3.3.8)
+  has it too.
 - ESP-IDF 5.5.4, as the precompiled libraries in
   `esp32-core-3.3.8-libs.tar.xz` on the same release. Copyright Espressif
   Systems, Apache-2.0. These include Espressif binary libraries (Apache-2.0)
-  and the third-party parts that the
-  [ESP-IDF copyright list](https://github.com/espressif/esp-idf/blob/v5.5.4/docs/en/COPYRIGHT.rst#firmware-components)
-  names, for example FreeRTOS (MIT), the Xtensa HAL (MIT) and newlib
-  ([BSD-style licenses](https://github.com/espressif/esp-idf/blob/v5.5.4/components/newlib/COPYING.NEWLIB)).
+  and the third-party parts in the
+  [ESP-IDF copyright list](https://github.com/espressif/esp-idf/blob/v5.5.4/docs/en/COPYRIGHT.rst#firmware-components).
+  Of those, the image has:
+  - FreeRTOS Kernel V10.5.1, Copyright (C) 2021 Amazon.com, Inc. or its
+    affiliates, MIT.
+  - Xtensa header files and HAL, Copyright (C) 2003-2013 Tensilica Inc., MIT.
+  - TLSF allocator, Copyright (C) 2006-2016 Matthew Conte, BSD-3-Clause.
+  - newlib, under the licenses in [LICENSES/newlib.txt](LICENSES/newlib.txt).
 - The GCC runtime libraries, under GPL-3.0 with the GCC Runtime Library
   Exception 3.1.
 
@@ -37,15 +42,14 @@ with it, as its [README](examples/esp32-button-led/README.md) tells.
 The web demo has `web/dist/esp32_rev300_rom.elf`. `tools/fetch-esp32-rom.sh`
 downloads it from the
 [espressif/esp-rom-elfs](https://github.com/espressif/esp-rom-elfs) release
-20260528. Copyright 2015-2022 Espressif Systems (Shanghai) Co. Ltd., under
-Apache-2.0, in [LICENSE](LICENSE).
+20260528. Copyright 2015-2022 Espressif Systems (Shanghai) Co. Ltd., under the
+Apache License 2.0. The license text is the same as in [LICENSE](LICENSE).
 
 The ROM contains code from these parts, as the
 [ESP-IDF copyright list](https://github.com/espressif/esp-idf/blob/v5.5.4/docs/en/COPYRIGHT.rst#rom-source-code-copyrights)
 tells:
 
-- newlib, under
-  [BSD-style licenses](https://github.com/espressif/esp-idf/blob/v5.5.4/components/newlib/COPYING.NEWLIB).
+- newlib, under the licenses in [LICENSES/newlib.txt](LICENSES/newlib.txt).
 - Xtensa libhal, Copyright (C) 2003, 2006, 2010 Tensilica Inc., MIT.
 - TinyBasic Plus, Copyright (C) 2012-2013 Mike Field & Scott Lawrence, MIT.
 - miniz, by Rich Geldreich, in the public domain.
@@ -62,7 +66,8 @@ The web demo has `web/dist/esp_spice_web.wasm`. It contains:
 - serde, serde_core and serde_json, Copyright Erick Tryzelaar and David
   Tolnay, and itoa, Copyright David Tolnay. Each is MIT or Apache-2.0, used
   here under Apache-2.0.
-- zmij, Copyright David Tolnay, MIT.
+- zmij, Copyright David Tolnay, a port of zmij, Copyright (c) 2025 Victor
+  Zverovich. Both are MIT.
 - memchr, Copyright Andrew Gallant and bluss, Unlicense or MIT, used here
   under the Unlicense.
 
@@ -81,7 +86,7 @@ repository and the web demo do not distribute them.
 
 ### MIT License
 
-The copyright lines above apply.
+The MIT copyright lines above apply.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -100,6 +105,34 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+### BSD 3-Clause License
+
+The BSD-3-Clause copyright line above applies.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+3. Neither the name of the copyright holder nor the names of its contributors
+   may be used to endorse or promote products derived from this software
+   without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
 
 ### TJpgDec license
 

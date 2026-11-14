@@ -28,6 +28,14 @@ jobs:
         env:
           # Keeps the build files out of the published folder.
           CARGO_TARGET_DIR: ${{ runner.temp }}/target
+      # LGPL-2.1 asks for the Arduino core source in the same place as
+      # firmware.bin.
+      - name: Get the Arduino-ESP32 source
+        run: |
+          curl -fsSL --retry 5 -o web/dist/esp32-core-3.3.8.tar.xz \
+            https://github.com/espressif/arduino-esp32/releases/download/3.3.8/esp32-core-3.3.8.tar.xz
+          echo "f7f63825cfb98269514b977ea78c17ab292904e47e1ca47329fbe0ccccc5a83d  web/dist/esp32-core-3.3.8.tar.xz" |
+            sha256sum -c
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .

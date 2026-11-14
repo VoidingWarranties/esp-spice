@@ -66,7 +66,8 @@ push to `main`, when Pages is set to deploy from GitHub Actions.
 
 ## License
 
-esp-spice is under the Apache License 2.0, in [LICENSE](LICENSE).
+Copyright 2026 the esp-spice authors. esp-spice is under the Apache License
+2.0, in [LICENSE](LICENSE).
 Third-party parts keep their own licenses, in
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
