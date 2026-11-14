@@ -3,7 +3,7 @@
  * the ESP32 (web/esp32) in a worker, so that the page stays responsive.
  *
  * Messages in:
- *   {type: 'start', diagram, firmwareUrl?}
+ *   {type: 'start', diagram, diagramUrl, firmwareUrl?}
  *   {type: 'control', name, value}
  * Messages out:
  *   {type: 'status', text}
@@ -16,7 +16,7 @@
 import {Simulation} from 'https://cdn.jsdelivr.net/npm/eecircuit-engine@1.9.0/dist/eecircuit-engine.mjs';
 
 import {toNetlist} from '../circuit/netlist.js';
-import {PARTS} from '../circuit/parts.js';
+import {loadPlugins} from '../circuit/plugins.js';
 
 const WASM_URL = 'dist/esp_spice_web.wasm';
 
@@ -29,6 +29,8 @@ const MAX_LAG_SECONDS = 0.5;
 
 const sim = new Simulation();
 let diagram;
+/** Part types from the diagram's plugins. */
+let plugins = {};
 /** @type {!Object<string, number>} */
 const controls = {};
 let controlsChanged = false;
@@ -38,6 +40,7 @@ self.onmessage = async ({data}) => {
   try {
     if (data.type === 'start') {
       diagram = data.diagram;
+      plugins = await loadPlugins(diagram, data.diagramUrl);
       hasFirmware = Boolean(data.firmwareUrl);
       post({type: 'status', text: 'Loading ngspice…'});
       await ready;
@@ -146,7 +149,8 @@ async function solveNow() {
  *     netlist: string}>}
  */
 async function solveOp(start) {
-  const circuit = toNetlist(diagram, {analysis: '.op', controls: start});
+  const circuit =
+      toNetlist(diagram, {analysis: '.op', controls: start, parts: plugins});
   sim.setNetList(circuit.netlist);
   const result = await sim.runSim();
   const values = Object.fromEntries(result.data.map((d) => [d.name, d.values[0]]));
@@ -155,9 +159,7 @@ async function solveOp(start) {
     i: (source) => values[`i(${source})`] ?? 0,
   };
   const parts = {};
-  for (const {id, type} of diagram.parts) {
-    if (PARTS[type]?.state) parts[id] = circuit.state(id, read);
-  }
+  for (const id of circuit.stateParts) parts[id] = circuit.state(id, read);
   // Board pins are the units with a "volts" control, such as "esp:2.volts".
   const pins = {};
   for (const name of Object.keys(circuit.controls)) {

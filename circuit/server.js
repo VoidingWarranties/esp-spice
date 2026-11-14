@@ -9,8 +9,10 @@
 
 import {readFileSync} from 'node:fs';
 import {createInterface} from 'node:readline';
+import {pathToFileURL} from 'node:url';
 import {parseArgs} from 'node:util';
 import {parseValue} from './netlist.js';
+import {loadPlugins} from './plugins.js';
 import {Simulation} from './simulation.js';
 
 const {values, positionals} = parseArgs({
@@ -33,9 +35,10 @@ const maxStep = values['max-step'] ? parseValue(values['max-step']) : undefined;
 /** @type {Simulation} */
 let sim;
 try {
-  sim = new Simulation(diagram, {maxStep, probes: values.probe});
+  const parts = await loadPlugins(diagram, pathToFileURL(positionals[0]));
+  sim = new Simulation(diagram, {maxStep, probes: values.probe, parts});
 } catch (e) {
-  // A message, not a stack trace, for a bad diagram or --probe pin.
+  // A message, not a stack trace, for a bad diagram, plugin or --probe pin.
   process.stderr.write(`${/** @type {Error} */ (e).message}\n`);
   process.exit(2);
 }

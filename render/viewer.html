@@ -96,10 +96,10 @@
       scrub.setAttribute('aria-valuetext', `${seconds} seconds`);
     }
 
-    async function load(diagram, newTrace = {parts: {}}) {
+    async function load(diagram, newTrace = {parts: {}}, diagramUrl) {
       trace = newTrace;
       const container = document.getElementById('circuit');
-      circuit = await renderCircuit(container, diagram);
+      circuit = await renderCircuit(container, diagram, {diagramUrl});
       document.getElementById('diagram').setAttribute(
         'aria-label',
         `Circuit diagram with ${diagram.parts.length} parts`,
@@ -146,9 +146,11 @@
     const params = new URLSearchParams(location.search);
     if (params.has('diagram')) {
       const fetchJson = async (url) => (await fetch(url)).json();
+      const diagramUrl = new URL(params.get('diagram'), location.href).href;
       await load(
-        await fetchJson(params.get('diagram')),
+        await fetchJson(diagramUrl),
         params.has('trace') ? await fetchJson(params.get('trace')) : undefined,
+        diagramUrl,
       );
     }
   </script>

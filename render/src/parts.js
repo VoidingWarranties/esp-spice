@@ -116,13 +116,25 @@ sheet.replaceSync(`
   text { font: 9px sans-serif; fill: currentColor; }
 `);
 
-const drawings = [
-  ...Object.entries(PARTS).map(([tag, {drawing}]) => [tag, drawing]),
-  ...Object.entries(BOARDS),
-];
-for (const [tag, drawing] of drawings) {
-  // A later wokwi-elements version may define some of these.
-  if (drawing && !customElements.get(tag)) define(tag, drawing);
+/** Part type to the wokwi-elements tag that draws it. */
+export const TAGS = new Map();
+
+/**
+ * Defines an element for each part type with a drawing.
+ * @param {!Object<string, !Object>} types Part type to model, as in
+ *     circuit/parts.js.
+ */
+export function defineDrawings(types) {
+  for (const [type, {drawing}] of Object.entries(types)) {
+    if (typeof drawing === 'string') TAGS.set(type, drawing);
+    // A later wokwi-elements version may define some of these.
+    else if (drawing && !customElements.get(type)) define(type, drawing);
+  }
+}
+
+defineDrawings(PARTS);
+for (const [tag, drawing] of Object.entries(BOARDS)) {
+  if (!customElements.get(tag)) define(tag, drawing);
 }
 
 /**

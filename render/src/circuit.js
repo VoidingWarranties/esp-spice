@@ -5,7 +5,8 @@
  * custom elements are defined.
  */
 
-import './parts.js';
+import {loadPlugins} from '../../circuit/plugins.js';
+import {TAGS, defineDrawings} from './parts.js';
 import {stateAt} from './trace.js';
 import {pinPosition, wirePoints} from './wires.js';
 
@@ -27,11 +28,18 @@ const DEFAULT_ATTRS = {'wokwi-slide-potentiometer': {max: '1023'}};
  * Draws the diagram into the container.
  * @param {!HTMLElement} container
  * @param {!Object} diagram Parsed diagram.json.
+ * @param {{diagramUrl: (string|undefined)}=} options diagramUrl is where
+ *     the diagram's part plugins are, relative to it.
  * @return {!Promise<{setTime: function(!Object, number): !Promise<void>,
  *     elements: !Map<string, !HTMLElement>, hasHidden: boolean,
  *     showHidden: function(boolean)}>}
  */
-export async function renderCircuit(container, diagram) {
+export async function renderCircuit(
+  container,
+  diagram,
+  {diagramUrl = document.baseURI} = {},
+) {
+  defineDrawings(await loadPlugins(diagram, diagramUrl));
   container.replaceChildren();
   container.style.position = 'relative';
 
@@ -147,9 +155,10 @@ function usedPins(connections, partsById) {
  */
 function createPart(part, pins) {
   let el;
-  if (customElements.get(part.type)) {
-    el = document.createElement(part.type);
-    const attrs = {...DEFAULT_ATTRS[part.type], ...part.attrs};
+  const tag = TAGS.get(part.type) ?? part.type;
+  if (customElements.get(tag)) {
+    el = document.createElement(tag);
+    const attrs = {...DEFAULT_ATTRS[tag], ...part.attrs};
     for (const [name, value] of Object.entries(attrs)) {
       el.setAttribute(name, value);
     }

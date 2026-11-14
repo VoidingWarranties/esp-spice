@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
-import {readFile, stat} from 'node:fs/promises';
+import {mkdtemp, readFile, stat, writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {after, before, mock, test} from 'node:test';
 import {encodeVideo, openCircuit} from '../capture.js';
 
@@ -180,4 +181,40 @@ test('dims bar graph segments by brightness', async () => {
   const [off, dim, full] = shots;
   assert.notDeepEqual(dim, off);
   assert.notDeepEqual(dim, full);
+});
+
+test('draws part plugins, in their own drawing or a wokwi element', async () => {
+  const fader = new URL('../../examples/audio-fader/', import.meta.url);
+  // A plugin with the look, pin names and controls of a wokwi element.
+  const dir = await mkdtemp(path.join(tmpdir(), 'esp-spice-'));
+  await writeFile(path.join(dir, 'pot.js'), `export default {
+    'my-pot': {
+      pins: ['GND', 'SIG', 'VCC'],
+      build() {},
+      drawing: 'wokwi-slide-potentiometer',
+    },
+  };`);
+  const pot = {
+    version: 1,
+    'esp-spice': {parts: ['pot.js']},
+    parts: [
+      {type: 'my-pot', id: 'pot1'},
+      {type: 'wokwi-gnd', id: 'gnd', top: 100},
+    ],
+    connections: [['pot1:GND', 'gnd:GND', 'black', []]],
+  };
+  const warn = mock.method(console, 'warn', () => {});
+  try {
+    for (const [diagram, dirPath] of [
+      [await readJson('diagram.json', fader), fileURLToPath(fader)],
+      [pot, dir],
+    ]) {
+      const view = await openCircuit(diagram, undefined, {dir: dirPath});
+      await view.shoot(0);
+      await view.close();
+    }
+    assert.deepEqual(warn.mock.calls.map((c) => c.arguments), []);
+  } finally {
+    warn.mock.restore();
+  }
 });

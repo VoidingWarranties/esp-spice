@@ -50,3 +50,16 @@ test('the server answers each command with one line', async () => {
   );
   assert.equal(code, 0);
 });
+
+test('the server loads the part plugins of the diagram', async () => {
+  const diagram = fileURLToPath(
+    new URL('../../examples/audio-fader/diagram.json', import.meta.url),
+  );
+  const child = spawn(process.execPath, [SERVER, diagram], {
+    stdio: ['pipe', 'pipe', 'inherit'],
+  });
+  const lines = createInterface({input: child.stdout})[Symbol.asyncIterator]();
+  child.stdin.end(JSON.stringify({cmd: 'voltage', pin: 'fader:WIPER'}) + '\n');
+  const {v} = JSON.parse((await lines.next()).value);
+  assert.ok(Math.abs(v - 0.331) < 0.001, `${v}`);
+});

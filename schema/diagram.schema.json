@@ -16,6 +16,16 @@
     "connections": {
       "type": "array",
       "items": { "$ref": "#/$defs/connection" }
+    },
+    "esp-spice": {
+      "type": "object",
+      "properties": {
+        "parts": {
+          "description": "Part plugin modules, relative to diagram.json. See docs/circuit-format.md.",
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
     }
   },
   "$defs": {

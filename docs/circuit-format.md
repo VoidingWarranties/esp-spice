@@ -48,6 +48,7 @@ Top-level fields:
 | `editor`      | string | Optional. Wokwi writes `"wokwi"`.                        |
 | `parts`       | array  | Required. See below.                                     |
 | `connections` | array  | Required. See below.                                     |
+| `esp-spice`   | object | Optional. `parts` lists [part plugins](#part-plugins).   |
 | other         | any    | Kept and ignored, for example `dependencies`.            |
 
 Part fields:
@@ -183,16 +184,64 @@ The ESP32 bridge sets it with a drive:
 With `freqHz` and `duty`, ngspice makes the PWM edges itself, from the
 current time. Read an input or ADC pin as the voltage of its net.
 
+### Part plugins
+
+A part plugin adds part types without a change to esp-spice. It is a
+JavaScript module in the diagram's folder, and the diagram names it:
+
+```json
+"esp-spice": { "parts": ["fader.js"] }
+```
+
+All tools load the plugins of a diagram: `circuit/server.js` (and so
+`esp-spice-run`), `render/capture.js`, the viewer and the web demo. A path
+must be relative, in the diagram's folder or below it.
+
+Loading a diagram runs the code of its plugins. Do not load a diagram from a
+source that you do not trust.
+
+The module's default export maps part types to models. A model has the same
+shape as a built-in type in `circuit/parts.js`, so a built-in type is also
+an example:
+
+| Field     | Notes                                                                 |
+| --------- | --------------------------------------------------------------------- |
+| `pins`    | Pin names.                                                            |
+| `ground`  | Optional. Pins that are always at node 0.                             |
+| `shorts`  | Optional. Groups of pins that the part always connects.              |
+| `build`   | `build(p)` adds the part to the netlist. See `PartContext` in `circuit/parts.js`. |
+| `state`   | Optional. `state(r)` gives the trace props. See `Reader`.            |
+| `drawing` | Optional. An object as in `circuit/parts.js` (`width`, `height`, `pins`, `svg`, `label`), or the tag of a wokwi element to draw the part with. |
+
+A plugin cannot import `circuit/parts.js`, because its path is different
+in each tool. The context `p` gives it the helpers `p.resistor()` and
+`p.pulseSource()`. Controls that `p.unit()` adds work as for built-in parts,
+for example `--set 0.5:fader1.value=1023` in `esp-spice-run`.
+
+With a wokwi element tag as `drawing`, the part must use that element's pin
+names. The web demo then sends the element's input (a pot drag or a button
+press) to the part's controls, as for the built-in type of that element. A
+drawing object is static SVG: the web demo cannot change its controls.
+
+A plugin type must not have the name of a built-in type or of a type in
+another plugin of the diagram. A plugin cannot add a board, because the
+ESP32 bridge must know the board pins.
+
+[examples/audio-fader](../examples/audio-fader) has a plugin: a slide fader
+with an audio taper.
+
 ## Netlist API
 
 `circuit/netlist.js` has no Node imports, so a browser can import it.
 
 ```js
 import { toNetlist } from './circuit/netlist.js';
+import { loadPlugins } from './circuit/plugins.js';
 
 const circuit = toNetlist(diagram, {
   analysis: '.op',                  // optional line to add at the end
   controls: { 'btn1.pressed': 1 },  // optional start values for controls
+  parts: await loadPlugins(diagram, diagramUrl),  // optional plugin types
 });
 circuit.netlist;    // string: the ngspice deck, ends with ".end"
 circuit.nodes;      // { "led1:A": "r1_2", "gnd:GND": "0", ... } pin to node
@@ -241,6 +290,7 @@ Options:
 - `frameInterval`: the time between trace records, in seconds. Default
   10 ms. The simulation also records when a control or pin drive changes.
 - `probes`: pins whose net voltage the trace records.
+- `parts`: part types from `loadPlugins()`, as in the netlist API.
 
 `state()` and the trace use the mean part current since the last record.
 While a pin has PWM with a period of one frame or less, that time grows to

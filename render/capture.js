@@ -29,6 +29,8 @@ const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const SERVED = path.dirname(ROOT);
 // Not a real host: page.route serves files from SERVED for this origin.
 const ORIGIN = 'http://esp-spice.invalid';
+// The diagram's folder is served here, for its part plugins.
+const DIAGRAM_DIR = '/diagram/';
 const BUNDLE = 'node_modules/@wokwi/elements/dist/wokwi-elements.bundle.js';
 
 /**
@@ -36,14 +38,15 @@ const BUNDLE = 'node_modules/@wokwi/elements/dist/wokwi-elements.bundle.js';
  * @param {!Object} diagram
  * @param {!Object=} trace
  * @param {{scale: (number|undefined), showHidden: (boolean|undefined),
- *     dark: (boolean|undefined)}=} options
+ *     dark: (boolean|undefined), dir: (string|undefined)}=} options dir is
+ *     the diagram's folder, which has its part plugins.
  * @return {!Promise<{shoot: function(number): !Promise<!Buffer>,
  *     close: function(): !Promise<void>}>}
  */
 export async function openCircuit(
   diagram,
   trace,
-  {scale = 2, showHidden = true, dark = false} = {},
+  {scale = 2, showHidden = true, dark = false, dir} = {},
 ) {
   if (!existsSync(path.join(ROOT, BUNDLE))) {
     throw new Error(`Missing ${BUNDLE}. Run "npm install" in ${ROOT}.`);
@@ -63,18 +66,23 @@ export async function openCircuit(
       if (m.type() === 'warning') console.warn(m.text());
     });
     await page.route(`${ORIGIN}/**`, (route) => {
-      const url = new URL(route.request().url());
-      const file = path.join(SERVED, url.pathname);
-      if (!file.startsWith(SERVED + path.sep) || !existsSync(file)) {
+      const {pathname} = new URL(route.request().url());
+      const [root, rel] = dir && pathname.startsWith(DIAGRAM_DIR) ?
+        [path.resolve(dir), pathname.slice(DIAGRAM_DIR.length)] :
+        [SERVED, pathname];
+      const file = path.join(root, rel);
+      if (!file.startsWith(root + path.sep) || !existsSync(file)) {
         return route.fulfill({status: 404});
       }
       return route.fulfill({path: file});
     });
     await page.goto(`${ORIGIN}/render/viewer.html`);
     await page.waitForFunction(() => window.espSpice);
-    await page.evaluate(([d, t]) => window.espSpice.load(d, t), [
+    const diagramUrl = dir && `${ORIGIN}${DIAGRAM_DIR}diagram.json`;
+    await page.evaluate(([d, t, u]) => window.espSpice.load(d, t, u), [
       diagram,
       trace,
+      diagramUrl,
     ]);
     await page.evaluate((s) => window.espSpice.showHidden(s), showHidden);
     return makeCircuit(browser, page);
@@ -181,6 +189,7 @@ async function main() {
     scale,
     showHidden,
     dark: values.dark,
+    dir: path.dirname(positionals[0]),
   });
   try {
     for (const [i, out] of values.png.entries()) {
