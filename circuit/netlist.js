@@ -12,6 +12,7 @@ const PREFIXES = {
   n: -9,
   u: -6,
   µ: -6,
+  μ: -6,
   m: -3,
   k: 3,
   K: 3,
@@ -29,7 +30,7 @@ const PREFIXES = {
 export function parseValue(text) {
   if (typeof text === 'number') return text;
   const match =
-    /^\s*([+-]?(?:\d+\.?\d*|\.\d+))(?:[eE]([+-]?\d+))?\s*(meg|[fpnuµmkKMG])?[a-zA-ZΩ]*\s*$/.exec(
+    /^\s*([+-]?(?:\d+\.?\d*|\.\d+))(?:[eE]([+-]?\d+))?\s*(meg|[fpnuµμmkKMG])?[a-zA-ZΩ]*\s*$/.exec(
       String(text),
     );
   if (!match) throw new Error(`not a number: "${text}"`);
@@ -57,6 +58,8 @@ function sanitize(text) {
  * @typedef {object} Circuit
  * @property {string} netlist The ngspice deck. It ends with ".end".
  * @property {Record<string, string>} nodes Pin reference to node name.
+ * @property {string[]} usedNodes Nodes that elements connect to. Other
+ *     nodes are not in the netlist.
  * @property {Record<string, number>} controls Control name to value.
  * @property {string[]} warnings
  * @property {string[]} senses Voltage sources that read part currents.
@@ -156,7 +159,9 @@ export function toNetlist(diagram, {analysis, controls: start = {}} = {}) {
   const members = new Map();
   for (const ref of parent.keys()) {
     const root = find(ref);
-    members.set(root, [...(members.get(root) ?? []), ref]);
+    const list = members.get(root);
+    if (list) list.push(ref);
+    else members.set(root, [ref]);
   }
   /** @type {Map<string, string>} */
   const rootNode = new Map();
@@ -183,6 +188,8 @@ export function toNetlist(diagram, {analysis, controls: start = {}} = {}) {
   const senses = new Map();
   /** @type {Record<string, number>} */
   const controls = {};
+  /** @type {Set<string>} */
+  const usedNodes = new Set();
 
   for (const [id, {attrs, model}] of parts) {
     if (!model) continue;
@@ -212,7 +219,11 @@ export function toNetlist(diagram, {analysis, controls: start = {}} = {}) {
           );
         }
       },
-      node: (pin) => /** @type {string} */ (rootNode.get(find(`${id}:${pin}`))),
+      node(pin) {
+        const node = /** @type {string} */ (rootNode.get(find(`${id}:${pin}`)));
+        usedNodes.add(node);
+        return node;
+      },
       wired: (pin) => (members.get(find(`${id}:${pin}`)) ?? []).length > 1,
       inner: (suffix) => once(`${id}__${suffix}`),
       el: (letter, suffix = '') =>
@@ -231,7 +242,7 @@ export function toNetlist(diagram, {analysis, controls: start = {}} = {}) {
         const values = {...defaults};
         for (const key of Object.keys(values)) {
           const full = `${name}.${key}`;
-          if (full in start) values[key] = start[full];
+          if (Object.hasOwn(start, full)) values[key] = start[full];
           controls[full] = values[key];
         }
         units.set(name, {values, render});
@@ -242,20 +253,9 @@ export function toNetlist(diagram, {analysis, controls: start = {}} = {}) {
   }
 
   for (const name of Object.keys(start)) {
-    if (!(name in controls) && !isUnwiredPin(name)) {
+    if (!Object.hasOwn(controls, name)) {
       throw new Error(`unknown control: "${name}"`);
     }
-  }
-
-  /**
-   * @param {string} name Control name, such as "esp:2.volts".
-   * @return {boolean} True for a board pin that is not in the circuit.
-   */
-  function isUnwiredPin(name) {
-    const ref = name.slice(0, name.lastIndexOf('.'));
-    const colon = ref.indexOf(':');
-    const model = parts.get(ref.slice(0, colon))?.model;
-    return colon > 0 && Boolean(model?.pins.includes(ref.slice(colon + 1)));
   }
 
   const netlist =
@@ -272,6 +272,7 @@ export function toNetlist(diagram, {analysis, controls: start = {}} = {}) {
   return {
     netlist,
     nodes,
+    usedNodes: [...usedNodes],
     controls,
     warnings,
     senses: [...senses.values()].flatMap((m) => [...m.values()]),
@@ -283,8 +284,7 @@ export function toNetlist(diagram, {analysis, controls: start = {}} = {}) {
       const dot = name.lastIndexOf('.');
       const unit = units.get(name.slice(0, dot));
       const key = name.slice(dot + 1);
-      if (!unit || !(key in unit.values)) {
-        if (isUnwiredPin(name)) return [];
+      if (!unit || !Object.hasOwn(unit.values, key)) {
         throw new Error(`unknown control: "${name}"`);
       }
       unit.values[key] = value;

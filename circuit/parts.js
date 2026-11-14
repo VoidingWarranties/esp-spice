@@ -86,7 +86,13 @@ export function pulseSource(name, a, b, {volts, freqHz = 0, duty = 0}, time) {
   let args;
   if (freqHz > 0 && duty > 0 && duty < 1) {
     const period = 1 / freqHz;
-    const edge = Math.min(1e-8, period / 100);
+    // Short enough that the pulse width stays positive at any duty.
+    const edge = Math.min(
+      1e-8,
+      period / 100,
+      (duty * period) / 2,
+      ((1 - duty) * period) / 2,
+    );
     args = [0, volts, time, edge, edge, duty * period - edge, period];
   } else {
     const level = freqHz > 0 && duty <= 0 ? 0 : volts;
@@ -258,9 +264,13 @@ function board({gpio, ground, v3, v5, other}) {
         p.add(`${p.el('r', pin)} ${inner} ${p.node(pin)} 0.01`);
       }
       for (const pin of gpio) {
-        if (!p.wired(pin)) continue;
-        const drv = p.inner(pin);
         const initial = {volts: 0, ohms: OPEN_OHMS, freqHz: 0, duty: 0};
+        // A pin that is not wired keeps its drive, with no elements.
+        if (!p.wired(pin)) {
+          p.unit(`${p.id}:${pin}`, initial, () => []);
+          continue;
+        }
+        const drv = p.inner(pin);
         p.unit(`${p.id}:${pin}`, initial, (drive, time) => [
           pulseSource(p.el('v', pin), drv, '0', drive, time),
           resistor(p.el('r', pin), drv, p.node(pin), drive.ohms),
@@ -339,7 +349,8 @@ export const PARTS = {
   'wokwi-slide-switch': {
     pins: ['1', '2', '3'],
     build(p) {
-      const initial = {value: p.attr('value', '') ? 1 : 0};
+      const on = ['1', 'true'].includes(p.attr('value', '').toLowerCase());
+      const initial = {value: on ? 1 : 0};
       p.unit(p.id, initial, ({value}) => [
         resistor(
           p.el('r', 'a'),

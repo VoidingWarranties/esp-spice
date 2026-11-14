@@ -5,12 +5,14 @@
 
 import {toNetlist} from './netlist.js';
 import {ngspice} from './ngspice.js';
+import {OPEN_OHMS} from './parts.js';
 import {TraceRecorder} from './trace.js';
 
 /** Times closer than this are equal, in seconds. */
 const EPSILON = 1e-12;
 
-let open = false;
+/** @type {Simulation | null} */
+let current = null;
 
 /**
  * A pin drive. See "Boards" in docs/circuit-format.md.
@@ -49,13 +51,13 @@ export class Simulation {
     diagram,
     {maxStep = 10e-6, frameInterval = 0.01, probes = []} = {},
   ) {
-    if (open) throw new Error('only one Simulation can be open at a time');
+    if (current) throw new Error('only one Simulation can be open at a time');
     this.#circuit = toNetlist(diagram);
     this.#frameInterval = frameInterval;
     this.#probes = probes;
     for (const pin of probes) this.#node(pin);
 
-    const saved = [...new Set(Object.values(this.#circuit.nodes))]
+    const saved = this.#circuit.usedNodes
       .filter((node) => node !== '0')
       .concat(this.#circuit.senses.map((source) => `${source}#branch`));
     const netlist = this.#circuit.netlist.replace(
@@ -68,9 +70,14 @@ export class Simulation {
       ].join('\n'),
     );
     this.#ng.load(netlist);
-    open = true;
-    this.#run(0);
-    this.#record();
+    current = this;
+    try {
+      this.#run(0);
+      this.#record();
+    } catch (e) {
+      this.close();
+      throw e;
+    }
   }
 
   /** @return {string} The netlist, for debugging. */
@@ -135,6 +142,12 @@ export class Simulation {
    */
   setPin(pin, drive) {
     this.#checkOpen();
+    const controls = this.#circuit.controls;
+    for (const key of Object.keys(drive)) {
+      if (!Object.hasOwn(controls, `${pin}.${key}`)) {
+        throw new Error(`unknown control: "${pin}.${key}"`);
+      }
+    }
     /** @type {string[]} */
     let commands = [];
     // Each call returns the commands for the whole pin, so use the last.
@@ -156,7 +169,13 @@ export class Simulation {
   voltage(pin) {
     this.#checkOpen();
     const node = this.#node(pin);
-    return node === '0' ? 0 : this.#last(node);
+    if (node === '0' || this.#ng.length(node) > 0) return this.#volts(node);
+    // A board pin that is not wired reads its own drive.
+    const controls = this.#circuit.controls;
+    const ohms = controls[`${pin}.ohms`];
+    return ohms !== undefined && ohms < OPEN_OHMS
+      ? controls[`${pin}.volts`]
+      : 0;
   }
 
   /**
@@ -175,8 +194,8 @@ export class Simulation {
 
   /** Frees ngspice for the next Simulation. */
   close() {
-    if (!open) return;
-    open = false;
+    if (current !== this) return;
+    current = null;
     this.#ng.stopAt(Infinity);
     this.#ng.command('delete all');
     this.#ng.command('destroy all');
@@ -184,7 +203,7 @@ export class Simulation {
   }
 
   #checkOpen() {
-    if (!open) throw new Error('the simulation is closed');
+    if (current !== this) throw new Error('the simulation is closed');
   }
 
   /** @param {string} pin @return {string} */
@@ -192,6 +211,14 @@ export class Simulation {
     const node = this.#circuit.nodes[pin];
     if (node === undefined) throw new Error(`unknown pin: "${pin}"`);
     return node;
+  }
+
+  /**
+   * @param {string} node
+   * @return {number} Volts now. 0 for a node that is not in the netlist.
+   */
+  #volts(node) {
+    return node === '0' || this.#ng.length(node) === 0 ? 0 : this.#last(node);
   }
 
   /** @param {string} name @return {number} Last value of a vector. */
@@ -234,7 +261,7 @@ export class Simulation {
     const from = Math.max(0, mark - 1);
     const times = this.#ng.vector('time', from) ?? [];
     return {
-      v: (node) => (node === '0' ? 0 : this.#last(node)),
+      v: (node) => this.#volts(node),
       i: (source) => {
         const values = this.#ng.vector(`${source}#branch`, from) ?? [];
         const span = times[times.length - 1] - times[0];
@@ -257,7 +284,7 @@ export class Simulation {
     }
     /** @type {Record<string, number>} */
     const probes = {};
-    for (const pin of this.#probes) probes[pin] = reader.v(this.#node(pin));
+    for (const pin of this.#probes) probes[pin] = this.voltage(pin);
     this.#recorder.record(this.#time, parts, probes);
     const length = this.#ng.length('time');
     if (length > this.#mark)
