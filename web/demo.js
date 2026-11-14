@@ -10,6 +10,8 @@
 import {renderCircuit} from '../render/src/circuit.js';
 
 const DEFAULT_DEMO = 'examples/esp32-s3-button-led';
+/** The readout shows the range of a voltage that changes this much. */
+const MIN_RANGE_VOLTS = 0.01;
 
 const status = document.querySelector('#status');
 const error = document.querySelector('#error');
@@ -120,10 +122,11 @@ function showError(message) {
 /**
  * Sets the part props and fills the readout table.
  *
- * @param {{parts: !Object, values: !Object, netlist: (string|undefined)}}
- *     state
+ * @param {{parts: !Object, values: !Object, ranges: !Object,
+ *     netlist: (string|undefined)}} state `ranges` has the lowest and
+ *     highest value of voltages since the last state.
  */
-function show({parts: states, values, netlist}) {
+function show({parts: states, values, ranges, netlist}) {
   for (const [id, props] of Object.entries(states)) {
     const el = parts.get(id);
     // The renderer does not draw parts with "hide".
@@ -146,7 +149,11 @@ function show({parts: states, values, netlist}) {
     header.scope = 'row';
     header.textContent = name;
     row.append(header);
-    row.insertCell().textContent = formatSi(value, unit);
+    const [low, high] = ranges[name] ?? [value, value];
+    // A voltage that changes, such as a wave, shows its range.
+    row.insertCell().textContent = high - low >= MIN_RANGE_VOLTS ?
+        `${formatSi(low, unit)} to ${formatSi(high, unit)}` :
+        formatSi(value, unit);
     return row;
   }));
 }

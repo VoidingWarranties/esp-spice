@@ -8,7 +8,8 @@
  *   {type: 'control', name, value}
  * Messages out:
  *   {type: 'status', text}
- *   {type: 'state', parts: {id: props}, values: {name: number}, netlist?}
+ *   {type: 'state', parts: {id: props}, values: {name: number},
+ *       ranges: {name: [low, high]}, netlist?}
  *   {type: 'error', message}
  * Port messages in: {t, drives: [{t, pin, volts, ohms, freqHz, duty}]}
  * Port messages out: {t, volts: {pin: number}}

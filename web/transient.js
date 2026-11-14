@@ -5,23 +5,35 @@
  *
  * eecircuit-engine gives no API to pause a run, so this sets its command
  * list: "stop when" pauses the transient run, "resume" continues it, and
- * "alter" changes controls. ngspice keeps every time point, so the run
- * starts again from the node voltages every RESTART_SECONDS.
+ * "alter" changes controls. ngspice keeps every time point, so after
+ * RESTART_SECONDS the run starts again from its state: the node voltages,
+ * the inductor currents and the phase of each wave.
  */
 
 import {toNetlist} from '../circuit/netlist.js';
-import {OPEN_OHMS} from '../circuit/parts.js';
+import {OPEN_OHMS, TOGGLE_AMPS} from '../circuit/parts.js';
 
 /** Largest time step, in seconds. */
 const MAX_STEP = 100e-6;
-/** Run time after which the run starts again, to free memory, in s. */
+/**
+ * Run time after which the run starts again, to free memory, in seconds.
+ * It starts again after a snapshot, so that each snapshot reads one run.
+ */
 const RESTART_SECONDS = 1;
 /** Times closer than this are equal, in seconds. */
 const EPSILON = 1e-9;
 /** stderr lines that mean a failure. ngspice also logs notes there. */
 const ERROR = /error/i;
-/** Vectors in one print command, so that its line stays short. */
+/** Expressions in one print command, so that its line stays short. */
 const PRINT_BATCH = 8;
+/** The prompts that ngspice prints before the output of commands. */
+const PROMPTS = /^(ngspice \d+ -> )+/;
+/** A sine source in the netlist: its name and the arguments of sin(). */
+const SINE = /^(v\S*) \S+ \S+ sin\(([^)]*)\)/gm;
+/** Time over which toggles() counts, in seconds, as in simulation.js. */
+const TOGGLE_SECONDS = 0.05;
+/** An inductor in the netlist. */
+const INDUCTOR = /^(l\S*) /gm;
 
 /** A running transient simulation of a diagram. */
 export class Transient {
@@ -37,10 +49,14 @@ export class Transient {
   /** Time in the current run, in seconds. */
   #local = 0;
   #started = false;
-  /** @type {!Array<string>} Nodes in the netlist, without ground. */
+  /** @type {!Array<string>} Nodes of part pins, without ground. */
   #nodes = [];
+  /** @type {!Array<string>} All nodes, also those inside parts. */
+  #allNodes = [];
   /** @type {!Array<string>} Sense sources, for currents. */
   #senses = [];
+  /** @type {!Array<string>} Sense sources whose toggles a part reads. */
+  #toggled = [];
   /**
    * Charge through each sense source since the run started, at the last
    * snapshot, in coulombs. Mean currents use the change.
@@ -48,6 +64,10 @@ export class Transient {
    */
   #charges = [];
   #snapshotTime = 0;
+  /** Index of the last time point at the last snapshot. */
+  #mark = 0;
+  /** True when the next advanceTo() starts the run again. */
+  #restartDue = false;
   /**
    * Start of the wave of each PWM unit, in seconds since the first run.
    * @type {!Map<string, number>}
@@ -84,8 +104,28 @@ export class Transient {
     // eecircuit-engine reads out.raw after each command list, so it must
     // exist. numdgt gives printed values more digits.
     await this.#exec(['set numdgt=12', 'setplot const', 'write out.raw e']);
-    await this.#load({});
+    await this.#load();
     await this.advanceTo(0);
+    // The run has a vector for each node, also for those inside parts.
+    const vectors = await this.#exec(['display']);
+    // Nodes inside a device, such as "d1#internal", take no .ic.
+    this.#allNodes = [...vectors.matchAll(/^\s*(\S+)\s+: voltage,/gm)]
+        .map(([, node]) => node)
+        .filter((node) => !node.includes('#') &&
+            !this.#senses.some((s) => charge(s) === node));
+    // Finds the sources whose toggles the part states read. A state must
+    // read them each time, not only for some values.
+    const toggled = new Set();
+    const probe = {
+      v: () => 0,
+      i: () => 0,
+      toggles: (source) => {
+        toggled.add(source);
+        return 0;
+      },
+    };
+    for (const id of this.#circuit.stateParts) this.#circuit.state(id, probe);
+    this.#toggled = [...toggled];
   }
 
   /**
@@ -127,14 +167,14 @@ export class Transient {
    * @return {!Promise<number>} The new time.
    */
   async advanceTo(t) {
-    if (this.#local >= RESTART_SECONDS) await this.#restart();
+    if (this.#restartDue) await this.#restart();
     const stop = Math.max(t - this.#offset, MAX_STEP) - EPSILON;
     if (this.#started && stop <= this.#local) return this.time;
-    const [local] = await this.#print(['time'], [
+    const [local] = await this.#print([last('time')], {before: [
       'delete all',
       `stop when time > ${stop}`,
       this.#started ? 'resume' : 'run',
-    ]);
+    ]});
     this.#started = true;
     this.#local = local;
     return this.time;
@@ -148,7 +188,7 @@ export class Transient {
     const wired = pins.filter((pin) =>
       this.#nodes.includes(this.#circuit.nodes[pin]));
     const values = await this.#print(
-        wired.map((pin) => volts(this.#circuit.nodes[pin])));
+        wired.map((pin) => last(volts(this.#circuit.nodes[pin]))));
     const controls = this.#circuit.controls;
     return Object.fromEntries(pins.map((pin) => {
       const k = wired.indexOf(pin);
@@ -161,55 +201,110 @@ export class Transient {
   }
 
   /**
-   * Reads the part states and the values for the readout. Currents are the
-   * mean since the last snapshot.
+   * Reads the part states and the values for the readout, since the last
+   * snapshot. Voltages are the value now, with the lowest and highest.
+   * Currents are the mean. Call it often: the run starts again only after
+   * a snapshot.
    *
-   * @return {!Promise<{parts: !Object, values: !Object<string, number>}>}
+   * @return {!Promise<{parts: !Object, values: !Object<string, number>,
+   *     ranges: !Object<string, !Array<number>>}>} `ranges` has the lowest
+   *     and highest value of each voltage.
    */
   async snapshot() {
-    const read = await this.#print(this.#state());
-    const span = this.time - this.#snapshotTime;
+    // From the point before the last snapshot, so that it has 2 points.
+    const from = Math.max(this.#mark - 1, 0);
+    const window = (vector) => `${vector}[${from},n-1]`;
+    const nodes = this.#nodes.map(volts);
+    // Toggles count over the last TOGGLE_SECONDS of this run: "in" is 1 at
+    // the points in that time. For each toggled source, lo and hi are its
+    // range there, and s is 1 where it is above the middle.
+    const toggleStart = this.#local - TOGGLE_SECONDS;
+    const lets = this.#toggled.length ?
+        [`let in__ = time ge ${toggleStart}`] : [];
+    this.#toggled.forEach((source, k) => {
+      const i = `i(${source})`;
+      lets.push(
+          `let lo__${k} = vecmin(${i} + (1 - in__) * 1e30)`,
+          `let hi__${k} = vecmax(${i} - (1 - in__) * 1e30)`,
+          `let s__${k} = ${i} gt (lo__${k} + hi__${k}) / 2`);
+    });
+    const read = await this.#print([
+      'n',
+      ...nodes.map(last),
+      ...nodes.map((v) => `vecmin(${window(v)})`),
+      ...nodes.map((v) => `vecmax(${window(v)})`),
+      ...this.#senses.map((source) => last(volts(charge(source)))),
+      ...this.#toggled.flatMap((_, k) => [
+        `hi__${k}-lo__${k}`,
+        // The changes of s in that time, so the times it crosses the middle.
+        `mean(abs(s__${k}[1,n-1]-s__${k}[0,n-2])*in__[1,n-1])*(n-1)`,
+      ]),
+    ], {lets});
+    let k = 0;
+    const next = () => read[k++];
+    this.#mark = next() - 1;
     /** @type {!Object<string, number>} */
     const values = {};
-    this.#nodes.forEach((node, k) => {
-      values[`v(${node})`] = read[k];
-    });
-    this.#senses.forEach((source, k) => {
-      const now = read[this.#nodes.length + k];
+    /** @type {!Object<string, !Array<number>>} */
+    const ranges = {};
+    for (const v of nodes) values[v] = next();
+    for (const v of nodes) ranges[v] = [next()];
+    for (const v of nodes) ranges[v].push(next());
+    const span = this.time - this.#snapshotTime;
+    this.#senses.forEach((source, j) => {
+      const now = next();
       values[`i(${source})`] =
-          span > 0 ? (now - this.#charges[k]) / span : 0;
-      this.#charges[k] = now;
+          span > 0 ? (now - this.#charges[j]) / span : 0;
+      this.#charges[j] = now;
     });
+    /** @type {!Map<string, number>} */
+    const toggles = new Map();
+    for (const source of this.#toggled) {
+      const range = next();
+      const count = next();
+      toggles.set(source, range >= TOGGLE_AMPS ? Math.round(count) : 0);
+    }
     this.#snapshotTime = this.time;
+    this.#restartDue = this.#local >= RESTART_SECONDS;
     const reader = {
-      v: (node) => values[`v(${node})`] ?? 0,
+      v: (node) => values[volts(node)] ?? 0,
       i: (source) => values[`i(${source})`] ?? 0,
+      toggles: (source) => toggles.get(source) ?? 0,
     };
     const parts = {};
     for (const id of this.#circuit.stateParts) {
       parts[id] = this.#circuit.state(id, reader);
     }
-    return {parts, values};
+    return {parts, values, ranges};
   }
 
   /**
-   * Starts the run again at the current time, from the node voltages now,
-   * so that ngspice can free the old time points.
+   * Starts the run again at the current time, from its state now, so that
+   * ngspice can free the old time points.
    */
   async #restart() {
-    const read = await this.#print(this.#state());
-    const charges = read.slice(this.#nodes.length);
-    // Keep the charge since the last snapshot.
-    this.#charges = this.#charges.map((last, k) => last - charges[k]);
+    this.#restartDue = false;
+    const inductors = this.#inductors();
+    const read = await this.#print([
+      ...this.#allNodes.map((node) => last(volts(node))),
+      ...inductors.map((name) => last(`i(${name})`)),
+      ...this.#senses.map((source) => last(volts(charge(source)))),
+    ]);
+    let k = 0;
+    const nodes = this.#allNodes.map((node) => [node, read[k++]]);
+    const amps = inductors.map((name) => [name, read[k++]]);
+    // The meters start again at 0, so keep the charge since the snapshot.
+    this.#charges = this.#charges.map((at) => at - read[k++]);
     this.#offset += this.#local;
-    await this.#load(Object.fromEntries(
-        this.#nodes.map((node, k) => [node, read[k]])));
+    await this.#load({nodes, inductors: amps});
   }
 
   /**
    * Loads the netlist for a new run that starts at #offset.
    *
-   * @param {!Object<string, number>} start Node voltages at the start.
+   * @param {{nodes: !Array<!Array>, inductors: !Array<!Array>}=} start
+   *     The volts of each node and the amps of each inductor at the start.
+   *     Without it, the run starts from the operating point.
    */
   async #load(start) {
     this.#circuit = toNetlist(this.#diagram, {controls: this.#controls});
@@ -222,41 +317,62 @@ export class Transient {
       `f__meter${k} 0 ${charge(source)} ${source} 1`,
       `c__meter${k} ${charge(source)} 0 1`,
     ]);
-    const saved = this.#state();
     // The meters start at 0. Without this, the operating point puts the
     // current through rshunt on them.
     const ic = [
-      ...Object.entries(start).map(([node, v]) => `.ic v(${node})=${v}`),
+      ...(start?.nodes ?? []).map(([node, v]) => `.ic v(${node})=${v}`),
       ...this.#senses.map((source) => `.ic v(${charge(source)})=0`),
     ];
+    // The first run saves all vectors, to find the nodes. Later runs save
+    // what restarts, snapshots and toggles read.
+    const saved = this.#allNodes.length ? [
+      ...this.#allNodes.map(volts),
+      ...this.#senses.map((source) => volts(charge(source))),
+      ...this.#inductors().map((name) => `${name}#branch`),
+      ...this.#toggled.map((source) => `${source}#branch`),
+    ] : [];
     this.#sim.setNetList(this.#circuit.netlist.replace(/\.end\n$/, [
       ...meters,
-      ...(saved.length ? [`.save ${saved.join(' ')}`] : []),
+      ...saved.map((vector) => `.save ${vector}`),
       ...ic,
-      // Stop time is far away: "stop when" pauses the run.
-      `.tran ${MAX_STEP} 1e9 0 ${MAX_STEP}`,
+      // Stop time is far away: "stop when" pauses the run. A restart uses
+      // the start state ("uic"), not the operating point, which would
+      // force the inductors' nodes to their voltages and so give them a
+      // huge current.
+      `.tran ${MAX_STEP} 1e9 0 ${MAX_STEP}${start ? ' uic' : ''}`,
       '.end\n',
     ].join('\n')));
+    const inductors = (start?.inductors ?? []).map(([name, amps]) =>
+      `alter ${name} ic=${amps}`);
     // Each PWM wave keeps its phase.
     const phases = [...this.#waveStarts.keys()].flatMap((unit) =>
       this.#circuit.setControl(`${unit}.freqHz`,
           this.#circuit.controls[`${unit}.freqHz`], this.#waveTime(unit)));
+    // Each sine keeps its phase: a negative delay runs it as if it started
+    // at time 0.
+    const sines = [...this.#circuit.netlist.matchAll(SINE)].map(
+        ([, name, args]) => {
+          const [offset, amplitude, freqHz, delay = 0, ...rest] =
+              args.trim().split(/\s+/).map(Number);
+          const late = this.#offset - delay;
+          const shift = late > 0 ? late % (1 / freqHz) : late;
+          return `alter @${name}[sin] = [ ` +
+              `${[offset, amplitude, freqHz, -shift, ...rest].join(' ')} ]`;
+        });
     // eecircuit-engine changes "source test.cir" into "remcirc" and then
     // "source test.cir" when a circuit is loaded.
-    await this.#exec(['destroy all', 'source test.cir', ...phases]);
+    await this.#exec([
+      'destroy all', 'source test.cir', ...inductors, ...phases, ...sines,
+    ]);
+    this.#mark = 0;
     this.#local = 0;
     this.#started = false;
   }
 
-  /**
-   * @return {!Array<string>} The vectors of the node voltages, then of the
-   *     charges through the sense sources.
-   */
-  #state() {
-    return [
-      ...this.#nodes.map(volts),
-      ...this.#senses.map((source) => volts(charge(source))),
-    ];
+  /** @return {!Array<string>} The names of the inductors. */
+  #inductors() {
+    return [...this.#circuit.netlist.matchAll(INDUCTOR)]
+        .map(([, name]) => name);
   }
 
   /**
@@ -282,32 +398,39 @@ export class Transient {
   }
 
   /**
-   * Prints vector values at the last time point.
+   * Prints the values of expressions.
    *
-   * @param {!Array<string>} vectors Such as "v(a)".
-   * @param {!Array<string>=} before Commands to run first.
+   * @param {!Array<string>} expressions Such as "v(a)[n-1]", where n is the
+   *     length of the time vector. They have no spaces.
+   * @param {{before: (!Array<string>|undefined),
+   *     lets: (!Array<string>|undefined)}=} commands To run before n is
+   *     set, and after.
    * @return {!Promise<!Array<number>>}
    */
-  async #print(vectors, before = []) {
-    if (!vectors.length && !before.length) return [];
+  async #print(expressions, {before = [], lets = []} = {}) {
+    if (!expressions.length && !before.length) return [];
     const prints = [];
-    for (let k = 0; k < vectors.length; k += PRINT_BATCH) {
-      const batch = vectors.slice(k, k + PRINT_BATCH);
-      prints.push(`print ${batch.map((v) => `${v}[n-1]`).join(' ')}`);
+    for (let k = 0; k < expressions.length; k += PRINT_BATCH) {
+      prints.push(
+          `print ${expressions.slice(k, k + PRINT_BATCH).join(' ')}`);
     }
     const info = await this.#exec([
       ...before,
-      ...(prints.length ? ['let n = length(time)', ...prints] : []),
+      ...(prints.length ? ['let n = length(time)', ...lets, ...prints] : []),
     ]);
+    // ngspice prints each expression as "expression = value".
     /** @type {!Map<string, number>} */
     const printed = new Map();
-    const lines = info.matchAll(/([^\s>]+)\[n-1\] = (\S+)/g);
-    for (const [, name, value] of lines) {
-      printed.set(name, Number(value));
+    for (const line of info.split('\n')) {
+      const match =
+          line.replace(PROMPTS, '').trim().match(/^(\S+) = (\S+)$/);
+      if (match) printed.set(match[1].toLowerCase(), Number(match[2]));
     }
-    return vectors.map((v) => {
-      const value = printed.get(v);
-      if (value === undefined) throw new Error(`ngspice did not print ${v}`);
+    return expressions.map((expression) => {
+      const value = printed.get(expression.toLowerCase());
+      if (value === undefined) {
+        throw new Error(`ngspice did not print ${expression}`);
+      }
       return value;
     });
   }
@@ -350,6 +473,14 @@ function stopLeak(sim) {
     return data;
   };
   asyncify.allocateData.patched = true;
+}
+
+/**
+ * @param {string} vector
+ * @return {string} The vector's value at the last time point.
+ */
+function last(vector) {
+  return `${vector}[n-1]`;
 }
 
 /**
