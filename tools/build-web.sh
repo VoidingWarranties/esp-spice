@@ -4,8 +4,11 @@
 #   tools/build-web.sh
 set -e
 cd "$(dirname "$0")/.."
-rustup target list --installed | grep -q wasm32-unknown-unknown ||
-  rustup target add wasm32-unknown-unknown
+# With rustup, add the target. The nix shell's toolchain already has it.
+if command -v rustup >/dev/null; then
+  rustup target list --installed | grep -q wasm32-unknown-unknown ||
+    rustup target add wasm32-unknown-unknown
+fi
 cargo build --release --target wasm32-unknown-unknown \
   --manifest-path web/esp32/Cargo.toml
 mkdir -p web/dist
