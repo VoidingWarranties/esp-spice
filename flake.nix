@@ -14,7 +14,13 @@
           packages = with pkgs; [
             nodejs_22
             ffmpeg
+            # For tools/fetch-esp32-rom.sh.
+            curl
           ];
+          # tools/fetch-esp32-rom.sh puts the ROM here by default.
+          shellHook = ''
+            export ESP32SIM_ROM_DIR="$PWD/roms"
+          '';
         }
         # Browsers that Playwright downloads do not run on NixOS. The render
         # tests pass with this Chromium. On macOS, run
