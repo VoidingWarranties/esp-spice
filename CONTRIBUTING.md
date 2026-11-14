@@ -33,4 +33,6 @@ Rules for `pr-assets`:
 The Captures workflow runs on each pull request that changes `examples/` or
 `render/`. It draws each example in light and dark mode, and attaches the
 PNG files to the run as the `captures` artifact. Reviewers can download it to
-see the change.
+see the change. An example with a `trace.json` shows the state at t = 0 of the
+trace. Other examples show no sim state, so upload a picture of the web demo
+when a change is about sim state.
