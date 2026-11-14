@@ -84,9 +84,9 @@ The web demo has `web/dist/esp_spice_web.wasm`. It contains:
 
 ## wokwi-elements
 
-The pictures in `render/examples` and `web/screenshot.png` show drawings from
-[wokwi-elements](https://github.com/wokwi/wokwi-elements), Copyright (c) 2020
-Uri Shaked, MIT.
+The pictures in `render/examples` and on the `pr-assets` branch show drawings
+from [wokwi-elements](https://github.com/wokwi/wokwi-elements), Copyright (c)
+2020 Uri Shaked, MIT.
 
 The web demo loads wokwi-elements and
 [eecircuit-engine](https://github.com/eelab-dev/EEcircuit-engine) (MIT, with
