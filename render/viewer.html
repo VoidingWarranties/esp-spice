@@ -3,15 +3,35 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
   <title>ESP Spice viewer</title>
   <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #fff;
+      --text: #222;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1e1e1e;
+        --text: #ddd;
+      }
+    }
     body {
       margin: 0;
       font: 14px system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    /* The parts are drawn for a light background, so the stage stays light,
+       also in dark mode. */
+    #stage {
+      display: inline-block;
+      position: relative;
+      color-scheme: light;
       background: #fff;
       color: #222;
     }
-    #stage { display: inline-block; position: relative; background: #fff; }
     #time {
       position: absolute;
       right: 8px;
@@ -21,6 +41,7 @@
     }
     #controls { display: flex; gap: 8px; align-items: center; padding: 8px; }
     #controls input { flex: 1; }
+    #controls button { min-block-size: 24px; min-inline-size: 24px; }
     #controls[hidden] { display: none; }
     #hidden-toggle { display: block; padding: 0 8px 8px; }
     #hidden-toggle[hidden] { display: none; }
@@ -28,18 +49,25 @@
   <script src="node_modules/@wokwi/elements/dist/wokwi-elements.bundle.js"></script>
 </head>
 <body>
-  <div id="stage">
-    <div id="circuit"></div>
-    <output id="time"></output>
-  </div>
-  <div id="controls" hidden>
-    <button id="play" type="button">Play</button>
-    <input id="scrub" type="range" min="0" step="any" value="0"
-        aria-label="Time">
-  </div>
-  <label id="hidden-toggle" hidden>
-    <input id="show-hidden" type="checkbox" checked> Show hidden parts
-  </label>
+  <main>
+    <div id="stage">
+      <!-- The parts only play back the trace here, so they are one image
+           to screen readers, and inert to clicks and keyboard focus. -->
+      <div id="diagram" role="img" aria-label="Circuit diagram">
+        <div id="circuit" inert></div>
+      </div>
+      <!-- Not a live region: it changes on every frame while playing. -->
+      <output id="time" for="scrub" aria-live="off"></output>
+    </div>
+    <div id="controls" hidden>
+      <button id="play" type="button">Play</button>
+      <label for="scrub">Time</label>
+      <input id="scrub" type="range" min="0" step="any" value="0">
+    </div>
+    <label id="hidden-toggle" for="show-hidden" hidden>
+      <input id="show-hidden" type="checkbox" checked> Show hidden parts
+    </label>
+  </main>
   <script type="module">
     import {renderCircuit} from './src/circuit.js';
     import {traceEnd} from './src/trace.js';
@@ -58,14 +86,20 @@
 
     async function setTime(t) {
       await circuit.setTime(trace, t);
-      timeLabel.value = `t = ${t.toFixed(3)} s`;
+      const seconds = t.toFixed(3);
+      timeLabel.value = `t = ${seconds} s`;
       scrub.value = t;
+      scrub.setAttribute('aria-valuetext', `${seconds} seconds`);
     }
 
     async function load(diagram, newTrace = {parts: {}}) {
       trace = newTrace;
       const container = document.getElementById('circuit');
       circuit = await renderCircuit(container, diagram);
+      document.getElementById('diagram').setAttribute(
+        'aria-label',
+        `Circuit diagram with ${diagram.parts.length} parts`,
+      );
       scrub.max = traceEnd(trace);
       controls.hidden = !(scrub.max > 0);
       hiddenToggle.hidden = !circuit.hasHidden;
