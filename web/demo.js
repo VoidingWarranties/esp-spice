@@ -11,6 +11,7 @@ import {renderCircuit} from '../render/src/circuit.js';
 const DEFAULT_DEMO = 'examples/esp32-pot-button-leds';
 
 const status = document.querySelector('#status');
+const error = document.querySelector('#error');
 const readout = document.querySelector('#readout');
 const netlistView = document.querySelector('#netlist');
 const serialView = document.querySelector('#serial');
@@ -39,9 +40,7 @@ const SERIAL_MAX_CHARS = 20000;
 /** @type {!Map<string, !HTMLElement>} */
 let parts;
 
-main().catch((e) => {
-  status.textContent = `Error: ${e.message}`;
-});
+main().catch((e) => showError(e.message));
 
 /** Loads the demo, draws it and starts the worker. */
 async function main() {
@@ -52,6 +51,10 @@ async function main() {
   const response = await fetch(new URL('diagram.json', demoUrl));
   if (!response.ok) throw new Error(`${demo}/diagram.json: ${response.status}`);
   const diagram = await response.json();
+  // With the integrity check, a changed or blocked bundle does not run.
+  if (!customElements.get('wokwi-led')) {
+    throw new Error('wokwi-elements did not load');
+  }
   const firmwareUrl = new URL('firmware.bin', demoUrl);
   const hasFirmware = (await fetch(firmwareUrl, {method: 'HEAD'})).ok;
   serialView.hidden = !hasFirmware;
@@ -59,6 +62,8 @@ async function main() {
       await renderCircuit(document.querySelector('#circuit'), diagram));
 
   const worker = new Worker('sim-worker.js', {type: 'module'});
+  // For example, when the worker cannot import ngspice.
+  worker.onerror = (e) => showError(e.message || 'the simulator did not load');
   const control = (name, value) =>
       worker.postMessage({type: 'control', name, value});
   for (const [id, el] of parts) INPUTS[el.localName]?.(id, el, control);
@@ -66,10 +71,11 @@ async function main() {
   worker.onmessage = ({data}) => {
     switch (data.type) {
       case 'status':
+        error.textContent = '';
         status.textContent = data.text;
         break;
       case 'error':
-        status.textContent = `Error: ${data.message}`;
+        showError(data.message);
         break;
       case 'serial':
         serialView.append(data.text);
@@ -80,6 +86,7 @@ async function main() {
         serialView.scrollTop = serialView.scrollHeight;
         break;
       case 'state':
+        error.textContent = '';
         show(data);
         if (!hasFirmware) {
           status.textContent = `Solved in ${data.ms.toFixed(1)} ms`;
@@ -92,6 +99,16 @@ async function main() {
     diagram,
     firmwareUrl: hasFirmware ? firmwareUrl.href : null,
   });
+}
+
+/**
+ * Shows an error in place of the status.
+ *
+ * @param {string} message
+ */
+function showError(message) {
+  status.textContent = '';
+  error.textContent = `Error: ${message}`;
 }
 
 /**
@@ -118,7 +135,10 @@ function show({parts: states, values, netlist}) {
   readout.replaceChildren(...shown.map(([name, value]) => {
     const row = document.createElement('tr');
     const unit = name.startsWith('i(') ? 'A' : 'V';
-    row.insertCell().textContent = name;
+    const header = document.createElement('th');
+    header.scope = 'row';
+    header.textContent = name;
+    row.append(header);
     row.insertCell().textContent = formatSi(value, unit);
     return row;
   }));

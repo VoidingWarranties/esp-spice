@@ -8,13 +8,20 @@
     :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
     body { margin: 16px; }
     main { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start; }
-    td { padding: 2px 12px 2px 0; font-family: ui-monospace, monospace; }
-    td:last-child { text-align: right; }
+    caption { text-align: start; }
+    th, td { padding: 2px 12px 2px 0; text-align: start; }
+    :is(th, td):last-child { text-align: end; }
+    tbody th, td { font-family: ui-monospace, monospace; font-weight: normal; }
     pre { font-size: 12px; }
+    #error:empty { margin: 0; }
+    /* The parts and wires are drawn for a light background. */
+    #circuit { color-scheme: light; background: #fff; color: #222; }
     #serial { width: 40ch; height: 12em; overflow: auto; padding: 8px;
               border: 1px solid #8888; }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/@wokwi/elements@1.9.2/dist/wokwi-elements.bundle.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@wokwi/elements@1.9.2/dist/wokwi-elements.bundle.min.js"
+          integrity="sha384-70TpcEe4sFJePJvCG5rCvuJW+tKfuUZl6IdbCeN/0rI7YeIr0o5rLHrZWbs0aa93"
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script type="module" src="demo.js"></script>
 </head>
 <body>
@@ -24,11 +31,17 @@
     <div id="circuit"></div>
     <section>
       <p id="status">Loading…</p>
-      <pre id="serial" hidden></pre>
-      <table><tbody id="readout"></tbody></table>
+      <p id="error" role="alert"></p>
+      <pre id="serial" role="region" aria-label="Serial output" tabindex="0"
+           hidden></pre>
+      <table>
+        <caption>Voltages and currents</caption>
+        <thead><tr><th scope="col">Name</th><th scope="col">Value</th></tr></thead>
+        <tbody id="readout"></tbody>
+      </table>
       <details>
         <summary>Netlist</summary>
-        <pre id="netlist"></pre>
+        <pre><code id="netlist"></code></pre>
       </details>
     </section>
   </main>
