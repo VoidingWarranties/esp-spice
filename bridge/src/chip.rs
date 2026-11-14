@@ -12,11 +12,17 @@ pub(crate) trait Chip: Soc + Sized {
     /// The addresses of GPIO_PIN0_REG and GPIO_FUNC0_OUT_SEL_CFG_REG.
     const PIN_REG: u32;
     const OUT_SEL_REG: u32;
-    /// The OUT_SEL value that gives a pad to GPIO_OUT, not to a peripheral.
+    /// The OUT_SEL bits of GPIO_FUNCn_OUT_SEL_CFG_REG, and the OUT_SEL value
+    /// that gives a pad to GPIO_OUT, not to a peripheral.
+    const OUT_SEL_MASK: u32;
     const GPIO_OUT_SIGNAL: u32;
 
     /// A machine that calls `board` at each GPIO change.
     fn machine(board: Board) -> Machine<Self>;
+
+    /// Whether a GPIO can connect to the circuit. Some GPIOs are not on the
+    /// chip, and some connect to the flash or PSRAM chip.
+    fn usable(gpio: u8) -> bool;
 
     /// Pulls that `SocBus::gpio_state` does not report, as (up, down).
     fn hidden_pulls(_bus: &mut Self::Bus, _gpio: u8) -> (bool, bool) {
@@ -74,12 +80,11 @@ impl<S: Chip> Esp for Machine<S> {
             mode.pull_up = state.pull_up;
             mode.pull_down = state.pull_down;
         }
-        // PAD_DRIVER is bit 2 of GPIO_PINn_REG, and OUT_SEL is bits 0..8 of
-        // GPIO_FUNCn_OUT_SEL_CFG_REG, on the classic ESP32 and the S3.
+        // PAD_DRIVER is bit 2 of GPIO_PINn_REG on each chip.
         let pin_reg = bus.read32_unpriced(S::PIN_REG + 4 * u32::from(gpio));
         mode.open_drain = pin_reg.is_ok_and(|v| v & 1 << 2 != 0);
         let out_sel = bus.read32_unpriced(S::OUT_SEL_REG + 4 * u32::from(gpio));
-        mode.peripheral = out_sel.is_ok_and(|v| v & 0x1ff != S::GPIO_OUT_SIGNAL);
+        mode.peripheral = out_sel.is_ok_and(|v| v & S::OUT_SEL_MASK != S::GPIO_OUT_SIGNAL);
         let (up, down) = S::hidden_pulls(bus, gpio);
         mode.pull_up |= up;
         mode.pull_down |= down;
@@ -101,6 +106,7 @@ type Boot = fn(Board, &[u8], &[u8]) -> Result<Box<dyn Esp>, String>;
 pub(crate) struct ChipEntry {
     pub rom_elf: &'static str,
     pub hz: u64,
+    pub usable: fn(u8) -> bool,
     pub boot: Boot,
 }
 
@@ -109,6 +115,8 @@ pub(crate) fn for_board(kind: &str) -> Option<ChipEntry> {
     match kind {
         "board-esp32-devkit-c-v4" | "wokwi-esp32-devkit-v1" => Some(entry::<esp32::Esp32>()),
         "board-esp32-s3-devkitc-1" => Some(entry::<esp32s3::S3>()),
+        "board-esp32-c3-devkitm-1" => Some(entry::<esp32c3::C3>()),
+        "board-esp32-c6-devkitc-1" => Some(entry::<esp32c6::C6>()),
         _ => None,
     }
 }
@@ -117,6 +125,7 @@ fn entry<S: Chip>() -> ChipEntry {
     ChipEntry {
         rom_elf: S::ROM_ELF,
         hz: S::CPU_HZ,
+        usable: S::usable,
         boot: boot::<S>,
     }
 }
@@ -136,6 +145,7 @@ impl Chip for esp32::Esp32 {
     // From ESP-IDF v5.5.4 components/soc/esp32/register/soc/gpio_reg.h.
     const PIN_REG: u32 = 0x3ff4_4088;
     const OUT_SEL_REG: u32 = 0x3ff4_4530;
+    const OUT_SEL_MASK: u32 = 0x1ff;
     const GPIO_OUT_SIGNAL: u32 = 256;
 
     fn machine(board: Board) -> Machine<Self> {
@@ -143,6 +153,11 @@ impl Chip for esp32::Esp32 {
         machine.bus.board = board;
         machine.bus.attach_board_devices();
         machine
+    }
+
+    /// GPIO 6 to 11 connect to the flash chip.
+    fn usable(gpio: u8) -> bool {
+        gpio <= 39 && !(6..=11).contains(&gpio)
     }
 
     /// ESP-IDF sets the pulls of RTC pads in the RTC IO registers, not in
@@ -160,6 +175,7 @@ impl Chip for esp32s3::S3 {
     // From ESP-IDF v5.5.4 components/soc/esp32s3/register/soc/gpio_reg.h.
     const PIN_REG: u32 = 0x6000_4074;
     const OUT_SEL_REG: u32 = 0x6000_4554;
+    const OUT_SEL_MASK: u32 = 0x1ff;
     const GPIO_OUT_SIGNAL: u32 = 256;
 
     fn machine(board: Board) -> Machine<Self> {
@@ -167,6 +183,52 @@ impl Chip for esp32s3::S3 {
         machine.bus.board = board;
         machine.bus.attach_board_devices();
         machine
+    }
+
+    /// GPIO 22 to 25 are not on the chip. GPIO 26 to 32 connect to the flash
+    /// and PSRAM chips.
+    fn usable(gpio: u8) -> bool {
+        gpio <= 48 && !(22..=32).contains(&gpio)
+    }
+}
+
+impl Chip for esp32c3::C3 {
+    // From ESP-IDF v5.5.4 components/soc/esp32c3/register/soc/gpio_reg.h.
+    const PIN_REG: u32 = 0x6000_4074;
+    const OUT_SEL_REG: u32 = 0x6000_4554;
+    const OUT_SEL_MASK: u32 = 0xff;
+    const GPIO_OUT_SIGNAL: u32 = 128;
+
+    fn machine(board: Board) -> Machine<Self> {
+        let mut machine = esp32c3::machine([0x34, 0x85, 0x18, 0x00, 0x33, 0x44], 4 << 20);
+        machine.bus.board = board;
+        machine.bus.attach_board_devices();
+        machine
+    }
+
+    /// GPIO 11 to 17 connect to the flash chip.
+    fn usable(gpio: u8) -> bool {
+        gpio <= 21 && !(11..=17).contains(&gpio)
+    }
+}
+
+impl Chip for esp32c6::C6 {
+    // From ESP-IDF v5.5.4 components/soc/esp32c6/register/soc/gpio_reg.h.
+    const PIN_REG: u32 = 0x6009_1074;
+    const OUT_SEL_REG: u32 = 0x6009_1554;
+    const OUT_SEL_MASK: u32 = 0xff;
+    const GPIO_OUT_SIGNAL: u32 = 128;
+
+    fn machine(board: Board) -> Machine<Self> {
+        let mut machine = esp32c6::machine([0x40, 0x4c, 0xca, 0x00, 0x55, 0x66], 8 << 20);
+        machine.bus.board = board;
+        machine.bus.attach_board_devices();
+        machine
+    }
+
+    /// GPIO 24 to 30 connect to the flash chip.
+    fn usable(gpio: u8) -> bool {
+        gpio <= 23
     }
 }
 

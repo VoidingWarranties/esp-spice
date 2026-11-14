@@ -7,8 +7,10 @@ the Apache License 2.0, in [LICENSES/Apache-2.0.txt](LICENSES/Apache-2.0.txt).
 
 ## ESP32 firmware image
 
-`examples/esp32-button-led/firmware.bin` (ESP32) and
-`examples/esp32-s3-button-led/firmware.bin` (ESP32-S3) are builds of
+`examples/esp32-button-led/firmware.bin` (ESP32),
+`examples/esp32-s3-button-led/firmware.bin` (ESP32-S3),
+`examples/esp32-c3-button-led/firmware.bin` (ESP32-C3) and
+`examples/esp32-c6-button-led/firmware.bin` (ESP32-C6) are builds of
 [`examples/esp32-button-led/firmware`](examples/esp32-button-led/firmware)
 with the pioarduino platform-espressif32 55.03.38-1.
 `examples/esp32-pot-button-leds/firmware.bin` is a link to the first. The
@@ -30,7 +32,8 @@ repository and the web demo both distribute these images. Each contains:
   Of those, the image has:
   - FreeRTOS Kernel V10.5.1, Copyright (C) 2021 Amazon.com, Inc. or its
     affiliates, MIT.
-  - Xtensa header files and HAL, Copyright (C) 2003-2013 Tensilica Inc., MIT.
+  - Xtensa header files and HAL, Copyright (C) 2003-2013 Tensilica Inc., MIT
+    (ESP32 and ESP32-S3 images).
   - TLSF allocator, Copyright (C) 2006-2016 Matthew Conte, BSD-3-Clause.
   - newlib, under the licenses in [LICENSES/newlib.txt](LICENSES/newlib.txt).
 - The GCC runtime libraries, under GPL-3.0 with the GCC Runtime Library
@@ -41,19 +44,21 @@ with it, as its [README](examples/esp32-button-led/README.md) tells.
 
 ## ESP32 mask ROM
 
-The web demo has `web/dist/esp32_rev300_rom.elf` and
-`web/dist/esp32s3_rev0_rom.elf`. `tools/fetch-esp32-rom.sh` downloads them
+The web demo has `web/dist/esp32_rev300_rom.elf`,
+`web/dist/esp32s3_rev0_rom.elf`, `web/dist/esp32c3_rev3_rom.elf` and
+`web/dist/esp32c6_rev0_rom.elf`. `tools/fetch-esp32-rom.sh` downloads them
 from the
 [espressif/esp-rom-elfs](https://github.com/espressif/esp-rom-elfs) release
 20260528. Copyright 2015-2022 Espressif Systems (Shanghai) Co. Ltd., under the
 Apache License 2.0, in [LICENSES/Apache-2.0.txt](LICENSES/Apache-2.0.txt).
 
-The ROM contains code from these parts, as the
+The ROMs contain code from these parts, as the
 [ESP-IDF copyright list](https://github.com/espressif/esp-idf/blob/v5.5.4/docs/en/COPYRIGHT.rst#rom-source-code-copyrights)
 tells:
 
 - newlib, under the licenses in [LICENSES/newlib.txt](LICENSES/newlib.txt).
-- Xtensa libhal, Copyright (C) 2003, 2006, 2010 Tensilica Inc., MIT.
+- Xtensa libhal, Copyright (C) 2003, 2006, 2010 Tensilica Inc., MIT (ESP32
+  and ESP32-S3 ROMs).
 - TinyBasic Plus, Copyright (C) 2012-2013 Mike Field & Scott Lawrence, MIT.
 - miniz, by Rich Geldreich, in the public domain.
 - TJpgDec, Copyright (C) 2011 ChaN, under the TJpgDec license below.

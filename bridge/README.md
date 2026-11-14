@@ -65,10 +65,9 @@ after each `run_for` and gives back the pin voltages.
   at the last circuit step. Above 0.75 × 3.3 V is high, below 0.25 × 3.3 V
   is low, and between them the level does not change.
 - **Pulls and PWM.** The bridge reads the pulls (IO_MUX, and RTC IO on the
-  classic ESP32) and the PWM (LEDC, and MCPWM on the S3) of each pin every
-  1 µs. A pull is 45 kΩ to 3.3 V or 0 V. A PWM
-  pin gives its frequency and duty to the circuit, and ngspice makes the
-  edges.
+  classic ESP32) and the PWM (LEDC, and MCPWM on the S3 and C6) of each pin
+  every 1 µs. A pull is 45 kΩ to 3.3 V or 0 V. A PWM pin gives its
+  frequency and duty to the circuit, and ngspice makes the edges.
 - **ADC.** The ADC input of a pin is its voltage at the last circuit step.
 - **Serial.** UART0 output is in `Bridge::serial`. `Bridge::serial_input`
   sends bytes to UART0.
@@ -76,7 +75,10 @@ after each `run_for` and gives back the pin voltages.
 ## Limits
 
 - The chips are the classic ESP32 (`board-esp32-devkit-c-v4` and
-  `wokwi-esp32-devkit-v1`) and the ESP32-S3 (`board-esp32-s3-devkitc-1`).
+  `wokwi-esp32-devkit-v1`), the ESP32-S3 (`board-esp32-s3-devkitc-1`), the
+  ESP32-C3 (`board-esp32-c3-devkitm-1`) and the ESP32-C6
+  (`board-esp32-c6-devkitc-1`). esp32sim rates the C3 and C6 as drafts, so
+  some firmware may not boot on them.
 - An input sees the circuit up to 100 µs late.
 - Only GPIO levels (push-pull and open-drain) and LEDC PWM go to the
   circuit. I2C, SPI, UART and RMT signals and the DAC do not: a pin that

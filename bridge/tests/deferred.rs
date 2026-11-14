@@ -30,6 +30,16 @@ fn deferred_circuit_drives_firmware_s3() {
     deferred_circuit_drives_firmware(common::S3);
 }
 
+#[test]
+fn deferred_circuit_drives_firmware_c3() {
+    deferred_circuit_drives_firmware(common::C3);
+}
+
+#[test]
+fn deferred_circuit_drives_firmware_c6() {
+    deferred_circuit_drives_firmware(common::C6);
+}
+
 fn deferred_circuit_drives_firmware(example: &str) {
     let mut circuit = StubCircuit::default();
     let deferred = DeferredCircuit::default();
