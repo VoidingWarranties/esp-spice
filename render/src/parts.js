@@ -1,7 +1,7 @@
 /**
  * @fileoverview Drawings for parts that wokwi-elements does not have.
  *
- * The sim core supports these types (see docs/circuit-format.md). Each
+ * The sim core supports these types, so the renderer must draw them. Each
  * element has pinInfo and updateComplete, like a wokwi element, so the
  * renderer can treat all parts the same.
  */
@@ -78,8 +78,12 @@ for (const [tag, {width, height, pins, draw}] of Object.entries(PARTS)) {
     render() {
       const root = this.shadowRoot ?? this.attachShadow({mode: 'open'});
       root.innerHTML = `
-        <style>:host { display: inline-block; } svg { display: block; overflow: visible; }</style>
-        <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">${draw(this)}</svg>`;
+        <style>
+          :host { display: inline-block; }
+          svg { display: block; overflow: visible; }
+        </style>
+        <svg width="${width}" height="${height}"
+            viewBox="0 0 ${width} ${height}">${draw(this)}</svg>`;
     }
   });
 }

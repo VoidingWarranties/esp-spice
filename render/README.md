@@ -12,7 +12,9 @@ cd render
 npm install
 ```
 
-Video export needs `ffmpeg` on the `PATH`.
+Video export needs `ffmpeg` on the `PATH`. Capture uses the Chromium that
+Playwright downloads (`npx playwright install chromium`), or the one at
+`CHROMIUM_PATH` if you set it. `nix develop` sets it for you.
 
 ## Capture
 
@@ -26,7 +28,8 @@ node capture.js examples/blink/diagram.json --trace examples/blink/trace.json \
   --video blink.mp4 --fps 20
 ```
 
-`--scale` sets the device pixel ratio (default 2).
+`--scale` sets the device pixel ratio (default 2). Parts with `"hide": true`
+show greyed out. Give `--no-hidden` to leave them out.
 
 ## Interactive viewer
 
@@ -67,8 +70,8 @@ wokwi-elements bundle first.
 }
 ```
 
-The sim core writes this format (`docs/circuit-format.md`). The renderer
-ignores `probes`. Each key frame sets properties of the part's wokwi element. A property keeps
+The sim core writes this format. The renderer ignores its optional `probes`
+key. Each key frame sets properties of the part's wokwi element. A property keeps
 its value until a later key frame changes it. Times are in seconds.
 
 ## Diagram support
@@ -79,7 +82,10 @@ its value until a later key frame changes it. Times are in seconds.
   `spice-diode` and `spice-npn`. Other types show as a dashed box.
 - `wokwi-slide-potentiometer` gets `max` 1023, because the sim gives pot
   values as 0..1023.
-- `top`, `left`, `rotate`, `attrs` and `hide` are supported.
+- `top`, `left`, `rotate` and `attrs` are supported.
+- Parts with `"hide": true` are still in the sim, so they and their wires
+  show greyed out. The viewer has a "Show hidden parts" toggle, and pages can
+  call `circuit.showHidden(false)`.
 - Wires follow the Wokwi `h`, `v` and `*` moves. An empty color hides a wire.
 
 [wokwi-elements]: https://github.com/wokwi/wokwi-elements

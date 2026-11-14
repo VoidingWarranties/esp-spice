@@ -4,7 +4,11 @@ import {stateAt, traceEnd} from '../src/trace.js';
 
 const trace = {
   parts: {
-    led1: [{t: 0, value: false}, {t: 0.5, value: true, brightness: 0.5}, {t: 1, brightness: 1}],
+    led1: [
+      {t: 0, value: false},
+      {t: 0.5, value: true, brightness: 0.5},
+      {t: 1, brightness: 1},
+    ],
   },
 };
 

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Playback of a sim trace.
  *
- * Format, shared with the sim core (version 1 adds "nets", unused here):
+ * Format, shared with the sim core. Its "probes" key is not used here:
  *   {
  *     "version": 1,
  *     "end": 2.0,
@@ -14,6 +14,9 @@
  * key frame changes it. Times are in seconds and sorted.
  */
 
+// Cumulative state after each key frame, so a seek is a binary search.
+const cache = new WeakMap();
+
 /**
  * Returns the element properties of each part at time t.
  * @param {{parts: !Object<string, !Array<!Object>>}} trace
@@ -23,24 +26,44 @@
 export function stateAt(trace, t) {
   const state = {};
   for (const [id, frames] of Object.entries(trace.parts ?? {})) {
-    const props = {};
-    for (const frame of frames) {
-      if (frame.t > t) break;
-      Object.assign(props, frame);
+    const states = cumulative(frames);
+    // Index of the last key frame at or before t.
+    let lo = 0;
+    let hi = frames.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (frames[mid].t <= t) lo = mid + 1;
+      else hi = mid;
     }
-    delete props.t;
+    const {t: _, ...props} = lo > 0 ? states[lo - 1] : {};
     state[id] = props;
   }
   return state;
 }
 
 /**
+ * @param {!Array<!Object>} frames
+ * @return {!Array<!Object>}
+ */
+function cumulative(frames) {
+  let states = cache.get(frames);
+  if (!states) {
+    let acc = {};
+    states = frames.map((frame) => (acc = {...acc, ...frame}));
+    cache.set(frames, states);
+  }
+  return states;
+}
+
+/**
  * Returns the trace length in seconds.
- * @param {{end: (number|undefined), parts: !Object<string, !Array<!Object>>}} trace
+ * @param {{end: (number|undefined),
+ *     parts: !Object<string, !Array<!Object>>}} trace
  * @return {number}
  */
 export function traceEnd(trace) {
   if (trace.end !== undefined) return trace.end;
-  const times = Object.values(trace.parts ?? {}).flatMap((f) => f.map((k) => k.t));
+  const frames = Object.values(trace.parts ?? {}).flat();
+  const times = frames.map((frame) => frame.t);
   return Math.max(0, ...times);
 }
