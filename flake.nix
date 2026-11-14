@@ -34,6 +34,8 @@
             })
             # For tools/fetch-esp32-rom.sh.
             curl
+            # A static server for the web demo.
+            python3
           ];
           # tools/fetch-esp32-rom.sh puts the ROM here by default.
           shellHook = ''
