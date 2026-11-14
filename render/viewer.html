@@ -22,6 +22,8 @@
     #controls { display: flex; gap: 8px; align-items: center; padding: 8px; }
     #controls input { flex: 1; }
     #controls[hidden] { display: none; }
+    #hidden-toggle { display: block; padding: 0 8px 8px; }
+    #hidden-toggle[hidden] { display: none; }
   </style>
   <script src="node_modules/@wokwi/elements/dist/wokwi-elements.bundle.js"></script>
 </head>
@@ -35,6 +37,9 @@
     <input id="scrub" type="range" min="0" step="any" value="0"
         aria-label="Time">
   </div>
+  <label id="hidden-toggle" hidden>
+    <input id="show-hidden" type="checkbox" checked> Show hidden parts
+  </label>
   <script type="module">
     import {renderCircuit} from './src/circuit.js';
     import {traceEnd} from './src/trace.js';
@@ -43,6 +48,8 @@
     const controls = document.getElementById('controls');
     const scrub = document.getElementById('scrub');
     const play = document.getElementById('play');
+    const hiddenToggle = document.getElementById('hidden-toggle');
+    const showHidden = document.getElementById('show-hidden');
     let circuit;
     let trace = {parts: {}};
     let playing = false;
@@ -61,9 +68,14 @@
       circuit = await renderCircuit(container, diagram);
       scrub.max = traceEnd(trace);
       controls.hidden = !(scrub.max > 0);
+      hiddenToggle.hidden = !circuit.hasHidden;
+      circuit.showHidden(showHidden.checked);
       await setTime(0);
     }
 
+    showHidden.addEventListener('change', () => {
+      circuit.showHidden(showHidden.checked);
+    });
     scrub.addEventListener('input', () => setTime(Number(scrub.value)));
     play.addEventListener('click', () => {
       playing = !playing;
@@ -86,7 +98,11 @@
     });
 
     // Used by capture.js, which passes the files in directly.
-    window.espSpice = {load, setTime};
+    window.espSpice = {
+      load,
+      setTime,
+      showHidden: (show) => circuit.showHidden(show),
+    };
 
     // viewer.html?diagram=path/diagram.json&trace=path/trace.json
     const params = new URLSearchParams(location.search);

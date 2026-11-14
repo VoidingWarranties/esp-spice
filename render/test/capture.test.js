@@ -73,3 +73,22 @@ test('draws spice parts with pins and no warnings', async () => {
     await npn.close();
   }
 });
+
+test('draws hidden parts greyed out, or not at all', async () => {
+  const dir = new URL('../examples/npn-switch/', import.meta.url);
+  const diagram = await readJson('diagram.json', dir);
+  const shots = [];
+  for (const hide of [false, true]) {
+    for (const part of diagram.parts) part.hide = hide && part.id === 'c1';
+    for (const showHidden of [true, false]) {
+      const options = {scale: 1, showHidden};
+      const view = await openCircuit(diagram, undefined, options);
+      shots.push((await view.shoot(0)).toString('base64'));
+      await view.close();
+    }
+  }
+  const [plain, plainNoHidden, grey, greyNoHidden] = shots;
+  assert.equal(plain, plainNoHidden, 'no hidden parts, so no change');
+  assert.notEqual(grey, plain, 'hidden part is greyed out');
+  assert.notEqual(greyNoHidden, grey, 'hidden part is not drawn');
+});

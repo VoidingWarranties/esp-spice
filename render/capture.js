@@ -6,9 +6,10 @@
  *   node capture.js diagram.json [--trace trace.json]
  *       [--png out.png --at 0.5]...
  *       [--video out.mp4|out.gif --fps 20 --start 0 --end 2]
- *       [--scale 2]
+ *       [--scale 2] [--no-hidden]
  *
  * Each --png pairs with the --at at the same position (default 0).
+ * Parts with "hide": true show greyed out, unless you give --no-hidden.
  * Video needs ffmpeg on the PATH.
  */
 
@@ -31,15 +32,23 @@ const BUNDLE = 'node_modules/@wokwi/elements/dist/wokwi-elements.bundle.js';
  * Opens the viewer in a headless browser with the circuit loaded.
  * @param {!Object} diagram
  * @param {!Object=} trace
- * @param {{scale: (number|undefined)}=} options
+ * @param {{scale: (number|undefined),
+ *     showHidden: (boolean|undefined)}=} options
  * @return {!Promise<{shoot: function(number): !Promise<!Buffer>,
  *     close: function(): !Promise<void>}>}
  */
-export async function openCircuit(diagram, trace, {scale = 2} = {}) {
+export async function openCircuit(
+  diagram,
+  trace,
+  {scale = 2, showHidden = true} = {},
+) {
   if (!existsSync(path.join(ROOT, BUNDLE))) {
     throw new Error(`Missing ${BUNDLE}. Run "npm install" in ${ROOT}.`);
   }
-  const browser = await chromium.launch();
+  // CHROMIUM_PATH lets Nix and other systems use their own Chromium.
+  const browser = await chromium.launch({
+    executablePath: process.env.CHROMIUM_PATH || undefined,
+  });
   try {
     const page = await browser.newPage({deviceScaleFactor: scale});
     page.on('pageerror', (e) => console.error(e));
@@ -61,6 +70,7 @@ export async function openCircuit(diagram, trace, {scale = 2} = {}) {
       diagram,
       trace,
     ]);
+    await page.evaluate((s) => window.espSpice.showHidden(s), showHidden);
     return makeCircuit(browser, page);
   } catch (e) {
     await browser.close();
@@ -141,6 +151,7 @@ async function main() {
       start: {type: 'string', default: '0'},
       end: {type: 'string'},
       scale: {type: 'string', default: '2'},
+      'no-hidden': {type: 'boolean', default: false},
     },
   });
   if (positionals.length !== 1) {
@@ -158,7 +169,8 @@ async function main() {
   const trace = values.trace ? await readJson(values.trace) : {parts: {}};
   const end = values.end ? toNumber('end', values.end, start) : traceEnd(trace);
 
-  const circuit = await openCircuit(diagram, trace, {scale});
+  const showHidden = !values['no-hidden'];
+  const circuit = await openCircuit(diagram, trace, {scale, showHidden});
   try {
     for (const [i, out] of values.png.entries()) {
       await writeFile(out, await circuit.shoot(times[i]));

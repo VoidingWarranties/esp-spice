@@ -11,6 +11,8 @@ import {pinPosition, wirePoints} from './wires.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const PADDING = 20;
+// Hidden parts are still in the sim, so we show them, but greyed out.
+const HIDDEN_STYLE = 'opacity: 0.35; filter: grayscale(1);';
 
 // The sim gives slide pot values as 0..1023, as for the rotary pot.
 const DEFAULT_ATTRS = {'wokwi-slide-potentiometer': {max: '1023'}};
@@ -20,13 +22,16 @@ const DEFAULT_ATTRS = {'wokwi-slide-potentiometer': {max: '1023'}};
  * @param {!HTMLElement} container
  * @param {!Object} diagram Parsed diagram.json.
  * @return {!Promise<{setTime: function(!Object, number): !Promise<void>,
- *     elements: !Map<string, !HTMLElement>}>}
+ *     elements: !Map<string, !HTMLElement>, hasHidden: boolean,
+ *     showHidden: function(boolean)}>}
  */
 export async function renderCircuit(container, diagram) {
   container.replaceChildren();
   container.style.position = 'relative';
 
-  const parts = diagram.parts.filter((p) => !p.hide);
+  const parts = diagram.parts;
+  const partsById = new Map(parts.map((p) => [p.id, p]));
+  const isHidden = (ref) => Boolean(partsById.get(ref.split(':')[0])?.hide);
   const elements = new Map();
   for (const part of parts) {
     const el = createPart(part);
@@ -39,9 +44,11 @@ export async function renderCircuit(container, diagram) {
   for (const [from, to, color, moves] of diagram.connections ?? []) {
     // "" hides the wire. "$" parts, such as $serialMonitor, are not drawn.
     if (!color || from.startsWith('$') || to.startsWith('$')) continue;
-    const a = pinAt(diagram, elements, from);
-    const b = pinAt(diagram, elements, to);
-    if (a && b) wires.push({color, points: wirePoints(a, b, moves)});
+    const a = pinAt(partsById, elements, from);
+    const b = pinAt(partsById, elements, to);
+    if (!a || !b) continue;
+    const hidden = isHidden(from) || isHidden(to);
+    wires.push({color, hidden, points: wirePoints(a, b, moves)});
   }
 
   const box = bounds(parts, elements, wires);
@@ -55,11 +62,24 @@ export async function renderCircuit(container, diagram) {
   container.style.width = `${box.right - box.left + 2 * PADDING}px`;
   container.style.height = `${box.bottom - box.top + 2 * PADDING}px`;
 
+  // Parts and wires to show or hide with showHidden.
+  const hiddenNodes = [...container.querySelectorAll('[data-hidden]')];
+
   // Element values from before the trace changed them, so seeking back works.
   const defaults = new Map();
 
   return {
     elements,
+    hasHidden: hiddenNodes.length > 0,
+    /**
+     * Shows or hides the parts with "hide": true, and their wires.
+     * @param {boolean} show
+     */
+    showHidden(show) {
+      for (const node of hiddenNodes) {
+        node.style.visibility = show ? '' : 'hidden';
+      }
+    },
     /**
      * Shows the trace state at time t.
      * @param {!Object} trace
@@ -105,20 +125,22 @@ function createPart(part) {
   el.style.left = `${part.left ?? 0}px`;
   el.style.top = `${part.top ?? 0}px`;
   if (part.rotate) el.style.transform = `rotate(${part.rotate}deg)`;
+  if (part.hide) {
+    el.dataset.hidden = '';
+    el.style.cssText += HIDDEN_STYLE;
+  }
   return el;
 }
 
 /**
- * @param {!Object} diagram
+ * @param {!Map<string, !Object>} partsById
  * @param {!Map<string, !HTMLElement>} elements
  * @param {string} ref "partId:pinName".
  * @return {?Array<number>}
  */
-function pinAt(diagram, elements, ref) {
+function pinAt(partsById, elements, ref) {
   const [id, name] = ref.split(':');
-  const part = diagram.parts.find((p) => p.id === id);
-  // Wokwi does not draw wires to hidden parts.
-  if (part?.hide) return null;
+  const part = partsById.get(id);
   const el = elements.get(id);
   const pin = el?.pinInfo?.find((p) => p.name === name);
   if (!part || !pin) {
@@ -159,7 +181,8 @@ function bounds(parts, elements, wires) {
 }
 
 /**
- * @param {!Array<{color: string, points: !Array<!Array<number>>}>} wires
+ * @param {!Array<{color: string, hidden: boolean,
+ *     points: !Array<!Array<number>>}>} wires
  * @param {!Array<number>} shift
  * @return {!SVGSVGElement}
  */
@@ -168,7 +191,7 @@ function drawWires(wires, shift) {
   svg.style.cssText =
     'position: absolute; inset: 0; width: 100%; height: 100%;' +
     ' overflow: visible; pointer-events: none;';
-  for (const {color, points} of wires) {
+  for (const {color, hidden, points} of wires) {
     const line = document.createElementNS(SVG_NS, 'polyline');
     const moved = points.map(([x, y]) => `${x + shift[0]},${y + shift[1]}`);
     line.setAttribute('points', moved.join(' '));
@@ -177,6 +200,10 @@ function drawWires(wires, shift) {
     line.setAttribute('stroke-width', '2');
     line.setAttribute('stroke-linejoin', 'round');
     line.setAttribute('stroke-linecap', 'round');
+    if (hidden) {
+      line.dataset.hidden = '';
+      line.style.cssText = HIDDEN_STYLE;
+    }
     svg.append(line);
   }
   return svg;
