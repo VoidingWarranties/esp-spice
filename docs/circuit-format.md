@@ -160,6 +160,17 @@ circuit.netlist;    // string: the ngspice deck, ends with ".end"
 circuit.nodes;      // { "led1:A": "r1_2", "gnd:GND": "0", ... } pin to node
 circuit.controls;   // { "btn1.pressed": 1, ... } every control and its value
 circuit.warnings;   // [ "unsupported part type: wokwi-lcd1602 (lcd1)" ]
+circuit.senses;     // [ "v_led1_i" ] 0 V sources that read part currents
+
+// Trace props of a part, from a solved circuit.
+circuit.state('led1', {
+  v: (node) => volts,      // volts at a node
+  i: (source) => amps,     // amps through a voltage source, such as "v_led1_i"
+});
+
+// Change a control. Returns ngspice commands ("alter ...") that change a
+// running simulation. To solve .op again, call toNetlist() with new controls.
+circuit.setControl('btn1.pressed', 1, timeInSeconds);
 ```
 
 Node and element names are lower case, because ngspice changes all names
@@ -177,7 +188,7 @@ import { Simulation } from './circuit/simulation.js';
 const sim = new Simulation(diagram, { maxStep: 10e-6, probes: ['led1:A'] });
 sim.advanceTo(0.5);                      // seconds, lands exactly on 0.5
 sim.set('btn1.pressed', 1);              // change a control
-sim.setPin('esp:2', { volts: 3.3, ohms: 40 });
+sim.setPin('esp:2', { volts: 3.3, ohms: 40 });  // keys not given are kept
 sim.advanceTo(1.0);
 sim.time;                                // 1.0
 sim.voltage('led1:A');                   // volts at the net of a pin
@@ -186,9 +197,20 @@ sim.trace();                             // the trace so far, see below
 sim.close();
 ```
 
-`maxStep` is the largest ngspice time step, in seconds. The default is
-10 us. The simulation records the trace at the end of each `advanceTo`
-call, so call it at least as often as you want frames.
+Options:
+
+- `maxStep`: the largest ngspice time step, in seconds. Default 10 us.
+- `frameInterval`: the time between trace records, in seconds. Default
+  10 ms. The simulation also records when a control or pin drive changes.
+- `probes`: pins whose net voltage the trace records.
+
+`state()` and the trace use the mean part current since the last record,
+so an LED on a PWM pin has a steady brightness. Node voltages are the
+value now.
+
+Ngspice keeps every time point in memory, so memory grows with the
+simulated time: about 50 MB for each simulated second with a 5 kHz PWM
+pin.
 
 ## Process protocol
 
