@@ -67,13 +67,18 @@ wokwi-elements bundle first.
 }
 ```
 
-Each key frame sets properties of the part's wokwi element. A property keeps
+The sim core writes this format (`docs/circuit-format.md`). The renderer
+ignores `probes`. Each key frame sets properties of the part's wokwi element. A property keeps
 its value until a later key frame changes it. Times are in seconds.
 
 ## Diagram support
 
 - Parts: any `type` that is a wokwi-elements tag, for example `wokwi-led` or
-  `wokwi-esp32-devkit-v1`. Other types show as a dashed box.
+  `wokwi-esp32-devkit-v1`. `src/parts.js` draws the types that
+  wokwi-elements does not have: `wokwi-vcc`, `wokwi-gnd`, `spice-capacitor`,
+  `spice-diode` and `spice-npn`. Other types show as a dashed box.
+- `wokwi-slide-potentiometer` gets `max` 1023, because the sim gives pot
+  values as 0..1023.
 - `top`, `left`, `rotate`, `attrs` and `hide` are supported.
 - Wires follow the Wokwi `h`, `v` and `*` moves. An empty color hides a wire.
 
