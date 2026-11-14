@@ -103,3 +103,26 @@ test('draws on a dark grey panel in dark mode', async () => {
   }
   assert.notDeepEqual(shots[0], shots[1]);
 });
+
+test('draws wires to unknown parts and pins, with warnings', async () => {
+  const dir = new URL('../examples/missing-pins/', import.meta.url);
+  const diagram = await readJson('diagram.json', dir);
+  const noWires = structuredClone(diagram);
+  for (const c of noWires.connections) c[2] = '';
+  const warn = mock.method(console, 'warn', () => {});
+  const shots = [];
+  try {
+    for (const d of [diagram, noWires]) {
+      const view = await openCircuit(d, undefined, {scale: 1});
+      shots.push(await view.shoot(0));
+      await view.close();
+    }
+    assert.deepEqual(warn.mock.calls[0].arguments, [
+      'No element for part type: chip-bme280',
+    ]);
+    assert.deepEqual(warn.mock.calls[1].arguments, ['Unknown pin: led1:K']);
+  } finally {
+    warn.mock.restore();
+  }
+  assert.notDeepEqual(shots[0], shots[1], 'wires show');
+});
