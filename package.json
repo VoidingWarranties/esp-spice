@@ -1,0 +1,14 @@
+{
+  "name": "esp-spice",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test \"circuit/**/*.test.js\""
+  },
+  "dependencies": {
+    "koffi": "^3.3.8"
+  }
+}
