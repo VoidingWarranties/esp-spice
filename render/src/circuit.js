@@ -5,11 +5,15 @@
  * custom elements are defined.
  */
 
+import './parts.js';
 import {stateAt} from './trace.js';
 import {pinPosition, wirePoints} from './wires.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const PADDING = 20;
+
+// The sim gives slide pot values as 0..1023, as for the rotary pot.
+const DEFAULT_ATTRS = {'wokwi-slide-potentiometer': {max: '1023'}};
 
 /**
  * Draws the diagram into the container.
@@ -85,7 +89,8 @@ function createPart(part) {
   let el;
   if (customElements.get(part.type)) {
     el = document.createElement(part.type);
-    for (const [name, value] of Object.entries(part.attrs ?? {})) {
+    const attrs = {...DEFAULT_ATTRS[part.type], ...part.attrs};
+    for (const [name, value] of Object.entries(attrs)) {
       el.setAttribute(name, value);
     }
   } else {

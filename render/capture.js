@@ -36,6 +36,8 @@ export async function openCircuit(diagram, trace, {scale = 2} = {}) {
   const browser = await chromium.launch();
   const page = await browser.newPage({deviceScaleFactor: scale});
   page.on('pageerror', (e) => console.error(e));
+  // Shows renderer warnings, such as unknown part types or pins.
+  page.on('console', (m) => m.type() === 'warning' && console.warn(m.text()));
   await page.route(`${ORIGIN}/**`, (route) => {
     const file = path.join(ROOT, new URL(route.request().url()).pathname);
     if (!file.startsWith(ROOT + path.sep)) return route.abort();

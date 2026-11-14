@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "end": 2,
+  "parts": {
+    "btn1": [
+      { "t": 0, "pressed": false },
+      { "t": 0.5, "pressed": true },
+      { "t": 1.5, "pressed": false }
+    ],
+    "led1": [
+      { "t": 0, "value": false, "brightness": 0 },
+      { "t": 0.52, "value": true, "brightness": 0.4 },
+      { "t": 0.56, "value": true, "brightness": 1 },
+      { "t": 1.6, "value": true, "brightness": 0.3 },
+      { "t": 1.7, "value": false, "brightness": 0 }
+    ]
+  }
+}

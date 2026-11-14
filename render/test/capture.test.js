@@ -3,7 +3,7 @@ import {execFileSync} from 'node:child_process';
 import {readFile, stat} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
-import {after, before, test} from 'node:test';
+import {after, before, mock, test} from 'node:test';
 import {encodeVideo, openCircuit} from '../capture.js';
 
 const example = new URL('../examples/blink/', import.meta.url);
@@ -40,3 +40,17 @@ function hasFfmpeg() {
     return false;
   }
 }
+
+test('draws spice parts with pins and no warnings', async () => {
+  const dir = new URL('../examples/npn-switch/', import.meta.url);
+  const read = async (name) => JSON.parse(await readFile(new URL(name, dir), 'utf8'));
+  const warn = mock.method(console, 'warn', () => {});
+  const npn = await openCircuit(await read('diagram.json'), await read('trace.json'), {scale: 1});
+  try {
+    assert.notDeepEqual(await npn.shoot(0), await npn.shoot(1));
+    assert.deepEqual(warn.mock.calls.map((c) => c.arguments), []);
+  } finally {
+    warn.mock.restore();
+    await npn.close();
+  }
+});
