@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "end": 2,
+  "parts": {
+    "led1": [
+      {
+        "t": 0,
+        "value": false
+      },
+      {
+        "t": 0.5,
+        "value": true
+      },
+      {
+        "t": 1,
+        "value": false
+      },
+      {
+        "t": 1.5,
+        "value": true
+      }
+    ],
+    "lcd1": [
+      {
+        "t": 0,
+        "text": "LED: off        D2: 0.00 V"
+      },
+      {
+        "t": 0.5,
+        "text": "LED: on         D2: 3.30 V"
+      },
+      {
+        "t": 1,
+        "text": "LED: off        D2: 0.00 V"
+      },
+      {
+        "t": 1.5,
+        "text": "LED: on         D2: 3.30 V"
+      }
+    ]
+  }
+}

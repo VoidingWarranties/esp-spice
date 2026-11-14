@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "author": "ESP Spice",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-resistor", "id": "r1", "top": 124.75, "left": 130, "attrs": { "value": "220" } },
+    { "type": "wokwi-led", "id": "led1", "top": 160, "left": 200, "attrs": { "color": "red" } },
+    { "type": "wokwi-lcd1602", "id": "lcd1", "top": -20, "left": 300, "attrs": { "pins": "i2c" } }
+  ],
+  "connections": [
+    [ "esp:TX0", "$serialMonitor:RX", "", [] ],
+    [ "esp:D2", "r1:1", "green", [] ],
+    [ "r1:2", "led1:A", "green", [ "h61.2", "v84.6", "h-25" ] ],
+    [ "led1:C", "esp:GND.1", "black", [ "v8", "h-95", "v-61" ] ],
+    [ "lcd1:GND", "esp:GND.2", "black", [ "h-14", "v-42", "h-314", "v179" ] ],
+    [ "lcd1:VCC", "esp:VIN", "red", [ "h-6", "v228", "h-322" ] ],
+    [ "lcd1:SDA", "esp:D21", "blue", [ "h-80" ] ],
+    [ "lcd1:SCL", "esp:D22", "purple", [ "h-60" ] ]
+  ],
+  "dependencies": {}
+}

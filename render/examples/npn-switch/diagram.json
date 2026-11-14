@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "author": "ESP Spice",
+  "editor": "esp-spice",
+  "parts": [
+    { "type": "wokwi-vcc", "id": "vcc1", "top": 0, "left": -60, "attrs": { "voltage": "3.3" } },
+    { "type": "spice-diode", "id": "d1", "top": 22, "left": -20, "attrs": { "model": "1N4148" } },
+    { "type": "wokwi-pushbutton", "id": "btn1", "top": 40, "left": 40, "attrs": { "color": "green" } },
+    { "type": "wokwi-resistor", "id": "r1", "top": 66.35, "left": 130, "attrs": { "value": "10k" } },
+    { "type": "spice-capacitor", "id": "c1", "top": 120, "left": 150, "attrs": { "value": "1u" } },
+    { "type": "wokwi-gnd", "id": "gnd2", "top": 150, "left": 178, "attrs": {} },
+    { "type": "spice-npn", "id": "q1", "top": 47, "left": 220, "attrs": { "model": "2N2222" } },
+    { "type": "wokwi-gnd", "id": "gnd1", "top": 140, "left": 238, "attrs": {} },
+    { "type": "wokwi-led", "id": "led1", "top": -20, "left": 235, "attrs": { "color": "red" } },
+    { "type": "wokwi-resistor", "id": "r2", "top": 26.35, "left": 290, "attrs": { "value": "220" } },
+    { "type": "wokwi-vcc", "id": "vcc2", "top": -20, "left": 370, "attrs": { "voltage": "3.3" } }
+  ],
+  "connections": [
+    [ "vcc1:VCC", "d1:A", "red", [] ],
+    [ "d1:C", "btn1:1.l", "red", [ "h8" ] ],
+    [ "btn1:2.r", "r1:1", "green", [] ],
+    [ "r1:2", "q1:B", "green", [] ],
+    [ "c1:1", "q1:B", "green", [ "h-10", "v-38" ] ],
+    [ "c1:2", "gnd2:GND", "black", [] ],
+    [ "q1:E", "gnd1:GND", "black", [] ],
+    [ "led1:C", "q1:C", "green", [] ],
+    [ "led1:A", "r2:1", "green", [ "v10" ] ],
+    [ "r2:2", "vcc2:VCC", "red", [] ]
+  ]
+}
