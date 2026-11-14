@@ -4,6 +4,7 @@
  * that are not JavaScript. See "Process protocol" in docs/circuit-format.md.
  *
  * Usage: node circuit/server.js diagram.json [--max-step 10e-6]
+ *     [--probe PIN]...
  */
 
 import {readFileSync} from 'node:fs';
@@ -14,18 +15,22 @@ import {Simulation} from './simulation.js';
 
 const {values, positionals} = parseArgs({
   allowPositionals: true,
-  options: {'max-step': {type: 'string'}},
+  options: {
+    'max-step': {type: 'string'},
+    probe: {type: 'string', multiple: true, default: []},
+  },
 });
 if (positionals.length !== 1) {
   process.stderr.write(
-    'usage: node circuit/server.js diagram.json [--max-step 10e-6]\n',
+    'usage: node circuit/server.js diagram.json [--max-step 10e-6] ' +
+      '[--probe PIN]...\n',
   );
   process.exit(2);
 }
 
 const diagram = JSON.parse(readFileSync(positionals[0], 'utf8'));
 const maxStep = values['max-step'] ? parseValue(values['max-step']) : undefined;
-const sim = new Simulation(diagram, {maxStep});
+const sim = new Simulation(diagram, {maxStep, probes: values.probe});
 for (const warning of sim.warnings)
   process.stderr.write(`warning: ${warning}\n`);
 

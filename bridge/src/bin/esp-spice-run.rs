@@ -1,11 +1,12 @@
 //! Runs ESP32 firmware against the circuit in a diagram.json.
 //!
 //! esp-spice-run DIAGRAM FIRMWARE [--seconds S] [--set T:NAME=VALUE]...
-//!     [--trace FILE] [--server circuit/server.js]
+//!     [--trace FILE] [--probe PIN]... [--server circuit/server.js]
 //!
 //! FIRMWARE is a merged flash image. `--set 0.5:btn1.pressed=1` changes a
 //! control at 0.5 s. The serial output goes to stdout. `--trace` writes the
-//! circuit trace (docs/circuit-format.md) at the end.
+//! circuit trace (docs/circuit-format.md) at the end. `--probe esp:D18`
+//! adds the net voltage of a pin to the trace.
 
 use std::io::Write;
 use std::process::{exit, Command};
@@ -14,7 +15,8 @@ use esp_bridge::{Bridge, ProcessCircuit, ROM_ELF};
 use serde_json::{json, Value};
 
 const USAGE: &str = "usage: esp-spice-run DIAGRAM FIRMWARE [--seconds S] \
-    [--set T:NAME=VALUE]... [--trace FILE] [--server circuit/server.js]";
+    [--set T:NAME=VALUE]... [--trace FILE] [--probe PIN]... \
+    [--server circuit/server.js]";
 
 struct Options {
     diagram: String,
@@ -22,6 +24,7 @@ struct Options {
     seconds: f64,
     sets: Vec<(f64, String, Value)>,
     trace: Option<String>,
+    probes: Vec<String>,
     server: String,
 }
 
@@ -46,6 +49,7 @@ fn parse(mut args: impl Iterator<Item = String>) -> Result<Options, String> {
         seconds: 1.0,
         sets: Vec::new(),
         trace: None,
+        probes: Vec::new(),
         server: "circuit/server.js".into(),
     };
     while let Some(arg) = args.next() {
@@ -54,6 +58,7 @@ fn parse(mut args: impl Iterator<Item = String>) -> Result<Options, String> {
             "--seconds" => options.seconds = value()?.parse().map_err(|_| "bad --seconds")?,
             "--trace" => options.trace = Some(value()?),
             "--server" => options.server = value()?,
+            "--probe" => options.probes.push(value()?),
             "--set" => options.sets.push(parse_set(&value()?).ok_or("bad --set")?),
             _ if arg.starts_with('-') => return Err(format!("unknown option {arg}")),
             _ => positional.push(arg),
@@ -86,8 +91,12 @@ fn run(options: &Options) -> Result<(), String> {
         "no {ROM_ELF}: run tools/fetch-esp32-rom.sh and set ESP32SIM_ROM_DIR"
     ))?;
     let rom = read(&rom_path.to_string_lossy())?;
-    let circuit =
-        ProcessCircuit::spawn(Command::new("node").args([&options.server, &options.diagram]))?;
+    let mut node = Command::new("node");
+    node.args([&options.server, &options.diagram]);
+    for pin in &options.probes {
+        node.args(["--probe", pin]);
+    }
+    let circuit = ProcessCircuit::spawn(&mut node)?;
     let mut bridge = Bridge::new(&diagram, &flash, &rom, circuit)?;
 
     let mut printed = 0;

@@ -215,8 +215,9 @@ pin.
 
 ## Process protocol
 
-`node circuit/server.js diagram.json [--max-step 10e-6]` reads one JSON
-command per line on stdin and writes one JSON reply per line on stdout.
+`node circuit/server.js diagram.json [--max-step 10e-6] [--probe PIN]...`
+reads one JSON command per line on stdin and writes one JSON reply per line
+on stdout. Each `--probe` adds a pin to the `probes` of the trace.
 A failed command replies `{ "error": "message" }`.
 
 | Command                                                          | Reply                                        |
