@@ -67,8 +67,8 @@ wokwi-elements bundle first.
 }
 ```
 
-The sim core writes this format (`docs/circuit-format.md`). The renderer
-ignores `probes`. Each key frame sets properties of the part's wokwi element. A property keeps
+The sim core writes this format. The renderer ignores its optional `probes`
+key. Each key frame sets properties of the part's wokwi element. A property keeps
 its value until a later key frame changes it. Times are in seconds.
 
 ## Diagram support

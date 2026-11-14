@@ -98,7 +98,8 @@ function createPart(part) {
     console.warn(`No element for part type: ${part.type}`);
     el = document.createElement('div');
     el.textContent = part.type;
-    el.style.cssText = 'border: 1px dashed #c00; padding: 4px; font: 12px sans-serif;';
+    el.style.cssText =
+      'border: 1px dashed #c00; padding: 4px; font: 12px sans-serif;';
   }
   el.style.position = 'absolute';
   el.style.left = `${part.left ?? 0}px`;
@@ -116,13 +117,16 @@ function createPart(part) {
 function pinAt(diagram, elements, ref) {
   const [id, name] = ref.split(':');
   const part = diagram.parts.find((p) => p.id === id);
+  // Wokwi does not draw wires to hidden parts.
+  if (part?.hide) return null;
   const el = elements.get(id);
   const pin = el?.pinInfo?.find((p) => p.name === name);
   if (!part || !pin) {
     console.warn(`Unknown pin: ${ref}`);
     return null;
   }
-  return pinPosition(part, pin, {width: el.offsetWidth, height: el.offsetHeight});
+  const size = {width: el.offsetWidth, height: el.offsetHeight};
+  return pinPosition(part, pin, size);
 }
 
 /**
@@ -134,10 +138,12 @@ function bounds(parts, elements, wires) {
   for (const part of parts) {
     const el = elements.get(part.id);
     const size = {width: el.offsetWidth, height: el.offsetHeight};
-    for (const corner of [[0, 0], [size.width, 0], [0, size.height], [size.width, size.height]]) {
-      const [x, y] = pinPosition(part, {x: corner[0], y: corner[1]}, size);
-      xs.push(x);
-      ys.push(y);
+    for (const cx of [0, size.width]) {
+      for (const cy of [0, size.height]) {
+        const [x, y] = pinPosition(part, {x: cx, y: cy}, size);
+        xs.push(x);
+        ys.push(y);
+      }
     }
   }
   for (const [x, y] of wires.flatMap((w) => w.points)) {
@@ -160,10 +166,12 @@ function bounds(parts, elements, wires) {
 function drawWires(wires, shift) {
   const svg = document.createElementNS(SVG_NS, 'svg');
   svg.style.cssText =
-    'position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none;';
+    'position: absolute; inset: 0; width: 100%; height: 100%;' +
+    ' overflow: visible; pointer-events: none;';
   for (const {color, points} of wires) {
     const line = document.createElementNS(SVG_NS, 'polyline');
-    line.setAttribute('points', points.map(([x, y]) => `${x + shift[0]},${y + shift[1]}`).join(' '));
+    const moved = points.map(([x, y]) => `${x + shift[0]},${y + shift[1]}`);
+    line.setAttribute('points', moved.join(' '));
     line.setAttribute('fill', 'none');
     line.setAttribute('stroke', color);
     line.setAttribute('stroke-width', '2');

@@ -10,7 +10,8 @@
  * Returns the corner points of a wire.
  * @param {!Array<number>} from Source pin [x, y].
  * @param {!Array<number>} to Target pin [x, y].
- * @param {!Array<string>=} moves Wokwi placement moves, e.g. ['v10', '*', 'h5'].
+ * @param {!Array<string>=} moves Wokwi placement moves, such as
+ *     ['v10', '*', 'h5'].
  * @return {!Array<!Array<number>>}
  */
 export function wirePoints(from, to, moves = []) {
@@ -22,7 +23,9 @@ export function wirePoints(from, to, moves = []) {
   for (const move of head) start.push(step(start.at(-1), move, 1));
 
   const end = [to];
-  for (const move of tail.slice().reverse()) end.unshift(step(end[0], move, -1));
+  for (const move of tail.slice().reverse()) {
+    end.unshift(step(end[0], move, -1));
+  }
 
   const a = start.at(-1);
   const b = end[0];
