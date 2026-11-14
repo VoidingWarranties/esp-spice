@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ESP Spice viewer</title>
+  <style>
+    body {
+      margin: 0;
+      font: 14px system-ui, sans-serif;
+      background: #fff;
+      color: #222;
+    }
+    #stage { display: inline-block; position: relative; background: #fff; }
+    #time {
+      position: absolute;
+      right: 8px;
+      bottom: 4px;
+      font: 12px ui-monospace, monospace;
+      color: #666;
+    }
+    #controls { display: flex; gap: 8px; align-items: center; padding: 8px; }
+    #controls input { flex: 1; }
+    #controls[hidden] { display: none; }
+    #hidden-toggle { display: block; padding: 0 8px 8px; }
+    #hidden-toggle[hidden] { display: none; }
+  </style>
+  <script src="node_modules/@wokwi/elements/dist/wokwi-elements.bundle.js"></script>
+</head>
+<body>
+  <div id="stage">
+    <div id="circuit"></div>
+    <output id="time"></output>
+  </div>
+  <div id="controls" hidden>
+    <button id="play" type="button">Play</button>
+    <input id="scrub" type="range" min="0" step="any" value="0"
+        aria-label="Time">
+  </div>
+  <label id="hidden-toggle" hidden>
+    <input id="show-hidden" type="checkbox" checked> Show hidden parts
+  </label>
+  <script type="module">
+    import {renderCircuit} from './src/circuit.js';
+    import {traceEnd} from './src/trace.js';
+
+    const timeLabel = document.getElementById('time');
+    const controls = document.getElementById('controls');
+    const scrub = document.getElementById('scrub');
+    const play = document.getElementById('play');
+    const hiddenToggle = document.getElementById('hidden-toggle');
+    const showHidden = document.getElementById('show-hidden');
+    let circuit;
+    let trace = {parts: {}};
+    let playing = false;
+    // Each Play or Pause starts a new run, so an old frame loop stops.
+    let run = 0;
+
+    async function setTime(t) {
+      await circuit.setTime(trace, t);
+      timeLabel.value = `t = ${t.toFixed(3)} s`;
+      scrub.value = t;
+    }
+
+    async function load(diagram, newTrace = {parts: {}}) {
+      trace = newTrace;
+      const container = document.getElementById('circuit');
+      circuit = await renderCircuit(container, diagram);
+      scrub.max = traceEnd(trace);
+      controls.hidden = !(scrub.max > 0);
+      hiddenToggle.hidden = !circuit.hasHidden;
+      circuit.showHidden(showHidden.checked);
+      await setTime(0);
+    }
+
+    showHidden.addEventListener('change', () => {
+      circuit.showHidden(showHidden.checked);
+    });
+    scrub.addEventListener('input', () => setTime(Number(scrub.value)));
+    play.addEventListener('click', () => {
+      playing = !playing;
+      play.textContent = playing ? 'Pause' : 'Play';
+      const thisRun = ++run;
+      if (!playing) return;
+      let last = performance.now();
+      if (Number(scrub.value) >= Number(scrub.max)) scrub.value = 0;
+      const tick = async (now) => {
+        if (thisRun !== run) return;
+        const max = Number(scrub.max);
+        const t = Math.min(Number(scrub.value) + (now - last) / 1000, max);
+        last = now;
+        await setTime(t);
+        if (thisRun !== run) return;
+        if (t >= max) play.click();
+        else requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+
+    // Used by capture.js, which passes the files in directly.
+    window.espSpice = {
+      load,
+      setTime,
+      showHidden: (show) => circuit.showHidden(show),
+    };
+
+    // viewer.html?diagram=path/diagram.json&trace=path/trace.json
+    const params = new URLSearchParams(location.search);
+    if (params.has('diagram')) {
+      const fetchJson = async (url) => (await fetch(url)).json();
+      await load(
+        await fetchJson(params.get('diagram')),
+        params.has('trace') ? await fetchJson(params.get('trace')) : undefined,
+      );
+    }
+  </script>
+</body>
+</html>
