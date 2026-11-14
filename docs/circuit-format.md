@@ -223,8 +223,10 @@ names. The web demo then sends the element's input (a pot drag or a button
 press) to the part's controls, as for the built-in type of that element. A
 drawing object is static SVG: the web demo cannot change its controls.
 
-A plugin type must not have the name of a built-in type or of a type in
-another plugin of the diagram. A plugin cannot add a board, because the
+A plugin type name must be lower case and have a `-`, because the renderer
+uses it as an HTML custom element name. It must not be the name of a
+built-in type or of a type in another plugin of the diagram. The renderer
+loads plugins only for a diagram on the same site as the page. A plugin cannot add a board, because the
 ESP32 bridge must know the board pins.
 
 [examples/audio-fader](../examples/audio-fader) has a plugin: a slide fader

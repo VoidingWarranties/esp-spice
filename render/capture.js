@@ -66,7 +66,8 @@ export async function openCircuit(
       if (m.type() === 'warning') console.warn(m.text());
     });
     await page.route(`${ORIGIN}/**`, (route) => {
-      const {pathname} = new URL(route.request().url());
+      const url = new URL(route.request().url());
+      const pathname = decodeURIComponent(url.pathname);
       const [root, rel] = dir && pathname.startsWith(DIAGRAM_DIR) ?
         [path.resolve(dir), pathname.slice(DIAGRAM_DIR.length)] :
         [SERVED, pathname];

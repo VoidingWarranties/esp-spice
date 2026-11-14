@@ -48,10 +48,22 @@ test('only files in the diagram folder load', async () => {
     '/x.js',
     'https://x/x.js',
     'data:text/javascript,',
-    'a\\x.js',
+    '..\\x.js',
+    '%2e%2e/x.js',
+    'a/.%2E/../x.js',
   ]) {
     await assert.rejects(loadPlugins(named([bad]), EXAMPLE), /relative path/);
   }
+});
+
+test('a plugin type is a custom element name', async () => {
+  const dir = mkdtempSync(path.join(tmpdir(), 'esp-spice-'));
+  writeFileSync(
+    path.join(dir, 'p.js'),
+    `export default {fader: {pins: [], build() {}}};`,
+  );
+  const url = pathToFileURL(path.join(dir, 'diagram.json'));
+  await assert.rejects(loadPlugins(named(['p.js']), url), /with a "-"/);
 });
 
 test('a plugin cannot replace a type', async () => {
@@ -62,8 +74,8 @@ test('a plugin cannot replace a type', async () => {
       `export default {'${type}': {pins: [], build() {}}};`,
     );
   write('led.js', 'wokwi-led');
-  write('a.js', 'x');
-  write('b.js', 'x');
+  write('a.js', 'my-x');
+  write('b.js', 'my-x');
   const url = pathToFileURL(path.join(dir, 'diagram.json'));
   await assert.rejects(loadPlugins(named(['led.js']), url), /already a type/);
   await assert.rejects(loadPlugins(named(['a.js', 'b.js']), url), /already/);

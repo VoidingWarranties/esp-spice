@@ -39,7 +39,13 @@ export async function renderCircuit(
   diagram,
   {diagramUrl = document.baseURI} = {},
 ) {
-  defineDrawings(await loadPlugins(diagram, diagramUrl));
+  // A link to the viewer can name a diagram on any site. Its plugins would
+  // then run on this site.
+  const base = new URL(diagramUrl, location.href);
+  if (base.origin !== location.origin && diagram['esp-spice']?.parts) {
+    throw new Error('A diagram from another site cannot load part plugins.');
+  }
+  defineDrawings(await loadPlugins(diagram, base));
   container.replaceChildren();
   container.style.position = 'relative';
 
