@@ -74,8 +74,9 @@ after each `run_for` and gives back the pin voltages.
 - Only the classic ESP32: `board-esp32-devkit-c-v4` and
   `wokwi-esp32-devkit-v1`.
 - An input sees the circuit up to 100 µs late.
-- Only GPIO levels and LEDC PWM go to the circuit. I2C, SPI, UART and RMT
-  signals and the DAC do not.
+- Only GPIO levels (push-pull and open-drain) and LEDC PWM go to the
+  circuit. I2C, SPI, UART and RMT signals and the DAC do not: a pin that
+  the GPIO matrix gives to one of them has only its pulls in the circuit.
 
 ## Test
 
