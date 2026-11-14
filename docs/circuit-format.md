@@ -96,6 +96,7 @@ warning. Their pins are not connected to anything in the circuit.
 | `spice-npn`                                  | `C` `B` `E`                           | `model` `2N2222` or `2N3904` (`2N2222`)           |                                |                                     |
 | `board-esp32-devkit-c-v4`                    | see [Boards](#boards)                 |                                                   | pin drive, see [Boards](#boards) |                                   |
 | `wokwi-esp32-devkit-v1`                      | see [Boards](#boards)                 |                                                   | pin drive, see [Boards](#boards) |                                   |
+| `board-esp32-s3-devkitc-1`                   | see [Boards](#boards)                 |                                                   | pin drive, see [Boards](#boards) |                                   |
 
 The `spice-*` types are not Wokwi parts. Wokwi does not simulate analog
 circuits, so it has no capacitor, diode or transistor. A renderer must draw
@@ -130,6 +131,7 @@ circuit. They still take drive changes, and their voltage is their own drive
 | ------------------------- | ----------------------- | ----- | ----- | ----------------------------------------------------------------------------------------- |
 | `board-esp32-devkit-c-v4` | `GND.1` `GND.2` `GND.3` | `3V3` | `5V`  | `0` `2` `4` `5` `12`..`19` `21`..`23` `25`..`27` `32`..`35` `TX` `RX` `VP` `VN`          |
 | `wokwi-esp32-devkit-v1`   | `GND.1` `GND.2`         | `3V3` | `VIN` | `D2` `D4` `D5` `D12`..`D15` `D18` `D19` `D21`..`D23` `D25`..`D27` `D32`..`D35` `TX0` `RX0` `TX2` `RX2` `VP` `VN` |
+| `board-esp32-s3-devkitc-1` | `GND.1`..`GND.4`       | `3V3.1` `3V3.2` | `5V` | `0`..`21` `35`..`42` `45`..`48` `TX` `RX`                                     |
 
 A pin driver is a Thevenin source: a voltage source with a series resistor.
 The ESP32 bridge sets it with a drive:

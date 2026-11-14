@@ -6,7 +6,12 @@
 constexpr int kRedLedPin = 2;
 constexpr int kButtonPin = 4;
 constexpr int kGreenLedPin = 5;
+// An ADC1 pin: ADC2 is not free while WiFi runs.
+#if CONFIG_IDF_TARGET_ESP32S3
+constexpr int kPotPin = 1;
+#else
 constexpr int kPotPin = 34;
+#endif
 
 bool was_pressed = false;
 int last_pot = -1000;

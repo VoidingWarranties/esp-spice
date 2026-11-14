@@ -1,4 +1,4 @@
-//! Shared test setup: the example project and a stub circuit.
+//! Shared test setup: the example projects and a stub circuit.
 
 // Each test file uses a different part of this module.
 #![allow(dead_code)]
@@ -7,21 +7,24 @@ use std::collections::HashMap;
 
 use esp_bridge::{Circuit, Drive};
 
-pub const EXAMPLE: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../examples/esp32-button-led");
+/// The example folders, one for each chip. They run the same sketch.
+pub const ESP32: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../examples/esp32-button-led");
+pub const S3: &str = concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/../examples/esp32-s3-button-led"
+);
 
-pub fn diagram() -> String {
-    std::fs::read_to_string(format!("{EXAMPLE}/diagram.json")).unwrap()
+pub fn diagram(example: &str) -> String {
+    std::fs::read_to_string(format!("{example}/diagram.json")).unwrap()
 }
 
-pub fn flash() -> Vec<u8> {
-    std::fs::read(format!("{EXAMPLE}/firmware.bin")).unwrap()
+pub fn flash(example: &str) -> Vec<u8> {
+    std::fs::read(format!("{example}/firmware.bin")).unwrap()
 }
 
-pub fn rom() -> Vec<u8> {
-    std::fs::read(esp_soc::rom::require(
-        esp_bridge::rom_elf(&diagram()).unwrap(),
-    ))
-    .unwrap()
+pub fn rom(example: &str) -> Vec<u8> {
+    let name = esp_bridge::rom_elf(&diagram(example)).unwrap();
+    std::fs::read(esp_soc::rom::require(name)).unwrap()
 }
 
 /// Each board pin is its own net: the pin drive in parallel with the

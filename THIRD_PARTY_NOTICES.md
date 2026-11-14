@@ -7,11 +7,12 @@ the Apache License 2.0, in [LICENSES/Apache-2.0.txt](LICENSES/Apache-2.0.txt).
 
 ## ESP32 firmware image
 
-`examples/esp32-button-led/firmware.bin` is a build of
+`examples/esp32-button-led/firmware.bin` (ESP32) and
+`examples/esp32-s3-button-led/firmware.bin` (ESP32-S3) are builds of
 [`examples/esp32-button-led/firmware`](examples/esp32-button-led/firmware)
 with the pioarduino platform-espressif32 55.03.38-1.
-`examples/esp32-pot-button-leds/firmware.bin` is a link to it. The
-repository and the web demo both distribute this image. It contains:
+`examples/esp32-pot-button-leds/firmware.bin` is a link to the first. The
+repository and the web demo both distribute these images. Each contains:
 
 - [Arduino-ESP32 3.3.8](https://github.com/espressif/arduino-esp32/tree/3.3.8),
   Copyright Espressif Systems and others. Parts are under the GNU Lesser
@@ -40,8 +41,9 @@ with it, as its [README](examples/esp32-button-led/README.md) tells.
 
 ## ESP32 mask ROM
 
-The web demo has `web/dist/esp32_rev300_rom.elf`. `tools/fetch-esp32-rom.sh`
-downloads it from the
+The web demo has `web/dist/esp32_rev300_rom.elf` and
+`web/dist/esp32s3_rev0_rom.elf`. `tools/fetch-esp32-rom.sh` downloads them
+from the
 [espressif/esp-rom-elfs](https://github.com/espressif/esp-rom-elfs) release
 20260528. Copyright 2015-2022 Espressif Systems (Shanghai) Co. Ltd., under the
 Apache License 2.0, in [LICENSES/Apache-2.0.txt](LICENSES/Apache-2.0.txt).

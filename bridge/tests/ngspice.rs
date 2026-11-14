@@ -1,4 +1,4 @@
-//! Runs the esp32-button-led example against ngspice, through
+//! Runs the button and LED examples against ngspice, through
 //! `node circuit/server.js`. Needs Node, `npm install` and libngspice.
 
 mod common;
@@ -14,16 +14,25 @@ fn set(bridge: &mut Bridge<ProcessCircuit>, name: &str, value: i32) {
 }
 
 #[test]
-fn firmware_reads_button_and_pot_in_ngspice() {
+fn firmware_reads_button_and_pot_in_ngspice_esp32() {
+    firmware_reads_button_and_pot_in_ngspice(common::ESP32);
+}
+
+#[test]
+fn firmware_reads_button_and_pot_in_ngspice_s3() {
+    firmware_reads_button_and_pot_in_ngspice(common::S3);
+}
+
+fn firmware_reads_button_and_pot_in_ngspice(example: &str) {
     let root = concat!(env!("CARGO_MANIFEST_DIR"), "/..");
-    let diagram = format!("{}/diagram.json", common::EXAMPLE);
+    let diagram = format!("{example}/diagram.json");
     let mut node = Command::new("node");
     node.current_dir(root).args(["circuit/server.js", &diagram]);
     let circuit = ProcessCircuit::spawn(&mut node).unwrap();
     let mut bridge = Bridge::new(
-        &common::diagram(),
-        &common::flash(),
-        &common::rom(),
+        &common::diagram(example),
+        &common::flash(example),
+        &common::rom(example),
         circuit,
     )
     .unwrap();
