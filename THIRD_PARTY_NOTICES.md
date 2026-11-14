@@ -112,7 +112,7 @@ The renderer turns them 180 degrees. They are from these board pages:
 
 The MIT License of esp-spice does not apply to these files. You must not
 use them, or pictures and pages that show them, for commercial purposes.
-`render/examples/boards/boards.png` shows them.
+Pictures on the `pr-assets` branch show them.
 
 ## License texts
 
