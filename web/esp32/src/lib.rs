@@ -1,4 +1,4 @@
-//! A C ABI over `esp_bridge::Bridge<DeferredCircuit>` for web/esp32.js.
+//! A C ABI over `esp_bridge::Bridge<DeferredCircuit>` for web/sim-worker.js.
 //!
 //! The host writes inputs into memory from `esp_web_alloc`. Text results go
 //! to an output buffer, which the host reads with `esp_web_out_ptr` and

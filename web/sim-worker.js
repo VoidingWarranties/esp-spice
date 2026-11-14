@@ -33,23 +33,25 @@ let diagram;
 /** @type {!Object<string, number>} */
 const controls = {};
 let controlsChanged = false;
+let hasFirmware = false;
 
 self.onmessage = async ({data}) => {
   try {
     if (data.type === 'start') {
       diagram = data.diagram;
+      hasFirmware = Boolean(data.firmwareUrl);
       post({type: 'status', text: 'Loading ngspice…'});
-      await sim.start();
-      if (data.firmwareUrl) {
+      await ready;
+      if (hasFirmware) {
         await runEsp32(data.firmwareUrl);
       } else {
-        await solve();
+        await solveSoon();
       }
     } else if (data.type === 'control') {
       controls[data.name] = data.value;
       controlsChanged = true;
-      // Without firmware, nothing else solves the circuit again.
-      if (!bridge) await solveSoon();
+      // With firmware, the ESP32 loop solves after its next step.
+      if (!hasFirmware) await solveSoon();
     }
   } catch (e) {
     post({type: 'error', message: e.message});
@@ -61,64 +63,82 @@ function post(message) {
   self.postMessage(message);
 }
 
-let solving = null;
-let solveAgain = false;
+// All solves share one ngspice, so they run one at a time, after it starts.
+const ready = sim.start();
+let lock = ready;
+let queued = false;
 
 /**
- * Solves now, or once more after the solve that is running.
- * A fast pot drag then does not queue a solve for each step.
+ * Runs fn after the solves before it.
+ *
+ * @param {function(): !Promise<T>} fn
+ * @return {!Promise<T>}
+ * @template T
+ */
+function exclusive(fn) {
+  const run = lock.then(fn);
+  lock = run.catch(() => {});
+  return run;
+}
+
+/**
+ * Solves once more, unless a solve is waiting to start. That solve reads
+ * the newest controls, so a fast pot drag does not queue a solve per step.
+ *
+ * @return {!Promise<void>}
  */
 async function solveSoon() {
-  if (solving) {
-    solveAgain = true;
-    return;
-  }
-  do {
-    solveAgain = false;
-    solving = solve();
-    await solving;
-  } while (solveAgain);
-  solving = null;
+  if (queued) return;
+  queued = true;
+  await exclusive(() => {
+    queued = false;
+    return solveNow();
+  });
 }
 
 /**
  * Solves the operating point and posts the part states.
  *
  * ngspice gives a PWM pin its low level in an .op solve. So with PWM pins,
- * this solves twice, with the PWM pins high and with them low, and mixes
- * the results by duty.
+ * this solves with all of them low, and once for each PWM pin high. Then it
+ * adds the change from each pin, weighted by its duty. This is exact when
+ * each PWM pin drives its own parts, such as one LED per pin.
  *
  * @return {!Promise<!Object<string, number>>} Node voltages by pin, such as
  *     {'esp:2': 3.3}, for the board pins.
  */
-async function solve() {
+async function solveNow() {
   controlsChanged = false;
   const pwmPins = Object.keys(controls)
       .filter((name) => name.endsWith('.duty') && controls[name] > 0 &&
           controls[name] < 1 && controls[name.replace('.duty', '.freqHz')] > 0)
       .map((name) => name.slice(0, -'.duty'.length));
-  const duty = pwmPins.length ?
-      pwmPins.reduce((sum, pin) => sum + controls[`${pin}.duty`], 0) /
-          pwmPins.length :
-      1;
-  const steady = (level) => {
+  // `high` is the PWM pin to hold high. The other PWM pins are low.
+  const steady = (high) => {
     const c = {...controls};
     for (const pin of pwmPins) {
       c[`${pin}.freqHz`] = 0;
-      if (!level) c[`${pin}.volts`] = 0;
+      if (pin !== high) c[`${pin}.volts`] = 0;
     }
     return c;
   };
   const start = performance.now();
-  const high = await solveOp(steady(true));
-  const low = pwmPins.length ? await solveOp(steady(false)) : high;
+  const base = await solveOp(steady(null));
+  const highs = [];
+  for (const pin of pwmPins) highs.push(await solveOp(steady(pin)));
   const ms = performance.now() - start;
 
-  const parts = mix(high.parts, low.parts, duty);
-  const values = mix(high.values, low.values, duty);
-  const pins = mix(high.pins, low.pins, duty);
-  post({type: 'state', parts, values, netlist: high.netlist, ms});
-  return pins;
+  const duties = pwmPins.map((pin) => controls[`${pin}.duty`]);
+  const combine = (key) =>
+      mix(base[key], highs.map((h) => h[key]), duties);
+  post({
+    type: 'state',
+    parts: combine('parts'),
+    values: combine('values'),
+    netlist: base.netlist,
+    ms,
+  });
+  return combine('pins');
 }
 
 /**
@@ -150,27 +170,28 @@ async function solveOp(start) {
 }
 
 /**
- * Mixes two results by weight. Numbers get the weighted mean. Booleans are
- * true when either is true.
+ * Adds to a base result the change of each other result, weighted.
+ * Booleans are true when the base or a result with weight above 0 is true.
  *
- * @param {*} high
- * @param {*} low
- * @param {number} weight The weight of `high`, 0 to 1.
+ * @param {*} base
+ * @param {!Array<*>} others
+ * @param {!Array<number>} weights The weight of each of `others`, 0 to 1.
  * @return {*}
  */
-function mix(high, low, weight) {
-  if (high === low) return high;
-  if (typeof high === 'number') return high * weight + low * (1 - weight);
-  if (typeof high === 'boolean') return high || low;
-  if (high && typeof high === 'object') {
-    return Object.fromEntries(Object.keys(high).map(
-        (key) => [key, mix(high[key], low[key], weight)]));
+function mix(base, others, weights) {
+  if (typeof base === 'number') {
+    return others.reduce((sum, o, i) => sum + weights[i] * (o - base), base);
   }
-  return high;
+  if (typeof base === 'boolean') {
+    return others.reduce((any, o, i) => any || (weights[i] > 0 && o), base);
+  }
+  if (base && typeof base === 'object') {
+    return Object.fromEntries(Object.keys(base).map((key) => [
+      key, mix(base[key], others.map((o) => o[key]), weights),
+    ]));
+  }
+  return base;
 }
-
-/** @type {?Object} The web/esp32 exports. */
-let bridge = null;
 
 /**
  * Boots the firmware and runs it at wall-clock speed, with a circuit solve
@@ -187,22 +208,29 @@ async function runEsp32(firmwareUrl) {
     env: {host_jit_compile: () => 0, host_jit_release: () => {}},
   });
   const w = instance.exports;
-  bridge = w;
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
-  const put = (bytes) => {
-    const ptr = w.esp_web_alloc(bytes.length);
-    new Uint8Array(w.memory.buffer, ptr, bytes.length).set(bytes);
-    return [ptr, bytes.length];
+  // Copies each input into wasm memory for the call, then frees it.
+  const withBytes = (inputs, call) => {
+    const args = inputs.map((bytes) => {
+      const ptr = w.esp_web_alloc(bytes.length);
+      new Uint8Array(w.memory.buffer, ptr, bytes.length).set(bytes);
+      return [ptr, bytes.length];
+    });
+    try {
+      return call(...args.flat());
+    } finally {
+      for (const [ptr, len] of args) w.esp_web_free(ptr, len);
+    }
   };
   const out = () => new Uint8Array(
       w.memory.buffer, w.esp_web_out_ptr(), w.esp_web_out_len()).slice();
   const check = (code) => {
     if (code) throw new Error(decoder.decode(out()));
   };
-  check(w.esp_web_new(
-      ...put(encoder.encode(JSON.stringify(diagram))), ...put(firmware),
-      ...put(rom)));
+  check(withBytes(
+      [encoder.encode(JSON.stringify(diagram)), firmware, rom],
+      w.esp_web_new));
 
   let wallStart = performance.now();
   let simStart = 0;
@@ -210,10 +238,14 @@ async function runEsp32(firmwareUrl) {
   let lastSpeed = {wall: wallStart, sim: 0};
   for (;;) {
     const sliceEnd = performance.now() + SLICE_MS;
+    let ahead = 0;
     while (performance.now() < sliceEnd) {
       const wallSeconds = (performance.now() - wallStart) / 1000;
       const lag = wallSeconds - (w.esp_web_time() - simStart);
-      if (lag < 0) break;
+      if (lag < 0) {
+        ahead = -lag;
+        break;
+      }
       if (lag > MAX_LAG_SECONDS) {
         wallStart = performance.now();
         simStart = w.esp_web_time();
@@ -230,9 +262,10 @@ async function runEsp32(firmwareUrl) {
         });
       }
       if (drives.length || controlsChanged) {
-        const pins = await solve();
+        const pins = await exclusive(solveNow);
         for (const [pin, volts] of Object.entries(pins)) {
-          check(w.esp_web_set_voltage(...put(encoder.encode(pin)), volts));
+          check(withBytes([encoder.encode(pin)],
+              (ptr, len) => w.esp_web_set_voltage(ptr, len, volts)));
         }
       }
     }
@@ -251,8 +284,8 @@ async function runEsp32(firmwareUrl) {
             `${(speed * 100).toFixed(0)}% of real time`,
       });
     }
-    // Lets control messages in.
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    // Lets control messages in, and waits when the ESP32 is ahead.
+    await new Promise((resolve) => setTimeout(resolve, ahead * 1000));
   }
 }
 

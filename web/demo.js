@@ -15,64 +15,84 @@ const readout = document.querySelector('#readout');
 const netlistView = document.querySelector('#netlist');
 const serialView = document.querySelector('#serial');
 
-const demo = new URLSearchParams(location.search).get('demo') ?? DEFAULT_DEMO;
-const demoUrl = new URL(`../${demo}/`, location.href);
-document.querySelector('#demo').textContent = demo;
-
-const diagram = await (await fetch(new URL('diagram.json', demoUrl))).json();
-const firmwareUrl = new URL('firmware.bin', demoUrl);
-const hasFirmware = (await fetch(firmwareUrl, {method: 'HEAD'})).ok;
-serialView.hidden = !hasFirmware;
-const {elements: parts} =
-    await renderCircuit(document.querySelector('#circuit'), diagram);
-
-const worker = new Worker('sim-worker.js', {type: 'module'});
-const control = (name, value) => worker.postMessage({type: 'control', name, value});
-for (const [id, el] of parts) {
-  switch (el.localName) {
-    case 'wokwi-potentiometer':
-    case 'wokwi-slide-potentiometer':
-      el.addEventListener('input', () => control(`${id}.value`, el.value));
-      break;
-    case 'wokwi-pushbutton':
-    case 'wokwi-pushbutton-6mm':
+/**
+ * How each input part sends its controls to the worker.
+ *
+ * @type {!Object<string, function(string, !HTMLElement,
+ *     function(string, number))>}
+ */
+const INPUTS = {};
+INPUTS['wokwi-potentiometer'] = INPUTS['wokwi-slide-potentiometer'] =
+    (id, el, control) => el.addEventListener(
+        'input', () => control(`${id}.value`, el.value));
+INPUTS['wokwi-pushbutton'] = INPUTS['wokwi-pushbutton-6mm'] =
+    (id, el, control) => {
       el.addEventListener('button-press', () => control(`${id}.pressed`, 1));
       el.addEventListener('button-release', () => control(`${id}.pressed`, 0));
-      break;
-  }
-}
-
+    };
 // Inputs keep their own value, so that a state does not move a pot that the
 // user drags.
 const INPUT_PROPS = new Set(['value', 'pressed']);
-const INPUT_TYPES = new Set([
-  'wokwi-potentiometer', 'wokwi-slide-potentiometer', 'wokwi-pushbutton',
-  'wokwi-pushbutton-6mm',
-]);
+/** Keeps the serial log short, so that appends stay fast. */
+const SERIAL_MAX_CHARS = 20000;
 
-worker.onmessage = ({data}) => {
-  switch (data.type) {
-    case 'status':
-      status.textContent = data.text;
-      break;
-    case 'error':
-      status.textContent = `Error: ${data.message}`;
-      break;
-    case 'serial':
-      serialView.textContent += data.text;
-      serialView.scrollTop = serialView.scrollHeight;
-      break;
-    case 'state':
-      show(data);
-      if (!hasFirmware) status.textContent = `Solved in ${data.ms.toFixed(1)} ms`;
-      break;
-  }
-};
-worker.postMessage({
-  type: 'start',
-  diagram,
-  firmwareUrl: hasFirmware ? firmwareUrl.href : null,
+/** @type {!Map<string, !HTMLElement>} */
+let parts;
+
+main().catch((e) => {
+  status.textContent = `Error: ${e.message}`;
 });
+
+/** Loads the demo, draws it and starts the worker. */
+async function main() {
+  const demo = new URLSearchParams(location.search).get('demo') ?? DEFAULT_DEMO;
+  const demoUrl = new URL(`../${demo}/`, location.href);
+  document.querySelector('#demo').textContent = demo;
+
+  const response = await fetch(new URL('diagram.json', demoUrl));
+  if (!response.ok) throw new Error(`${demo}/diagram.json: ${response.status}`);
+  const diagram = await response.json();
+  const firmwareUrl = new URL('firmware.bin', demoUrl);
+  const hasFirmware = (await fetch(firmwareUrl, {method: 'HEAD'})).ok;
+  serialView.hidden = !hasFirmware;
+  ({elements: parts} =
+      await renderCircuit(document.querySelector('#circuit'), diagram));
+
+  const worker = new Worker('sim-worker.js', {type: 'module'});
+  const control = (name, value) =>
+      worker.postMessage({type: 'control', name, value});
+  for (const [id, el] of parts) INPUTS[el.localName]?.(id, el, control);
+
+  worker.onmessage = ({data}) => {
+    switch (data.type) {
+      case 'status':
+        status.textContent = data.text;
+        break;
+      case 'error':
+        status.textContent = `Error: ${data.message}`;
+        break;
+      case 'serial':
+        serialView.append(data.text);
+        if (serialView.textContent.length > SERIAL_MAX_CHARS) {
+          serialView.textContent =
+              serialView.textContent.slice(-SERIAL_MAX_CHARS / 2);
+        }
+        serialView.scrollTop = serialView.scrollHeight;
+        break;
+      case 'state':
+        show(data);
+        if (!hasFirmware) {
+          status.textContent = `Solved in ${data.ms.toFixed(1)} ms`;
+        }
+        break;
+    }
+  };
+  worker.postMessage({
+    type: 'start',
+    diagram,
+    firmwareUrl: hasFirmware ? firmwareUrl.href : null,
+  });
+}
 
 /**
  * Sets the part props and fills the readout table.
@@ -82,7 +102,9 @@ worker.postMessage({
 function show({parts: states, values, netlist}) {
   for (const [id, props] of Object.entries(states)) {
     const el = parts.get(id);
-    if (!INPUT_TYPES.has(el.localName)) {
+    // The renderer does not draw parts with "hide".
+    if (!el) continue;
+    if (!(el.localName in INPUTS)) {
       Object.assign(el, props);
       continue;
     }
@@ -111,7 +133,9 @@ function show({parts: states, values, netlist}) {
  */
 function formatSi(value, unit) {
   const prefixes = [[1, ''], [1e-3, 'm'], [1e-6, 'µ'], [1e-9, 'n']];
-  const [scale, prefix] =
+  // Values under 1 pA or 1 pV are solver noise, so they show as 0.
+  const [scale, prefix] = Math.abs(value) < 1e-12 ?
+      prefixes[0] :
       prefixes.find(([s]) => Math.abs(value) >= s) ?? prefixes.at(-1);
   return `${(value / scale).toFixed(2)} ${prefix}${unit}`;
 }
