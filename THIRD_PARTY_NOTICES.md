@@ -93,6 +93,27 @@ The web demo loads wokwi-elements and
 [ngspice](https://ngspice.sourceforge.io/) inside) from jsDelivr. This
 repository and the web demo do not distribute them.
 
+## ESPboards board drawings
+
+`render/src/boards/` has board drawings by
+[ESPboards](https://www.espboards.dev/), (c) 2026 espboards.dev, under
+[CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/), with no
+changes. See the [ESPboards asset license](https://www.espboards.dev/license/).
+The renderer turns them 180 degrees. They are from these board pages:
+
+- [ESP32-DevKitC](https://www.espboards.dev/esp32/esp32-devkitc/):
+  `esp32-devkitc.svg`
+- [ESP32-S3-DevKitC-1](https://www.espboards.dev/esp32/esp32-s3-devkitc-1/):
+  `esp32-s3-devkitc-1.svg`
+- [ESP32-C3-DevKitM-1](https://www.espboards.dev/esp32/esp32-c3-devkitm-1/):
+  `esp32-c3-devkitm-1.svg`
+- [ESP32-C6-DevKitC-1](https://www.espboards.dev/esp32/esp32-c6-devkitc-1/):
+  `esp32-c6-devkitc-1.svg`
+
+The MIT License of esp-spice does not apply to these files. You must not
+use them, or pictures and pages that show them, for commercial purposes.
+Pictures on the `pr-assets` branch show them.
+
 ## License texts
 
 ### MIT License

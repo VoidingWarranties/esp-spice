@@ -1,0 +1,644 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 284 481.964" width="284" height="481.964"><title>Espressif ESP32-C3-DevKitM-1 board illustration - espboards.dev</title><desc>(c) 2026 espboards.dev. Licensed CC BY-NC 4.0: https://creativecommons.org/licenses/by-nc/4.0/</desc><metadata><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#"><cc:Work rdf:about=""><dc:title>Espressif ESP32-C3-DevKitM-1 board illustration - espboards.dev</dc:title><dc:date>2026</dc:date><dc:creator><cc:Agent><dc:title>espboards.dev</dc:title></cc:Agent></dc:creator><dc:rights><cc:Agent><dc:title>espboards.dev</dc:title></cc:Agent></dc:rights><dc:source>https://espboards.dev/esp32/esp32-c3-devkitm-1/</dc:source><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/><cc:license rdf:resource="https://creativecommons.org/licenses/by-nc/4.0/"/></cc:Work><cc:License rdf:about="https://creativecommons.org/licenses/by-nc/4.0/"><cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/><cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/><cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/><cc:requires rdf:resource="http://creativecommons.org/ns#Notice"/><cc:requires rdf:resource="http://creativecommons.org/ns#Attribution"/><cc:prohibits rdf:resource="http://creativecommons.org/ns#CommercialUse"/></cc:License></rdf:RDF></metadata><defs>
+    <linearGradient id="nodemcu-32s-linearGradient69393">
+      <stop style="stop-color:#605543;stop-opacity:1;" offset="0" id="nodemcu-32s-stop69389"></stop>
+      <stop style="stop-color:#959692;stop-opacity:1" offset="1" id="nodemcu-32s-stop69391"></stop>
+    </linearGradient>
+    <linearGradient id="nodemcu-32s-linearGradient69137">
+      <stop style="stop-color:#999890;stop-opacity:1;" offset="0" id="nodemcu-32s-stop69133"></stop>
+      <stop style="stop-color:#999890;stop-opacity:0;" offset="1" id="nodemcu-32s-stop69135"></stop>
+    </linearGradient>
+    <linearGradient id="nodemcu-32s-linearGradient69065">
+      <stop style="stop-color:#605543;stop-opacity:1;" offset="0" id="nodemcu-32s-stop69061"></stop>
+      <stop style="stop-color:#605543;stop-opacity:0;" offset="1" id="nodemcu-32s-stop69063"></stop>
+    </linearGradient>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter49800" x="-0.15475245" y="-0.057237213" width="1.2956877" height="1.1298058">
+      <feOffset dy="3" dx="3" id="nodemcu-32s-feOffset49790"></feOffset>
+      <feGaussianBlur stdDeviation="3" result="blur" id="nodemcu-32s-feGaussianBlur49792"></feGaussianBlur>
+      <feFlood flood-color="rgb(0,0,0)" flood-opacity="0.40037243947858475" result="flood" id="nodemcu-32s-feFlood49794"></feFlood>
+      <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite" id="nodemcu-32s-feComposite49796"></feComposite>
+      <feBlend in="blur" in2="composite" mode="normal" id="nodemcu-32s-feBlend49798"></feBlend>
+    </filter>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient69067" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919" gradientUnits="userSpaceOnUse"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient69139" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253" gradientUnits="userSpaceOnUse"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient69323" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" gradientUnits="userSpaceOnUse"></radialGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient78643" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient78645" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient78647" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient78649" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient78651" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient78653" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient78655" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient78657" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient78659" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient78661" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient78663" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient78665" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient78667" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient78669" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient78671" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient78673" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient78675" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient78677" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient78679" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient78681" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient78683" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient78685" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient78687" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient78689" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient78691" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient78693" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient78695" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient78697" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient78699" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient78701" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient78703" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient78705" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient78707" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient78709" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient78711" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient78713" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient78715" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient78717" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient78719" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient78721" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient78723" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient78725" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient78727" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient78729" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient78731" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient78733" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient78735" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient78737" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient78739" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient78741" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient78743" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient78745" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient78747" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient78749" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient79040" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient79042" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient79044" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient79046" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient79048" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient79050" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient79052" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient79054" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient79056" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient79058" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient79060" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient79062" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient79064" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient79066" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient79068" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient79070" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient79072" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient79074" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient79076" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient79078" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient79080" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient79082" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient79084" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient79086" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient79088" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient79090" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient79092" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient79094" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient79096" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient79098" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient79100" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient79102" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient79104" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient79106" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient79108" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient79110" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient79112" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient79114" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient79116" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient79118" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient79120" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient79122" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient79124" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient79126" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient79128" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient79130" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient79132" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient79134" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient79136" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient79138" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient79140" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient79142" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient79144" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient79146" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <radialGradient href="#nodemcu-32s-linearGradient69393" id="nodemcu-32s-radialGradient79148" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,1.0076922,0,0.52478915)" cx="-150.30165" cy="-68.223351" fx="-150.30165" fy="-68.223351" r="10.168141"></radialGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69065" id="nodemcu-32s-linearGradient79150" gradientUnits="userSpaceOnUse" x1="-230.43541" y1="107.79695" x2="-230.71252" y2="103.79919"></linearGradient>
+    <linearGradient href="#nodemcu-32s-linearGradient69137" id="nodemcu-32s-linearGradient79152" gradientUnits="userSpaceOnUse" x1="191.84773" y1="-190.07961" x2="197.23093" y2="-191.39253"></linearGradient>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter79154" x="-0.52092297" y="-0.34550991" width="2.0418459" height="1.6910198">
+      <feGaussianBlur stdDeviation="1.7827308" id="nodemcu-32s-feGaussianBlur79156"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter79158" x="-0.54883601" y="-0.36402365" width="2.097672" height="1.7280473">
+      <feGaussianBlur stdDeviation="1.8782563" id="nodemcu-32s-feGaussianBlur79160"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter79162" x="-0.67630642" y="-0.44857029" width="2.3526128" height="1.8971406">
+      <feGaussianBlur stdDeviation="2.3144925" id="nodemcu-32s-feGaussianBlur79164"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter79166" x="-0.53860153" y="-0.35723548" width="2.0772031" height="1.714471">
+      <feGaussianBlur stdDeviation="1.8432313" id="nodemcu-32s-feGaussianBlur79168"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter79170" x="-0.33983288" y="-0.22539922" width="1.6796658" height="1.4507984">
+      <feGaussianBlur stdDeviation="1.1629945" id="nodemcu-32s-feGaussianBlur79172"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter79174" x="-0.32780433" y="-0.2174211" width="1.6556087" height="1.4348422">
+      <feGaussianBlur stdDeviation="1.1218298" id="nodemcu-32s-feGaussianBlur79176"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter79178" x="-0.33178978" y="-0.22006451" width="1.6635796" height="1.440129">
+      <feGaussianBlur stdDeviation="1.135469" id="nodemcu-32s-feGaussianBlur79180"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter79182" x="-0.33983288" y="-0.22539922" width="1.6796658" height="1.4507984">
+      <feGaussianBlur stdDeviation="1.1629945" id="nodemcu-32s-feGaussianBlur79184"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter79186" x="-0.29868125" y="-0.19810478" width="1.5973625" height="1.3962096">
+      <feGaussianBlur stdDeviation="1.0221631" id="nodemcu-32s-feGaussianBlur79188"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter79190" x="-0.35002222" y="-0.23215745" width="1.7000444" height="1.4643149">
+      <feGaussianBlur stdDeviation="1.197865" id="nodemcu-32s-feGaussianBlur79192"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter79194" x="-0.38363946" y="-0.25445458" width="1.7672789" height="1.5089092">
+      <feGaussianBlur stdDeviation="1.3129117" id="nodemcu-32s-feGaussianBlur79196"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter79198" x="-0.33983288" y="-0.22539922" width="1.6796658" height="1.4507984">
+      <feGaussianBlur stdDeviation="1.1629945" id="nodemcu-32s-feGaussianBlur79200"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter79202" x="-0.35002222" y="-0.23215745" width="1.7000444" height="1.4643149">
+      <feGaussianBlur stdDeviation="1.197865" id="nodemcu-32s-feGaussianBlur79204"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter79206" x="-0.34389058" y="-0.22809054" width="1.6877812" height="1.4561811">
+      <feGaussianBlur stdDeviation="1.1768809" id="nodemcu-32s-feGaussianBlur79208"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter79312" x="-0.47442533" y="-0.31466966" width="1.9488507" height="1.6293393">
+      <feGaussianBlur stdDeviation="1.623604" id="nodemcu-32s-feGaussianBlur79314"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter79324" x="-0.47442533" y="-0.31466966" width="1.9488507" height="1.6293393">
+      <feGaussianBlur stdDeviation="1.623604" id="nodemcu-32s-feGaussianBlur79326"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter79332" x="-0.38579172" y="-0.2558821" width="1.7715834" height="1.5117642">
+      <feGaussianBlur stdDeviation="1.3202773" id="nodemcu-32s-feGaussianBlur79334"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter79336" x="-0.46728226" y="-0.30993191" width="1.9345645" height="1.6198638">
+      <feGaussianBlur stdDeviation="1.5991586" id="nodemcu-32s-feGaussianBlur79338"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80659" x="-74.299193" y="-0.24911109" width="149.59839" height="1.4982222">
+      <feGaussianBlur stdDeviation="0.9671606" id="nodemcu-32s-feGaussianBlur80661"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80663" x="-78.498471" y="-0.26921454" width="157.99694" height="1.5384291">
+      <feGaussianBlur stdDeviation="1.0453721" id="nodemcu-32s-feGaussianBlur80665"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80724" x="-1.8194364" y="-0.22374897" width="4.6960103" height="1.4354023">
+      <feGaussianBlur stdDeviation="0.6496973" id="nodemcu-32s-feGaussianBlur80726"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80766" x="-1.8649946" y="-0.22997006" width="4.7871267" height="1.4478445">
+      <feGaussianBlur stdDeviation="0.67054188" id="nodemcu-32s-feGaussianBlur80768"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80808" x="-1.8194364" y="-0.22374897" width="4.6960103" height="1.4354023">
+      <feGaussianBlur stdDeviation="0.6496973" id="nodemcu-32s-feGaussianBlur80810"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80812" x="-1.6303299" y="-0.19792597" width="4.3177973" height="1.3837563">
+      <feGaussianBlur stdDeviation="0.56317399" id="nodemcu-32s-feGaussianBlur80814"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80816" x="-74.299193" y="-0.24911109" width="149.59839" height="1.4982222">
+      <feGaussianBlur stdDeviation="0.9671606" id="nodemcu-32s-feGaussianBlur80818"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80820" x="-72.935714" y="-0.24258363" width="146.87143" height="1.4851673">
+      <feGaussianBlur stdDeviation="0.9417658" id="nodemcu-32s-feGaussianBlur80822"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80824" x="-80.175606" y="-0.27724359" width="161.35121" height="1.5544872">
+      <feGaussianBlur stdDeviation="1.0766088" id="nodemcu-32s-feGaussianBlur80826"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80828" x="-79.214219" y="-0.27264109" width="159.42844" height="1.5452822">
+      <feGaussianBlur stdDeviation="1.0587029" id="nodemcu-32s-feGaussianBlur80830"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80870" x="-1.5543895" y="-0.1875561" width="4.1659165" height="1.3630165">
+      <feGaussianBlur stdDeviation="0.52842845" id="nodemcu-32s-feGaussianBlur80872"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80874" x="-1.8194364" y="-0.22374897" width="4.6960103" height="1.4354023">
+      <feGaussianBlur stdDeviation="0.6496973" id="nodemcu-32s-feGaussianBlur80876"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80916" x="-77.787254" y="-0.26580969" width="156.57451" height="1.5316194">
+      <feGaussianBlur stdDeviation="1.0321257" id="nodemcu-32s-feGaussianBlur80918"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80920" x="-65.760822" y="-0.20823485" width="132.52164" height="1.4164697">
+      <feGaussianBlur stdDeviation="0.80813345" id="nodemcu-32s-feGaussianBlur80922"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80924" x="-68.091487" y="-0.21939258" width="137.18297" height="1.4387852">
+      <feGaussianBlur stdDeviation="0.85154203" id="nodemcu-32s-feGaussianBlur80926"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80928" x="-78.73655" y="-0.27035431" width="158.4731" height="1.5407086">
+      <feGaussianBlur stdDeviation="1.0498063" id="nodemcu-32s-feGaussianBlur80930"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80932" x="-74.987737" y="-0.2524074" width="150.97547" height="1.5048148">
+      <feGaussianBlur stdDeviation="0.97998469" id="nodemcu-32s-feGaussianBlur80934"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80936" x="-76.145385" y="-0.25794948" width="153.29077" height="1.515899">
+      <feGaussianBlur stdDeviation="1.0015459" id="nodemcu-32s-feGaussianBlur80938"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80978" x="-2.1367453" y="-0.26707835" width="5.3306282" height="1.522061">
+      <feGaussianBlur stdDeviation="0.79487799" id="nodemcu-32s-feGaussianBlur80980"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80982" x="-2.3690022" y="-0.29879365" width="5.7951419" height="1.5854916">
+      <feGaussianBlur stdDeviation="0.90114422" id="nodemcu-32s-feGaussianBlur80984"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80986" x="-1.9582689" y="-0.24270693" width="4.9736754" height="1.4733182">
+      <feGaussianBlur stdDeviation="0.71321842" id="nodemcu-32s-feGaussianBlur80988"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80990" x="-1.9979826" y="-0.24812993" width="5.0531027" height="1.4841642">
+      <feGaussianBlur stdDeviation="0.73138886" id="nodemcu-32s-feGaussianBlur80992"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80994" x="-2.1367453" y="-0.26707835" width="5.3306282" height="1.522061">
+      <feGaussianBlur stdDeviation="0.79487799" id="nodemcu-32s-feGaussianBlur80996"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter80998" x="-2.3336745" y="-0.29396957" width="5.7244866" height="1.5758435">
+      <feGaussianBlur stdDeviation="0.88498052" id="nodemcu-32s-feGaussianBlur81000"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82153" x="-88.672915" y="-0.31792326" width="178.34583" height="1.6358465">
+      <feGaussianBlur stdDeviation="1.2348711" id="nodemcu-32s-feGaussianBlur82155"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82157" x="-85.355159" y="-0.30203997" width="171.71032" height="1.6040799">
+      <feGaussianBlur stdDeviation="1.173078" id="nodemcu-32s-feGaussianBlur82159"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82199" x="-1.9346806" y="-0.23948587" width="4.9264987" height="1.4668761">
+      <feGaussianBlur stdDeviation="0.70242586" id="nodemcu-32s-feGaussianBlur82201"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82203" x="-2.2553564" y="-0.28327502" width="5.5678504" height="1.5544544">
+      <feGaussianBlur stdDeviation="0.84914704" id="nodemcu-32s-feGaussianBlur82205"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82207" x="-79.453809" y="-0.27378809" width="159.90762" height="1.5475762">
+      <feGaussianBlur stdDeviation="1.0631653" id="nodemcu-32s-feGaussianBlur82209"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82211" x="-77.080568" y="-0.26242653" width="155.16114" height="1.5248531">
+      <feGaussianBlur stdDeviation="1.0189637" id="nodemcu-32s-feGaussianBlur82213"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82253" x="-2.1284228" y="-0.2659419" width="5.3139832" height="1.5197881">
+      <feGaussianBlur stdDeviation="0.79107019" id="nodemcu-32s-feGaussianBlur82255"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82257" x="-2.0789082" y="-0.25918055" width="5.2149541" height="1.5062654">
+      <feGaussianBlur stdDeviation="0.76841542" id="nodemcu-32s-feGaussianBlur82259"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82261" x="-79.214219" y="-0.27264109" width="159.42844" height="1.5452822">
+      <feGaussianBlur stdDeviation="1.0587029" id="nodemcu-32s-feGaussianBlur82263"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82265" x="-79.9345" y="-0.27608933" width="160.869" height="1.5521787">
+      <feGaussianBlur stdDeviation="1.0721182" id="nodemcu-32s-feGaussianBlur82267"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82269" x="-89.450633" y="-0.32164647" width="179.90127" height="1.6432929">
+      <feGaussianBlur stdDeviation="1.2493562" id="nodemcu-32s-feGaussianBlur82271"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82311" x="-79.453809" y="-0.27378809" width="159.90762" height="1.5475762">
+      <feGaussianBlur stdDeviation="1.0631653" id="nodemcu-32s-feGaussianBlur82313"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82315" x="-80.175606" y="-0.27724359" width="161.35121" height="1.5544872">
+      <feGaussianBlur stdDeviation="1.0766088" id="nodemcu-32s-feGaussianBlur82317"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82319" x="-74.299193" y="-0.24911109" width="149.59839" height="1.4982222">
+      <feGaussianBlur stdDeviation="0.9671606" id="nodemcu-32s-feGaussianBlur82321"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82323" x="-72.710231" y="-0.24150416" width="146.42046" height="1.4830083">
+      <feGaussianBlur stdDeviation="0.93756618" id="nodemcu-32s-feGaussianBlur82325"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82327" x="-69.388452" y="-0.22560161" width="139.7769" height="1.4512032">
+      <feGaussianBlur stdDeviation="0.87569805" id="nodemcu-32s-feGaussianBlur82329"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82331" x="-69.824806" y="-0.2276906" width="140.64961" height="1.4553812">
+      <feGaussianBlur stdDeviation="0.88382513" id="nodemcu-32s-feGaussianBlur82333"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82335" x="-69.388452" y="-0.22560161" width="139.7769" height="1.4512032">
+      <feGaussianBlur stdDeviation="0.87569805" id="nodemcu-32s-feGaussianBlur82337"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82339" x="-73.388194" y="-0.24474981" width="147.77639" height="1.4894996">
+      <feGaussianBlur stdDeviation="0.9501932" id="nodemcu-32s-feGaussianBlur82341"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82343" x="-67.024537" y="-0.2142847" width="135.04907" height="1.4285694">
+      <feGaussianBlur stdDeviation="0.83167009" id="nodemcu-32s-feGaussianBlur82345"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82347" x="-1.7159313" y="-0.20961507" width="4.4890002" height="1.4071345">
+      <feGaussianBlur stdDeviation="0.60233987" id="nodemcu-32s-feGaussianBlur82349"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82351" x="-1.8497286" y="-0.22788545" width="4.7565947" height="1.4436752">
+      <feGaussianBlur stdDeviation="0.66355712" id="nodemcu-32s-feGaussianBlur82353"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82355" x="-1.8649946" y="-0.22997006" width="4.7871267" height="1.4478445">
+      <feGaussianBlur stdDeviation="0.67054188" id="nodemcu-32s-feGaussianBlur82357"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82359" x="-1.7524478" y="-0.2146015" width="4.5620331" height="1.4171073">
+      <feGaussianBlur stdDeviation="0.61904753" id="nodemcu-32s-feGaussianBlur82361"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82363" x="-1.7524478" y="-0.2146015" width="4.5620331" height="1.4171073">
+      <feGaussianBlur stdDeviation="0.61904753" id="nodemcu-32s-feGaussianBlur82365"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82367" x="-1.8119133" y="-0.22272167" width="4.6809641" height="1.4333477">
+      <feGaussianBlur stdDeviation="0.6462552" id="nodemcu-32s-feGaussianBlur82369"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82371" x="-1.8119133" y="-0.22272167" width="4.6809641" height="1.4333477">
+      <feGaussianBlur stdDeviation="0.6462552" id="nodemcu-32s-feGaussianBlur82373"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82375" x="-1.5955118" y="-0.19317146" width="4.2481611" height="1.3742473">
+      <feGaussianBlur stdDeviation="0.54724343" id="nodemcu-32s-feGaussianBlur82377"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82379" x="-1.6514605" y="-0.20081141" width="4.3600586" height="1.3895272">
+      <feGaussianBlur stdDeviation="0.57284204" id="nodemcu-32s-feGaussianBlur82381"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82383" x="-1.7598111" y="-0.21560697" width="4.5767597" height="1.4191183">
+      <feGaussianBlur stdDeviation="0.62241649" id="nodemcu-32s-feGaussianBlur82385"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82387" x="-1.8194364" y="-0.22374897" width="4.6960103" height="1.4354023">
+      <feGaussianBlur stdDeviation="0.6496973" id="nodemcu-32s-feGaussianBlur82389"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82391" x="-1.919055" y="-0.23735216" width="4.8952476" height="1.4626087">
+      <feGaussianBlur stdDeviation="0.69527654" id="nodemcu-32s-feGaussianBlur82393"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82395" x="-75.912845" y="-0.25683623" width="152.82569" height="1.5136725">
+      <feGaussianBlur stdDeviation="0.99721486" id="nodemcu-32s-feGaussianBlur82397"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82399" x="-70.924508" y="-0.23295526" width="142.84902" height="1.4659105">
+      <feGaussianBlur stdDeviation="0.90430708" id="nodemcu-32s-feGaussianBlur82401"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82403" x="-79.9345" y="-0.27608933" width="160.869" height="1.5521787">
+      <feGaussianBlur stdDeviation="1.0721182" id="nodemcu-32s-feGaussianBlur82405"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82407" x="-76.145385" y="-0.25794948" width="153.29077" height="1.515899">
+      <feGaussianBlur stdDeviation="1.0015459" id="nodemcu-32s-feGaussianBlur82409"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82411" x="-1.8803404" y="-0.23206558" width="4.8178184" height="1.4520355">
+      <feGaussianBlur stdDeviation="0.67756321" id="nodemcu-32s-feGaussianBlur82413"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter82415" x="-1.8345425" y="-0.22581175" width="4.7262226" height="1.4395278">
+      <feGaussianBlur stdDeviation="0.65660892" id="nodemcu-32s-feGaussianBlur82417"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter83646" x="-64.928428" y="-0.20424988" width="130.85686" height="1.4084998">
+      <feGaussianBlur stdDeviation="0.79263005" id="nodemcu-32s-feGaussianBlur83648"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter83650" x="-61.282406" y="-0.18679506" width="123.56481" height="1.3735901">
+      <feGaussianBlur stdDeviation="0.72472291" id="nodemcu-32s-feGaussianBlur83652"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter83654" x="-87.386773" y="-0.31176603" width="175.77355" height="1.6235321">
+      <feGaussianBlur stdDeviation="1.2109168" id="nodemcu-32s-feGaussianBlur83656"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter83658" x="-70.924508" y="-0.23295526" width="142.84902" height="1.4659105">
+      <feGaussianBlur stdDeviation="0.90430708" id="nodemcu-32s-feGaussianBlur83660"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter83662" x="-71.813339" y="-0.23721042" width="144.62668" height="1.4744208">
+      <feGaussianBlur stdDeviation="0.92086155" id="nodemcu-32s-feGaussianBlur83664"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter83666" x="-71.590377" y="-0.23614302" width="144.18075" height="1.472286">
+      <feGaussianBlur stdDeviation="0.91670886" id="nodemcu-32s-feGaussianBlur83668"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter84871" x="-99.808131" y="-0.37123153" width="200.61626" height="1.7424631">
+      <feGaussianBlur stdDeviation="1.4422645" id="nodemcu-32s-feGaussianBlur84873"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter84875" x="-85.784088" y="-0.30409341" width="172.56818" height="1.6081868">
+      <feGaussianBlur stdDeviation="1.1810668" id="nodemcu-32s-feGaussianBlur84877"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter84879" x="-83.098964" y="-0.29123875" width="167.19793" height="1.5824775">
+      <feGaussianBlur stdDeviation="1.1310563" id="nodemcu-32s-feGaussianBlur84881"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter84883" x="-77.902956" y="-0.2663636" width="156.80591" height="1.5327272">
+      <feGaussianBlur stdDeviation="1.0342806" id="nodemcu-32s-feGaussianBlur84885"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86096" x="-0.5060047" y="-0.33561515" width="2.0120094" height="1.6712303">
+      <feGaussianBlur stdDeviation="1.7316767" id="nodemcu-32s-feGaussianBlur86098"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86100" x="-0.36246905" y="-0.24041299" width="1.7249381" height="1.480826">
+      <feGaussianBlur stdDeviation="1.2404612" id="nodemcu-32s-feGaussianBlur86102"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86104" x="-0.36246905" y="-0.24041299" width="1.7249381" height="1.480826">
+      <feGaussianBlur stdDeviation="1.2404612" id="nodemcu-32s-feGaussianBlur86106"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86108" x="-0.36246905" y="-0.24041299" width="1.7249381" height="1.480826">
+      <feGaussianBlur stdDeviation="1.2404612" id="nodemcu-32s-feGaussianBlur86110"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86112" x="-0.36246905" y="-0.24041299" width="1.7249381" height="1.480826">
+      <feGaussianBlur stdDeviation="1.2404612" id="nodemcu-32s-feGaussianBlur86114"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86116" x="-0.36246905" y="-0.24041299" width="1.7249381" height="1.480826">
+      <feGaussianBlur stdDeviation="1.2404612" id="nodemcu-32s-feGaussianBlur86118"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86120" x="-0.36246905" y="-0.24041299" width="1.7249381" height="1.480826">
+      <feGaussianBlur stdDeviation="1.2404612" id="nodemcu-32s-feGaussianBlur86122"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86124" x="-0.35897999" y="-0.23809882" width="1.71796" height="1.4761976">
+      <feGaussianBlur stdDeviation="1.2285208" id="nodemcu-32s-feGaussianBlur86126"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86128" x="-0.35897999" y="-0.23809882" width="1.71796" height="1.4761976">
+      <feGaussianBlur stdDeviation="1.2285208" id="nodemcu-32s-feGaussianBlur86130"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86132" x="-0.35897999" y="-0.23809882" width="1.71796" height="1.4761976">
+      <feGaussianBlur stdDeviation="1.2285208" id="nodemcu-32s-feGaussianBlur86134"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86136" x="-0.35897999" y="-0.23809882" width="1.71796" height="1.4761976">
+      <feGaussianBlur stdDeviation="1.2285208" id="nodemcu-32s-feGaussianBlur86138"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86140" x="-0.35897999" y="-0.23809882" width="1.71796" height="1.4761976">
+      <feGaussianBlur stdDeviation="1.2285208" id="nodemcu-32s-feGaussianBlur86142"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86144" x="-0.35897999" y="-0.23809882" width="1.71796" height="1.4761976">
+      <feGaussianBlur stdDeviation="1.2285208" id="nodemcu-32s-feGaussianBlur86146"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86148" x="-0.35897999" y="-0.23809882" width="1.71796" height="1.4761976">
+      <feGaussianBlur stdDeviation="1.2285208" id="nodemcu-32s-feGaussianBlur86150"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86152" x="-0.52639738" y="-0.34914089" width="2.0527948" height="1.6982818">
+      <feGaussianBlur stdDeviation="1.8014656" id="nodemcu-32s-feGaussianBlur86154"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86156" x="-0.52639738" y="-0.34914089" width="2.0527948" height="1.6982818">
+      <feGaussianBlur stdDeviation="1.8014656" id="nodemcu-32s-feGaussianBlur86158"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86160" x="-0.52639738" y="-0.34914089" width="2.0527948" height="1.6982818">
+      <feGaussianBlur stdDeviation="1.8014656" id="nodemcu-32s-feGaussianBlur86162"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86164" x="-0.52639738" y="-0.34914089" width="2.0527948" height="1.6982818">
+      <feGaussianBlur stdDeviation="1.8014656" id="nodemcu-32s-feGaussianBlur86166"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86168" x="-0.52639738" y="-0.34914089" width="2.0527948" height="1.6982818">
+      <feGaussianBlur stdDeviation="1.8014656" id="nodemcu-32s-feGaussianBlur86170"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86172" x="-0.52639738" y="-0.34914089" width="2.0527948" height="1.6982818">
+      <feGaussianBlur stdDeviation="1.8014656" id="nodemcu-32s-feGaussianBlur86174"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86176" x="-0.52639738" y="-0.34914089" width="2.0527948" height="1.6982818">
+      <feGaussianBlur stdDeviation="1.8014656" id="nodemcu-32s-feGaussianBlur86178"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86180" x="-84.571053" y="-0.29828617" width="170.14211" height="1.5965723">
+      <feGaussianBlur stdDeviation="1.158474" id="nodemcu-32s-feGaussianBlur86182"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86184" x="-84.571053" y="-0.29828617" width="170.14211" height="1.5965723">
+      <feGaussianBlur stdDeviation="1.158474" id="nodemcu-32s-feGaussianBlur86186"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86188" x="-86.585219" y="-0.30792871" width="174.17044" height="1.6158574">
+      <feGaussianBlur stdDeviation="1.1959878" id="nodemcu-32s-feGaussianBlur86190"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86192" x="-86.585219" y="-0.30792871" width="174.17044" height="1.6158574">
+      <feGaussianBlur stdDeviation="1.1959878" id="nodemcu-32s-feGaussianBlur86194"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86196" x="-94.043305" y="-0.34363324" width="189.08661" height="1.6872665">
+      <feGaussianBlur stdDeviation="1.3348946" id="nodemcu-32s-feGaussianBlur86198"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86200" x="-94.043305" y="-0.34363324" width="189.08661" height="1.6872665">
+      <feGaussianBlur stdDeviation="1.3348946" id="nodemcu-32s-feGaussianBlur86202"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86204" x="-96.364196" y="-0.35474418" width="193.72839" height="1.7094884">
+      <feGaussianBlur stdDeviation="1.3781213" id="nodemcu-32s-feGaussianBlur86206"></feGaussianBlur>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter86208" x="-96.364196" y="-0.35474418" width="193.72839" height="1.7094884">
+      <feGaussianBlur stdDeviation="1.3781213" id="nodemcu-32s-feGaussianBlur86210"></feGaussianBlur>
+    </filter>
+    <rect id="nodemcu-32s-p" width="8" height="8" x="0" y="0"></rect>
+    <filter style="color-interpolation-filters:sRGB" id="nodemcu-32s-filter4483" x="-0.62541216" y="-0.62541216" width="2.2508243" height="2.2508243">
+      <feGaussianBlur stdDeviation="1.9759984" id="nodemcu-32s-feGaussianBlur4485"></feGaussianBlur>
+    </filter>
+  
+<radialGradient id="authored-a-pad-face" gradientUnits="objectBoundingBox" cx="0.42" cy="0.38" r="0.72">
+<stop offset="0" stop-color="#f0e6c2"></stop><stop offset="1" stop-color="#a18a52"></stop>
+</radialGradient>
+<linearGradient id="authored-a-sd-lid" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#d5d7da"></stop><stop offset="0.55" stop-color="#b4b7bb"></stop><stop offset="1" stop-color="#85888d"></stop>
+</linearGradient>
+<g id="part-button-tactile-4530"><g id="authored-a-button-tactile-4530" transform="translate(10442.908 56.296)"><rect x="-4.926" y="0.704" width="11.259" height="11.963" fill="#e2e3e5"></rect><rect x="-4.926" y="32.37" width="11.259" height="11.963" fill="#e2e3e5"></rect><rect x="57" y="0.704" width="11.259" height="11.963" fill="#e2e3e5"></rect><rect x="57" y="32.37" width="11.259" height="11.963" fill="#e2e3e5"></rect><rect x="2.111" y="0.704" width="60.518" height="45.037" fill="#4d4d4d"></rect><rect x="1.407" y="0" width="60.518" height="45.037" rx="5.63" fill="#807f7c"></rect><rect x="1.407" y="4.504" width="3.378" height="36.029" rx="1.126" fill="#d6d6d4"></rect><rect x="58.548" y="4.504" width="3.378" height="36.029" rx="1.126" fill="#b4b3b0"></rect><rect x="11.259" y="5.63" width="40.815" height="33.778" rx="14.778" fill="#1a1a1a"></rect><rect x="11.822" y="6.193" width="39.689" height="32.652" rx="14.074" fill="none" stroke="#c9c9c7" stroke-width="1.267"></rect><rect x="13.23" y="7.6" width="36.874" height="29.837" rx="13.37" fill="#5b6070"></rect></g></g><g id="part-chip-0402-empty"><g id="authored-a-chip-0402-empty" transform="translate(20491.744 56.296)"><rect x="-3.518" y="-1.056" width="7.389" height="9.148" rx="0.704" fill="#e2e3e5"></rect><rect x="10.204" y="-1.056" width="7.389" height="9.148" rx="0.704" fill="#e2e3e5"></rect></g></g><g id="part-chip-0402-res"><g id="authored-a-chip-0402-res" transform="translate(19112.492 56.296)"><rect x="-3.518" y="-1.056" width="7.389" height="9.148" rx="0.704" fill="#e2e3e5"></rect><rect x="10.204" y="-1.056" width="7.389" height="9.148" rx="0.704" fill="#e2e3e5"></rect><rect x="0.704" y="0.704" width="14.074" height="7.037" fill="#4d4d4d"></rect><rect x="0" y="0" width="14.074" height="7.037" rx="0.704" fill="#a67a4e"></rect><rect x="0" y="0" width="3.378" height="7.037" rx="0.704" fill="#b3b3b3"></rect><rect x="10.696" y="0" width="3.378" height="7.037" rx="0.704" fill="#b3b3b3"></rect><rect x="3.941" y="0.704" width="6.193" height="0.985" fill="#ffffff" opacity="0.2"></rect></g></g><g id="part-chip-0402-res-black"><g id="authored-a-chip-0402-res-black" transform="translate(19703.6 56.296)"><rect x="-3.518" y="-1.056" width="7.389" height="9.148" rx="0.704" fill="#e2e3e5"></rect><rect x="10.204" y="-1.056" width="7.389" height="9.148" rx="0.704" fill="#e2e3e5"></rect><rect x="0.704" y="0.704" width="14.074" height="7.037" fill="#4d4d4d"></rect><rect x="0" y="0" width="14.074" height="7.037" rx="0.704" fill="#35353a"></rect><rect x="0" y="0" width="3.378" height="7.037" rx="0.704" fill="#b3b3b3"></rect><rect x="10.696" y="0" width="3.378" height="7.037" rx="0.704" fill="#b3b3b3"></rect><rect x="3.941" y="0.704" width="6.193" height="0.985" fill="#ffffff" opacity="0.2"></rect></g></g><g id="part-chip-0805-mlcc-brown"><g id="authored-a-chip-0805-mlcc-brown" transform="translate(22659.14 56.296)"><rect x="-4.926" y="-1.056" width="14.602" height="19.704" rx="0.704" fill="#e2e3e5"></rect><rect x="18.472" y="-1.056" width="14.602" height="19.704" rx="0.704" fill="#e2e3e5"></rect><rect x="0.704" y="0.704" width="28.148" height="17.593" fill="#4d4d4d"></rect><rect x="0" y="0" width="28.148" height="17.593" rx="1.759" fill="#c4a06a"></rect><rect x="0" y="0" width="6.756" height="17.593" rx="1.759" fill="#b3b3b3"></rect><rect x="21.392" y="0" width="6.756" height="17.593" rx="1.759" fill="#b3b3b3"></rect><rect x="7.318" y="0.704" width="13.511" height="2.463" fill="#ffffff" opacity="0.2"></rect></g></g><g id="part-connector-usb-micro-b"><g id="nodemcu-32s-g21538">
+      <ellipse style="opacity:1;fill:#cccccc;fill-opacity:0.854902;stroke:none;stroke-width:0.499999" id="nodemcu-32s-path21419" cx="432.53107" cy="60.463375" rx="12.004215" ry="11.18288"></ellipse>
+      <ellipse style="opacity:1;fill:#cccccc;fill-opacity:0.854902;stroke:none;stroke-width:0.499999" id="nodemcu-32s-ellipse21501" cx="432.53107" cy="155.99171" rx="12.004215" ry="11.18288"></ellipse>
+      <path id="nodemcu-32s-path19403" style="fill:#000000;stroke:none;stroke-width:0.999999px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 2004.5957,208.02344 -339.0527,4.05273 c 0,0 0,49.97991 9.457,59.43555 9.4556,9.45564 21.6113,5.4043 21.6113,5.4043 l 67.8145,1.3496 -0.7539,37 -30.7539,1.8125 0.6308,184.38282 30.461,3.01562 -1.0293,32.27149 c 0,0 -77.1745,2.2233 -85.2793,10.32812 -8.1048,8.10486 -9.4551,13.50781 -9.4551,13.50781 l 2.7012,48.62891 334.3711,-5.48437 z m -129.3398,50.31836 h 30.9003 l 0.252,39.84765 h -36.2168 c 0,0 -6.08,-0.33682 -6.0801,-6.41601 v -27.01563 c 0,-4.28644 3.3773,-6.0783 11.1446,-6.41601 z m 0,258 h 30.9003 l 0.252,39.84961 h -36.2168 c 0,0 -6.08,-0.33875 -6.0801,-6.41797 v -27.01563 c 0,-4.28644 3.3773,-6.07831 11.1446,-6.41601 z" transform="scale(0.26458333)"></path>
+      <g id="nodemcu-32s-g21395" style="fill:#cccccc;fill-opacity:0.854902">
+        <rect style="opacity:1;fill:#cccccc;fill-opacity:0.854902;stroke:none;stroke-width:0.499999" id="nodemcu-32s-rect21129" width="28.431053" height="3.0326457" x="426.33945" y="88.578522" ry="0"></rect>
+        <rect style="opacity:1;fill:#cccccc;fill-opacity:0.854902;stroke:none;stroke-width:0.499999" id="nodemcu-32s-rect21382" width="28.431053" height="3.0326457" x="426.21307" y="97.171021" ry="0"></rect>
+        <rect style="opacity:1;fill:#cccccc;fill-opacity:0.854902;stroke:none;stroke-width:0.499999" id="nodemcu-32s-rect21384" width="28.431053" height="3.0326457" x="426.21307" y="106.64804" ry="0"></rect>
+        <rect style="opacity:1;fill:#cccccc;fill-opacity:0.854902;stroke:none;stroke-width:0.499999" id="nodemcu-32s-rect21386" width="28.431053" height="3.0326457" x="425.70764" y="115.24054" ry="0"></rect>
+        <rect style="opacity:1;fill:#cccccc;fill-opacity:0.854902;stroke:none;stroke-width:0.499999" id="nodemcu-32s-rect21388" width="28.431053" height="3.0326457" x="425.83401" y="124.46484" ry="0"></rect>
+      </g>
+      <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 444.78802,73.415297 22.04963,0.209147 -0.19947,9.789584 -8.13696,0.479557 0.16689,48.784615 8.05948,0.79789 -0.27234,8.53849 -20.1509,0.3934 -0.25271,-9.72973 6.94981,0.25272 -0.25273,-49.027773 -7.3289,-0.252722 z" id="nodemcu-32s-path20940"></path>
+      <path id="nodemcu-32s-path21503" style="fill:#cccccc;stroke:none;stroke-width:0.999999px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 2004.5957,208.02344 -339.0527,4.05273 c 0,0 0,49.97991 9.457,59.43555 9.4556,9.45564 21.6113,5.4043 21.6113,5.4043 l 67.8145,1.3496 -0.7539,37 -30.7539,1.8125 0.6308,184.38282 30.461,3.01562 -1.0293,32.27149 c 0,0 -77.1745,2.2233 -85.2793,10.32812 -8.1048,8.10486 -9.4551,13.50781 -9.4551,13.50781 l 2.7012,48.62891 334.3711,-5.48437 z m -129.3398,50.31836 h 30.9003 l 0.252,39.84765 h -36.2168 c 0,0 -6.08,-0.33682 -6.0801,-6.41601 v -27.01563 c 0,-4.28644 3.3773,-6.0783 11.1446,-6.41601 z m 0,258 h 30.9003 l 0.252,39.84961 h -36.2168 c 0,0 -6.08,-0.33875 -6.0801,-6.41797 v -27.01563 c 0,-4.28644 3.3773,-6.07831 11.1446,-6.41601 z" transform="scale(0.26458333)"></path>
+    </g></g><g id="part-diode-sod123"><g id="authored-a-diode-sod123" transform="translate(24038.392 56.296)"><rect x="-9.148" y="4.222" width="14.074" height="14.074" rx="0.704" fill="#e2e3e5"></rect><rect x="33.074" y="4.222" width="14.074" height="14.074" rx="0.704" fill="#e2e3e5"></rect><rect x="-7.037" y="7.389" width="9.852" height="7.741" fill="#b3b3b3"></rect><rect x="35.185" y="7.389" width="9.852" height="7.741" fill="#b3b3b3"></rect><rect x="0.704" y="0.704" width="38" height="22.518" fill="#4d4d4d"></rect><rect x="0" y="0" width="38" height="22.518" rx="1.407" fill="#333333"></rect><rect x="2.533" y="1.126" width="4.222" height="20.267" fill="#c9c9c9"></rect><rect x="8.444" y="1.407" width="27.444" height="1.126" fill="#ffffff" opacity="0.2"></rect></g></g><g id="part-empty-4pad-1612"><g id="authored-a-empty-4pad-1612" transform="translate(23841.356 56.296)"><rect x="0" y="0" width="5.911" height="7.741" rx="0.704" fill="#e2e3e5"></rect><rect x="0" y="13.089" width="5.911" height="7.741" rx="0.704" fill="#e2e3e5"></rect><rect x="15.481" y="0" width="5.911" height="7.741" rx="0.704" fill="#e2e3e5"></rect><rect x="15.481" y="13.089" width="5.911" height="7.741" rx="0.704" fill="#e2e3e5"></rect></g></g><g id="part-header-pad"><g id="nodemcu-32s-g78461">
+        <ellipse style="opacity:1;fill:url(#nodemcu-32s-radialGradient69323);fill-opacity:1;stroke:none;stroke-width:9.90392;stroke-opacity:1" id="nodemcu-32s-path50635" cx="-150.30165" cy="-68.223351" rx="10.168141" ry="10.246357"></ellipse>
+        <rect style="fill:#a4a39b;fill-opacity:1;stroke:none;stroke-width:7.99999;stroke-opacity:1" id="nodemcu-32s-rect50917" width="6.4443722" height="6.2548313" x="-149.42097" y="-73.983917"></rect>
+        <rect style="fill:url(#nodemcu-32s-linearGradient69067);fill-opacity:1;stroke:none;stroke-width:8.44265;stroke-opacity:1" id="nodemcu-32s-rect50999" width="6.4443665" height="5.8906116" x="-233.83694" y="102.33731" transform="matrix(1,0,0.77998317,-0.62580049,0,0)"></rect>
+        <rect style="fill:url(#nodemcu-32s-linearGradient69139);fill-opacity:1;stroke:none;stroke-width:7.53203;stroke-opacity:1" id="nodemcu-32s-rect51100" width="5.7124934" height="6.2548313" x="191.53935" y="-193.82004" transform="matrix(-0.7801059,0.62564749,0,1,0,0)"></rect>
+      </g></g><g id="part-ic-qfn28"><g id="nodemcu-32s-g17723">
+      <g id="nodemcu-32s-g17435">
+        <g id="nodemcu-32s-g15527-1-6" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,374.45564,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect15523-1-2" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86152)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path15525-3-3"></path>
+        </g>
+        <g id="nodemcu-32s-g17382" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,381.51122,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17378" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86156)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17380"></path>
+        </g>
+        <g id="nodemcu-32s-g17388" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,388.56676,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17384" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86160)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17386"></path>
+        </g>
+        <g id="nodemcu-32s-g17394" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,395.62231,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17390" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86164)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17392"></path>
+        </g>
+        <g id="nodemcu-32s-g17400" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,402.67788,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17396" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86168)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17398"></path>
+        </g>
+        <g id="nodemcu-32s-g17406" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,409.73346,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17402" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86172)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17404"></path>
+        </g>
+        <g id="nodemcu-32s-g17412" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,416.789,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17408" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86176)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17410"></path>
+        </g>
+      </g>
+      <g id="nodemcu-32s-g17479" transform="matrix(1,0,0,-1,0,213.99484)">
+        <g id="nodemcu-32s-g17441" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,374.45564,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17437" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86120)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17439"></path>
+        </g>
+        <g id="nodemcu-32s-g17447" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,381.51122,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17443" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86116)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17445"></path>
+        </g>
+        <g id="nodemcu-32s-g17453" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,388.56676,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17449" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86112)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17451"></path>
+        </g>
+        <g id="nodemcu-32s-g17459" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,395.62231,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17455" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86108)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17457"></path>
+        </g>
+        <g id="nodemcu-32s-g17465" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,402.67788,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17461" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86104)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17463"></path>
+        </g>
+        <g id="nodemcu-32s-g17471" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,409.73346,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17467" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86100)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17469"></path>
+        </g>
+        <g id="nodemcu-32s-g17477" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,416.789,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17473" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86096)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17475"></path>
+        </g>
+      </g>
+      <g id="nodemcu-32s-g17523" transform="matrix(0,-1,-1,0,445.63567,445.54532)">
+        <g id="nodemcu-32s-g17485" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,374.45564,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17481" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17483"></path>
+        </g>
+        <g id="nodemcu-32s-g17491" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,381.51122,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17487" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17489"></path>
+        </g>
+        <g id="nodemcu-32s-g17497" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,388.56676,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17493" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17495"></path>
+        </g>
+        <g id="nodemcu-32s-g17503" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,395.62231,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17499" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17501"></path>
+        </g>
+        <g id="nodemcu-32s-g17509" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,402.67788,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17505" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17507"></path>
+        </g>
+        <g id="nodemcu-32s-g17515" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,409.73346,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17511" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17513"></path>
+        </g>
+        <g id="nodemcu-32s-g17521" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,416.789,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17517" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17519"></path>
+        </g>
+      </g>
+      <g id="nodemcu-32s-g17567" transform="rotate(-90,339.12224,106.42308)">
+        <g id="nodemcu-32s-g17529" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,374.45564,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17525" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86124)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17527"></path>
+        </g>
+        <g id="nodemcu-32s-g17535" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,381.51122,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17531" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86128)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17533"></path>
+        </g>
+        <g id="nodemcu-32s-g17541" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,388.56676,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17537" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86132)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17539"></path>
+        </g>
+        <g id="nodemcu-32s-g17547" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,395.62231,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17543" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86136)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17545"></path>
+        </g>
+        <g id="nodemcu-32s-g17553" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,402.67788,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17549" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86140)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17551"></path>
+        </g>
+        <g id="nodemcu-32s-g17559" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,409.73346,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17555" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86144)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17557"></path>
+        </g>
+        <g id="nodemcu-32s-g17565" style="display:inline;opacity:0.87404" transform="matrix(-0.32734362,0,0,-0.32734362,416.789,68.141172)">
+          <rect style="fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.1" id="nodemcu-32s-rect17561" width="13.155064" height="27.996178" x="167.62094" y="-23.945847" ry="2.9062855"></rect>
+          <path style="fill:#333333;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#nodemcu-32s-filter86148)" d="m 170.3336,2.5272047 3.159,-12.1305826 5.05441,12.3833031 z" id="nodemcu-32s-path17563"></path>
+        </g>
+      </g>
+      <rect style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.499999" id="nodemcu-32s-rect17159" width="71.480141" height="68.263542" x="304.5054" y="73.62455"></rect>
+      <rect style="fill:#333333;fill-opacity:1;stroke:none;stroke-width:0.499999" id="nodemcu-32s-rect17569" width="71.480141" height="68.263542" x="304.5054" y="73.62455"></rect>
+    </g></g><g id="part-led-rgb-3535"><g id="authored-a-led-rgb-3535" transform="translate(24432.464 56.296)"><rect x="-8.444" y="4.926" width="21.111" height="13.793" fill="#b3b3b3"></rect><rect x="36.592" y="4.926" width="21.111" height="13.793" fill="#b3b3b3"></rect><rect x="-8.444" y="30.541" width="21.111" height="13.793" fill="#b3b3b3"></rect><rect x="36.592" y="30.541" width="21.111" height="13.793" fill="#b3b3b3"></rect><rect x="0.844" y="0.844" width="49.259" height="49.259" fill="#4d4d4d"></rect><rect x="0" y="0" width="49.259" height="49.259" rx="2.815" fill="#f2f2f2"></rect><path d="M 0 8.867 L 8.867 0 L 0 0 Z" fill="#999999"></path><circle cx="24.63" cy="24.63" r="16.255" fill="#e0e4e6"></circle><rect x="15.467" y="24.925" width="6.108" height="6.108" fill="#c0392b"></rect><rect x="27.684" y="24.925" width="6.108" height="6.108" fill="#1f9d63"></rect><rect x="21.575" y="15.073" width="6.108" height="6.108" fill="#2f6fd0"></rect></g></g><g id="part-logo-ce"><g id="authored-a-logo-ce" transform="translate(44530.136 56.296)"><path d="M15.481,28.077A14.074,14.074 0 0 1 14.074,28.148A14.074,14.074 0 0 1 14.074,0A14.074,14.074 0 0 1 15.481,0.071L15.481,4.293A9.852,9.852 0 0 0 14.074,4.222A9.852,9.852 0 0 0 14.074,23.926A9.852,9.852 0 0 0 15.481,23.855Z" fill="#1a1a1a"></path><path d="M39.407,28.077A14.074,14.074 0 0 1 38,28.148A14.074,14.074 0 0 1 38,0A14.074,14.074 0 0 1 39.407,0.071L39.407,4.293A9.852,9.852 0 0 0 38,4.222A9.852,9.852 0 0 0 28.376,11.963L36.592,11.963L36.592,16.185L28.376,16.185A9.852,9.852 0 0 0 38,23.926A9.852,9.852 0 0 0 39.407,23.855Z" fill="#1a1a1a"></path></g></g><g id="part-logo-espressif-disc"><g id="authored-a-logo-espressif-disc" transform="translate(44136.064 56.296)"><circle cx="14.074" cy="14.074" r="14.074" fill="#1a1a1a"></circle><path d="M 2.398 15.981 L 2.604 15.847 L 2.815 15.72 L 3.03 15.601 L 3.248 15.49 L 3.471 15.386 L 3.697 15.29 L 3.927 15.202 L 4.159 15.122 L 4.394 15.05 L 4.631 14.987 L 4.87 14.931 L 5.111 14.885 L 5.354 14.846 L 5.598 14.816 L 5.842 14.795 L 6.088 14.782 L 6.333 14.778 L 6.579 14.782 L 6.824 14.795 L 7.069 14.816 L 7.313 14.846 L 7.555 14.885 L 7.796 14.931 L 8.036 14.987 L 8.273 15.05 L 8.508 15.122 L 8.74 15.202 L 8.969 15.29 L 9.196 15.386 L 9.418 15.49 L 9.637 15.601 L 9.852 15.72 L 10.062 15.847 L 10.268 15.981 L 10.47 16.122 L 10.666 16.269 L 10.857 16.424 L 11.042 16.585 L 11.222 16.753 L 11.395 16.926 L 11.563 17.106 L 11.724 17.291 L 11.879 17.482 L 12.026 17.678 L 12.167 17.88 L 12.301 18.086 L 12.428 18.296 L 12.547 18.511 L 12.658 18.73 L 12.762 18.952 L 12.858 19.179 L 12.946 19.408 L 13.026 19.64 L 13.098 19.875 L 13.161 20.112 L 13.217 20.352 L 13.263 20.593 L 13.302 20.835 L 13.332 21.079 L 13.353 21.324 L 13.366 21.569 L 13.37 21.815 L 13.366 22.06 L 13.353 22.306 L 13.332 22.55 L 13.302 22.794 L 13.263 23.037 L 13.217 23.278 L 13.161 23.517 L 13.098 23.754 L 13.026 23.989 L 12.946 24.221 L 12.858 24.451 L 12.762 24.677 L 12.658 24.9 L 12.547 25.118 L 12.428 25.333 L 12.301 25.544 L 12.167 25.75" fill="none" stroke="#e0e0e0" stroke-width="2.956" stroke-linecap="butt"></path><path d="M 3.201 9.251 L 3.641 9.15 L 4.085 9.063 L 4.531 8.993 L 4.98 8.938 L 5.43 8.898 L 5.881 8.875 L 6.333 8.867 L 6.785 8.875 L 7.237 8.898 L 7.687 8.938 L 8.135 8.993 L 8.582 9.063 L 9.025 9.15 L 9.466 9.251 L 9.902 9.368 L 10.334 9.5 L 10.762 9.647 L 11.184 9.809 L 11.6 9.986 L 12.009 10.177 L 12.412 10.382 L 12.807 10.601 L 13.195 10.834 L 13.574 11.08 L 13.944 11.339 L 14.305 11.611 L 14.656 11.896 L 14.997 12.192 L 15.328 12.501 L 15.647 12.82 L 15.956 13.151 L 16.252 13.492 L 16.537 13.843 L 16.809 14.204 L 17.068 14.574 L 17.314 14.953 L 17.547 15.341 L 17.766 15.736 L 17.971 16.139 L 18.162 16.548 L 18.339 16.964 L 18.501 17.386 L 18.648 17.814 L 18.78 18.246 L 18.897 18.682 L 18.998 19.123 L 19.085 19.566 L 19.155 20.013 L 19.21 20.461 L 19.25 20.911 L 19.273 21.363 L 19.281 21.815 L 19.273 22.267 L 19.25 22.718 L 19.21 23.168 L 19.155 23.617 L 19.085 24.063 L 18.998 24.507 L 18.897 24.947" fill="none" stroke="#e0e0e0" stroke-width="2.956" stroke-linecap="butt"></path><path d="M 9.608 3.242 L 10.254 3.368 L 10.896 3.516 L 11.532 3.686 L 12.161 3.879 L 12.784 4.093 L 13.398 4.329 L 14.004 4.586 L 14.601 4.864 L 15.187 5.163 L 15.763 5.482 L 16.327 5.821 L 16.879 6.18 L 17.418 6.557 L 17.944 6.953 L 18.456 7.368 L 18.953 7.8 L 19.434 8.249 L 19.899 8.714 L 20.348 9.195 L 20.78 9.692 L 21.195 10.204 L 21.591 10.73 L 21.968 11.269 L 22.327 11.821 L 22.666 12.385 L 22.985 12.961 L 23.284 13.547 L 23.562 14.144 L 23.819 14.75 L 24.055 15.364 L 24.269 15.987 L 24.462 16.616 L 24.632 17.252 L 24.78 17.894 L 24.906 18.54" fill="none" stroke="#e0e0e0" stroke-width="2.956" stroke-linecap="butt"></path><circle cx="6.333" cy="21.815" r="1.83" fill="#e0e0e0"></circle></g></g><g id="part-module-mini"><g id="authored-a-module-mini" transform="translate(7881.44 56.296)"><rect x="0" y="0" width="233.628" height="185.777" rx="3.518" fill="#404048"></rect><path d="M 54.185 14.778 L 12.512 14.778 L 12.512 63.831 L 35.227 63.831 L 35.227 91.951 L 12.512 91.951 L 12.512 117.415 L 35.227 117.415 L 35.227 146.629 L 12.512 146.629 L 12.512 170.999 L 49.287 170.999" fill="none" stroke="#686868" stroke-width="7.318" stroke-linejoin="miter" stroke-linecap="butt"></path><path d="M 12.512 39.617 L 54.185 39.617" fill="none" stroke="#686868" stroke-width="7.318" stroke-linejoin="miter" stroke-linecap="butt"></path><circle cx="54.185" cy="14.778" r="4.504" fill="#d8c088"></circle><circle cx="54.185" cy="39.617" r="4.504" fill="#d8c088"></circle><rect x="67.555" y="11.963" width="154.11" height="161.851" rx="4.926" fill="#e0e0e0"></rect><circle cx="67.555" cy="19" r="1.83" fill="#404048"></circle><circle cx="67.555" cy="34.481" r="1.83" fill="#404048"></circle><circle cx="67.555" cy="49.963" r="1.83" fill="#404048"></circle><circle cx="67.555" cy="65.444" r="1.83" fill="#404048"></circle><circle cx="67.555" cy="80.925" r="1.83" fill="#404048"></circle><circle cx="67.555" cy="96.407" r="1.83" fill="#404048"></circle><circle cx="67.555" cy="111.888" r="1.83" fill="#404048"></circle><circle cx="67.555" cy="127.37" r="1.83" fill="#404048"></circle><circle cx="67.555" cy="142.851" r="1.83" fill="#404048"></circle></g></g><g id="part-sot223"><g id="authored-a-ic-sot223" transform="translate(10245.872 56.296)"><rect x="17.593" y="-33.074" width="56.296" height="37.296" rx="0.844" fill="#e2e3e5"></rect><rect x="5.63" y="45.037" width="21.111" height="34.481" rx="0.844" fill="#e2e3e5"></rect><rect x="38.703" y="45.037" width="21.111" height="34.481" rx="0.844" fill="#e2e3e5"></rect><rect x="71.777" y="45.037" width="21.111" height="34.481" rx="0.844" fill="#e2e3e5"></rect><rect x="19.704" y="-26.741" width="52.074" height="30.963" fill="#b3b3b3"></rect><rect x="7.741" y="45.037" width="16.889" height="28.148" fill="#b3b3b3"></rect><rect x="40.815" y="45.037" width="16.889" height="28.148" fill="#b3b3b3"></rect><rect x="73.888" y="45.037" width="16.889" height="28.148" fill="#b3b3b3"></rect><rect x="0.844" y="0.844" width="91.481" height="49.259" fill="#4d4d4d"></rect><rect x="0" y="0" width="91.481" height="49.259" rx="1.97" fill="#333333"></rect><rect x="3.518" y="1.689" width="84.444" height="1.407" fill="#ffffff" opacity="0.2"></rect></g></g><g id="part-sot23"><g id="authored-a-transistor-sot23-pads" transform="translate(10836.98 56.296)"><rect x="2.674" y="-14.074" width="8.726" height="18.296" rx="0.704" fill="#e2e3e5"></rect><rect x="29.415" y="-14.074" width="8.726" height="18.296" rx="0.704" fill="#e2e3e5"></rect><rect x="16.044" y="18.296" width="8.726" height="18.296" rx="0.704" fill="#e2e3e5"></rect><rect x="4.222" y="-8.444" width="5.63" height="11.259" fill="#b3b3b3"></rect><rect x="30.963" y="-8.444" width="5.63" height="11.259" fill="#b3b3b3"></rect><rect x="17.593" y="19.704" width="5.63" height="11.259" fill="#b3b3b3"></rect><rect x="0.704" y="0.704" width="40.815" height="22.518" fill="#4d4d4d"></rect><rect x="0" y="0" width="40.815" height="22.518" rx="1.689" fill="#333333"></rect><rect x="2.111" y="1.407" width="36.592" height="1.126" fill="#ffffff" opacity="0.2"></rect></g></g></defs><g transform="translate(12 20.901)"><g transform="scale(0.727)"><g transform="translate(0 547.619) rotate(-90)"><path d="M 16.889 0 L 530.731 0 A 16.889 16.889 0 0 1 547.619 16.889 L 547.619 340.591 A 16.889 16.889 0 0 1 530.731 357.48 L 16.889 357.48 A 16.889 16.889 0 0 1 0 340.591 L 0 16.889 A 16.889 16.889 0 0 1 16.889 0 Z" fill="#1a1a1a" stroke="#000000" stroke-width="1"/><use href="#part-module-mini" transform="translate(-7951.2467 29.5553)"/><use href="#part-logo-espressif-disc" transform="translate(-44130.8129 166.5755) rotate(180 44150.1365 70.37) translate(44150.1365 70.37) scale(0.6943) translate(-44150.1365 -70.37)"/><text x="19.3236" y="222.2478" transform="rotate(270 19.3236 222.2478)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="16.9944" fill="#1a1a1a">ESPRESSIF</text><text x="42.4401" y="246.7172" transform="rotate(270 42.4401 246.7172)" text-anchor="start" dominant-baseline="central" font-family="sans-serif" font-weight="600" font-size="11.1497" fill="#1a1a1a">ESP32-C3-MINI-1</text><use href="#part-logo-ce" transform="translate(-44485.8246 163.8847) rotate(270 44549.8402 70.37) translate(44549.8402 70.37) scale(0.6325) translate(-44549.8402 -70.37)"/><g class="bpad pwr" data-slot="R1" data-gpio="" data-caps="" data-labels="GND" data-note="Ground" tabindex="0"><use href="#part-header-pad" transform="translate(173.8756 86.0973)"/><circle class="ring" cx="23.574" cy="17.874" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad pwr" data-slot="L1" data-gpio="" data-caps="" data-labels="GND" data-note="Ground" tabindex="0"><use href="#part-header-pad" transform="translate(173.8756 407.829)"/><circle class="ring" cx="23.574" cy="339.606" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad sys" data-slot="R2" data-gpio="21" data-caps="uart pwm" data-labels="IO21 TX" data-note="UART0 TX" tabindex="0"><use href="#part-header-pad" transform="translate(209.6236 86.0973)"/><circle class="ring" cx="59.322" cy="17.874" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad pwr" data-slot="L2" data-gpio="" data-caps="" data-labels="3V3 3.3V" data-note="3.3V regulated output" tabindex="0"><use href="#part-header-pad" transform="translate(209.6236 407.829)"/><circle class="ring" cx="59.322" cy="339.606" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad sys" data-slot="R3" data-gpio="20" data-caps="uart pwm" data-labels="IO20 RX" data-note="UART0 RX" tabindex="0"><use href="#part-header-pad" transform="translate(245.3715 86.0973)"/><circle class="ring" cx="95.07" cy="17.874" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad pwr" data-slot="L3" data-gpio="" data-caps="" data-labels="3V3 3.3V" data-note="3.3V regulated output" tabindex="0"><use href="#part-header-pad" transform="translate(245.3715 407.829)"/><circle class="ring" cx="95.07" cy="339.606" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad pwr" data-slot="R4" data-gpio="" data-caps="" data-labels="GND" data-note="Ground" tabindex="0"><use href="#part-header-pad" transform="translate(281.1195 86.0973)"/><circle class="ring" cx="130.818" cy="17.874" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad warn" data-slot="L4" data-gpio="2" data-caps="adc pwm" data-labels="IO2 A2" data-note="ADC1_CH2; FSPIQ" tabindex="0"><use href="#part-header-pad" transform="translate(281.1195 407.829)"/><circle class="ring" cx="130.818" cy="339.606" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad warn" data-slot="R5" data-gpio="9" data-caps="i2c pwm" data-labels="IO9 SCL" data-note="BOOT button; default I2C SCL" tabindex="0"><use href="#part-header-pad" transform="translate(316.8674 86.0973)"/><circle class="ring" cx="166.566" cy="17.874" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad safe" data-slot="L5" data-gpio="3" data-caps="adc pwm" data-labels="IO3 A3" data-note="ADC1_CH3" tabindex="0"><use href="#part-header-pad" transform="translate(316.8674 407.829)"/><circle class="ring" cx="166.566" cy="339.606" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad warn" data-slot="R6" data-gpio="8" data-caps="i2c pwm" data-labels="IO8 SDA" data-note="Onboard RGB LED; default I2C SDA" tabindex="0"><use href="#part-header-pad" transform="translate(352.6154 86.0973)"/><circle class="ring" cx="202.314" cy="17.874" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad pwr" data-slot="L6" data-gpio="" data-caps="" data-labels="GND" data-note="Ground" tabindex="0"><use href="#part-header-pad" transform="translate(352.6154 407.829)"/><circle class="ring" cx="202.314" cy="339.606" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad pwr" data-slot="R7" data-gpio="" data-caps="" data-labels="GND" data-note="Ground" tabindex="0"><use href="#part-header-pad" transform="translate(388.3634 86.0973)"/><circle class="ring" cx="238.062" cy="17.874" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad pwr" data-slot="L7" data-gpio="" data-caps="" data-labels="RST EN" data-note="Chip reset (active low)" tabindex="0"><use href="#part-header-pad" transform="translate(388.3634 407.829)"/><circle class="ring" cx="238.062" cy="339.606" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad warn" data-slot="R8" data-gpio="7" data-caps="spi pwm" data-labels="IO7 SS" data-note="SPI SS; JTAG MTDO" tabindex="0"><use href="#part-header-pad" transform="translate(424.1113 86.0973)"/><circle class="ring" cx="273.81" cy="17.874" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad pwr" data-slot="L8" data-gpio="" data-caps="" data-labels="GND" data-note="Ground" tabindex="0"><use href="#part-header-pad" transform="translate(424.1113 407.829)"/><circle class="ring" cx="273.81" cy="339.606" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad warn" data-slot="R9" data-gpio="6" data-caps="spi pwm" data-labels="IO6 MOSI" data-note="SPI MOSI; JTAG MTCK" tabindex="0"><use href="#part-header-pad" transform="translate(459.8593 86.0973)"/><circle class="ring" cx="309.558" cy="17.874" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad safe" data-slot="L9" data-gpio="0" data-caps="adc pwm" data-labels="IO0 A0" data-note="ADC1_CH0; RTC; XTAL_32K" tabindex="0"><use href="#part-header-pad" transform="translate(459.8593 407.829)"/><circle class="ring" cx="309.558" cy="339.606" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad warn" data-slot="R10" data-gpio="5" data-caps="adc spi pwm" data-labels="IO5 A5 MISO" data-note="ADC2_CH0; SPI MISO; JTAG MTDI" tabindex="0"><use href="#part-header-pad" transform="translate(495.6072 86.0973)"/><circle class="ring" cx="345.306" cy="17.874" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad safe" data-slot="L10" data-gpio="1" data-caps="adc pwm" data-labels="IO1 A1" data-note="ADC1_CH1; RTC; XTAL_32K" tabindex="0"><use href="#part-header-pad" transform="translate(495.6072 407.829)"/><circle class="ring" cx="345.306" cy="339.606" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad warn" data-slot="R11" data-gpio="4" data-caps="adc spi pwm" data-labels="IO4 A4 SCK" data-note="ADC1_CH4; SPI SCK; JTAG MTMS" tabindex="0"><use href="#part-header-pad" transform="translate(531.3552 86.0973)"/><circle class="ring" cx="381.054" cy="17.874" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad safe" data-slot="L11" data-gpio="10" data-caps="pwm" data-labels="IO10" data-note="General-purpose GPIO; FSPICS0" tabindex="0"><use href="#part-header-pad" transform="translate(531.3552 407.829)"/><circle class="ring" cx="381.054" cy="339.606" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad pwr" data-slot="R12" data-gpio="" data-caps="" data-labels="GND" data-note="Ground" tabindex="0"><use href="#part-header-pad" transform="translate(567.1032 86.0973)"/><circle class="ring" cx="416.802" cy="17.874" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad pwr" data-slot="L12" data-gpio="" data-caps="" data-labels="GND" data-note="Ground" tabindex="0"><use href="#part-header-pad" transform="translate(567.1032 407.829)"/><circle class="ring" cx="416.802" cy="339.606" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad sys" data-slot="R13" data-gpio="18" data-caps="pwm" data-labels="IO18" data-note="USB D- (native USB Serial/JTAG)" tabindex="0"><use href="#part-header-pad" transform="translate(602.8511 86.0973)"/><circle class="ring" cx="452.549" cy="17.874" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad pwr" data-slot="L13" data-gpio="" data-caps="" data-labels="5V" data-note="5V input (from USB) / output" tabindex="0"><use href="#part-header-pad" transform="translate(602.8511 407.829)"/><circle class="ring" cx="452.549" cy="339.606" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad sys" data-slot="R14" data-gpio="19" data-caps="pwm" data-labels="IO19" data-note="USB D+ (native USB Serial/JTAG)" tabindex="0"><use href="#part-header-pad" transform="translate(638.5991 86.0973)"/><circle class="ring" cx="488.297" cy="17.874" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad pwr" data-slot="L14" data-gpio="" data-caps="" data-labels="5V" data-note="5V input (from USB) / output" tabindex="0"><use href="#part-header-pad" transform="translate(638.5991 407.829)"/><circle class="ring" cx="488.297" cy="339.606" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad pwr" data-slot="R15" data-gpio="" data-caps="" data-labels="GND" data-note="Ground" tabindex="0"><use href="#part-header-pad" transform="translate(674.347 86.0973)"/><circle class="ring" cx="524.045" cy="17.874" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><g class="bpad pwr" data-slot="L15" data-gpio="" data-caps="" data-labels="GND" data-note="Ground" tabindex="0"><use href="#part-header-pad" transform="translate(674.347 407.829)"/><circle class="ring" cx="524.045" cy="339.606" r="12.808" fill="none" stroke="none" style="stroke-width:2.254"/></g><use href="#part-chip-0805-mlcc-brown" transform="translate(-22453.6604 217.2324) rotate(90 22673.2148 65.092)"/><use href="#part-led-rgb-3535" transform="translate(-24225.7184 -0.1405) rotate(90 24457.095 81.3475)"/><use href="#part-chip-0805-mlcc-brown" transform="translate(-22430.7198 217.2324) rotate(90 22673.2148 65.092)"/><use href="#part-sot223" transform="translate(-10037.7174 103.1625)"/><use href="#part-chip-0402-res" transform="translate(-18852.2648 237.5696)"/><use href="#part-chip-0402-res" transform="translate(-18852.2648 222.5104)"/><use href="#part-chip-0402-res" transform="translate(-18852.2648 207.7327)"/><use href="#part-chip-0805-mlcc-brown" transform="translate(-22382.1645 217.2324) rotate(90 22673.2148 65.092)"/><use href="#part-chip-0805-mlcc-brown" transform="translate(-22342.0536 217.2324) rotate(90 22673.2148 65.092)"/><use href="#part-empty-4pad-1612" transform="translate(-23514.6977 74.029)"/><use href="#part-chip-0402-res-black" transform="translate(-19377.7874 40.9558)"/><use href="#part-sot23" transform="translate(-10510.3937 0.9854) rotate(-90 10857.74 67.555)"/><use href="#part-ic-qfn28" transform="translate(13.9492 102.1422)"/><use href="#part-chip-0402-res-black" transform="translate(-19349.2172 40.6744)"/><use href="#part-sot23" transform="translate(-10453.9569 0.9854) rotate(-90 10857.74 67.555)"/><use href="#part-chip-0402-empty" transform="translate(-20098.799 209.2809) rotate(90 20498.7821 59.814)"/><use href="#part-diode-sod123" transform="translate(-23637.5647 170.3658) rotate(90 24057.3921 67.907)"/><g transform="translate(-29939.7615 231.2364)"><g transform="translate(30343.544 56.296)"><rect x="-4.222" y="-1.056" width="10.415" height="13.37" rx="0.704" fill="#e2e3e5"></rect><rect x="16.326" y="-1.056" width="10.415" height="13.37" rx="0.704" fill="#e2e3e5"></rect><rect x="0.844" y="0.844" width="22.518" height="11.259" fill="#4d4d4d"></rect><rect x="0" y="0" width="22.518" height="11.259" rx="1.351" fill="#e9e2c9"></rect><rect x="0" y="0" width="4.504" height="11.259" rx="1.351" fill="#b3b3b3"></rect><rect x="1.531" y="1.801" width="0.721" height="7.656" fill="#ffffff" opacity="0.5"></rect><rect x="18.015" y="0" width="4.504" height="11.259" rx="1.351" fill="#b3b3b3"></rect><rect x="19.546" y="1.801" width="0.721" height="7.656" fill="#ffffff" opacity="0.5"></rect><rect x="15.988" y="0" width="1.351" height="11.259" fill="#1a1a1a" opacity="0.55"></rect><rect x="5.067" y="0.563" width="12.385" height="1.801" fill="#ffffff" opacity="0.2"></rect></g></g><use href="#part-chip-0402-empty" transform="translate(-20078.9547 215.8957)"/><use href="#part-chip-0402-empty" transform="translate(-20019.9846 41.6595)"/><use href="#part-button-tactile-4530" transform="translate(-9973.6812 199.6394)"/><use href="#part-button-tactile-4530" transform="translate(-9978.3257 -13.4409)"/><use href="#part-connector-usb-micro-b" transform="translate(29.284 67.6975)"/><use href="#part-empty-4pad-1612" transform="translate(-23578.3122 33.2144) rotate(90 23852.0515 66.711)"/><use href="#part-chip-0402-empty" transform="translate(-20231.5168 4.6449) rotate(90 20498.7821 59.814)"/><g transform="translate(-19234.0928 4.6449) rotate(90 19513.6024 59.814)"><g transform="translate(19506.564 56.296)"><rect x="-3.518" y="-1.056" width="7.389" height="9.148" rx="0.704" fill="#e2e3e5"></rect><rect x="10.204" y="-1.056" width="7.389" height="9.148" rx="0.704" fill="#e2e3e5"></rect><rect x="0.704" y="0.704" width="14.074" height="7.037" fill="#4d4d4d"></rect><rect x="0" y="0" width="14.074" height="7.037" rx="0.704" fill="#cd7a48"></rect><rect x="0" y="0" width="3.378" height="7.037" rx="0.704" fill="#b3b3b3"></rect><rect x="10.696" y="0" width="3.378" height="7.037" rx="0.704" fill="#b3b3b3"></rect><rect x="3.941" y="0.704" width="6.193" height="0.985" fill="#ffffff" opacity="0.2"></rect></g></g><use href="#part-chip-0402-res-black" transform="translate(-19357.5208 226.8734) rotate(90 19710.6375 59.814)"/><use href="#part-chip-0402-res-black" transform="translate(-19341.8987 226.8734) rotate(90 19710.6375 59.814)"/><g transform="translate(-19154.9969 207.7327)"><g transform="translate(19506.564 56.296)"><rect x="-3.518" y="-1.056" width="7.389" height="9.148" rx="0.704" fill="#e2e3e5"></rect><rect x="10.204" y="-1.056" width="7.389" height="9.148" rx="0.704" fill="#e2e3e5"></rect><rect x="0.704" y="0.704" width="14.074" height="7.037" fill="#4d4d4d"></rect><rect x="0" y="0" width="14.074" height="7.037" rx="0.704" fill="#cd7a48"></rect><rect x="0" y="0" width="3.378" height="7.037" rx="0.704" fill="#b3b3b3"></rect><rect x="10.696" y="0" width="3.378" height="7.037" rx="0.704" fill="#b3b3b3"></rect><rect x="3.941" y="0.704" width="6.193" height="0.985" fill="#ffffff" opacity="0.2"></rect></g></g><use href="#part-chip-0402-res-black" transform="translate(-19290.6693 136.9405)"/><use href="#part-chip-0402-res-black" transform="translate(-19290.6693 123.8517)"/><use href="#part-chip-0402-res-black" transform="translate(-19290.5286 111.4666)"/><use href="#part-chip-0402-empty" transform="translate(-20107.1027 86.6963)"/><use href="#part-chip-0402-empty" transform="translate(-20078.9547 86.6963)"/><use href="#part-chip-0402-empty" transform="translate(-20092.6065 72.9038)"/><use href="#part-chip-0402-empty" transform="translate(-20107.1027 58.2669)"/><use href="#part-chip-0402-empty" transform="translate(-20078.9547 58.2669)"/><use href="#part-chip-0402-empty" transform="translate(-20019.5624 186.0588)"/><text x="23.5739" y="312.1613" transform="rotate(180 23.5739 312.1613)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">GND</text><text x="59.3219" y="312.1613" transform="rotate(180 59.3219 312.1613)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">3V3</text><text x="95.0699" y="312.1613" transform="rotate(180 95.0699 312.1613)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">3V3</text><text x="130.8178" y="312.1613" transform="rotate(180 130.8178 312.1613)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">2</text><text x="166.5658" y="312.1613" transform="rotate(180 166.5658 312.1613)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">3</text><text x="202.3137" y="312.1613" transform="rotate(180 202.3137 312.1613)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">GND</text><text x="238.0617" y="312.1613" transform="rotate(180 238.0617 312.1613)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">RST</text><text x="273.8097" y="312.1613" transform="rotate(180 273.8097 312.1613)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">GND</text><text x="309.5576" y="312.1613" transform="rotate(180 309.5576 312.1613)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">0</text><text x="345.3056" y="312.1613" transform="rotate(180 345.3056 312.1613)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">1</text><text x="381.0535" y="312.1613" transform="rotate(180 381.0535 312.1613)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">10</text><text x="416.8015" y="312.1613" transform="rotate(180 416.8015 312.1613)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">GND</text><text x="452.5495" y="312.1613" transform="rotate(180 452.5495 312.1613)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">5V</text><text x="488.2974" y="312.1613" transform="rotate(180 488.2974 312.1613)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">5V</text><text x="524.0454" y="312.1613" transform="rotate(180 524.0454 312.1613)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">GND</text><text x="23.5739" y="34.7628" transform="rotate(180 23.5739 34.7628)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">GND</text><text x="59.3219" y="34.7628" transform="rotate(180 59.3219 34.7628)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">TX</text><text x="95.0699" y="34.7628" transform="rotate(180 95.0699 34.7628)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">RX</text><text x="130.8178" y="34.7628" transform="rotate(180 130.8178 34.7628)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">GND</text><text x="166.5658" y="34.7628" transform="rotate(180 166.5658 34.7628)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">9</text><text x="202.3137" y="34.7628" transform="rotate(180 202.3137 34.7628)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">8</text><text x="238.0617" y="34.7628" transform="rotate(180 238.0617 34.7628)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">GND</text><text x="273.8097" y="34.7628" transform="rotate(180 273.8097 34.7628)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">7</text><text x="309.5576" y="34.7628" transform="rotate(180 309.5576 34.7628)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">6</text><text x="345.3056" y="34.7628" transform="rotate(180 345.3056 34.7628)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">5</text><text x="381.0535" y="34.7628" transform="rotate(180 381.0535 34.7628)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">4</text><text x="416.8015" y="34.7628" transform="rotate(180 416.8015 34.7628)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">GND</text><text x="452.5495" y="34.7628" transform="rotate(180 452.5495 34.7628)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">18</text><text x="488.2974" y="34.7628" transform="rotate(180 488.2974 34.7628)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">19</text><text x="524.0454" y="34.7628" transform="rotate(180 524.0454 34.7628)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="14.074" fill="#b3b3b3">GND</text><text x="450.931" y="278.1022" transform="rotate(90 450.931 278.1022)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="13.3703" fill="#b3b3b3">Boot</text><text x="447.5532" y="64.4589" transform="rotate(90 447.5532 64.4589)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="13.3703" fill="#b3b3b3">RST</text><text x="291.0503" y="101.4735" transform="rotate(90 291.0503 101.4735)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="11.2592" fill="#b3b3b3">RGB</text><text x="291.0503" y="65.7256" transform="rotate(90 291.0503 65.7256)" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="700" font-size="11.2592" fill="#b3b3b3">IO8</text></g></g></g></svg>
