@@ -22,6 +22,7 @@ the firmware.
 | [zener-regulator](zener-regulator)         | resistors, 1N4733A zener                | 9 V in: 4.75 V on the 1k load                                        |
 | [opamp-amplifier](opamp-amplifier)         | sine source, LM358, resistors           | Gain 1 + 22k / 10k = 3.2: 0.75 V ± 0.25 V in, 2.4 V ± 0.8 V out      |
 | [rlc-resonance](rlc-resonance)             | sine source, R, inductor, capacitor     | f0 = 1592 Hz and Q = 5: 0.5 V in, 2.5 V peak on the capacitor        |
+| [audio-fader](audio-fader)                 | part plugin: audio taper fader          | Fader at 512 of 1023: 3.3 V × (81^0.5 − 1) / 80 = 0.33 V             |
 
 [esp32-rectifier](esp32-rectifier) uses the firmware of
 [esp32-pwm](esp32-pwm): `firmware.bin` is a link to it.

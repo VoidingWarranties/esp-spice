@@ -3,7 +3,7 @@
  * a browser can use this file. See docs/circuit-format.md.
  */
 
-import {PARTS} from './parts.js';
+import {PARTS, pulseSource, resistor} from './parts.js';
 
 /** Powers of ten for SI prefixes. @type {Record<string, number>} */
 const PREFIXES = {
@@ -78,12 +78,18 @@ function sanitize(text) {
  * @param {{parts: Array<{type: string, id: string,
  *     attrs?: Record<string, string | number | boolean>}>,
  *     connections: Array<string[]>}} diagram
- * @param {{analysis?: string, controls?: Record<string, number>}} [options]
+ * @param {{analysis?: string, controls?: Record<string, number>,
+ *     parts?: Record<string, import('./parts.js').PartModel>}} [options]
  *     `analysis` is a line to add before ".end", such as ".op".
  *     `controls` sets start values for controls.
+ *     `parts` adds part types, such as from loadPlugins().
  * @return {Circuit}
  */
-export function toNetlist(diagram, {analysis, controls: start = {}} = {}) {
+export function toNetlist(
+  diagram,
+  {analysis, controls: start = {}, parts: plugins = {}} = {},
+) {
+  const types = {...PARTS, ...plugins};
   /** @type {string[]} */
   const warnings = [];
   /** @type {Map<string, {type: string, attrs: Record<string, unknown>,
@@ -91,7 +97,7 @@ export function toNetlist(diagram, {analysis, controls: start = {}} = {}) {
   const parts = new Map();
   for (const {type, id, attrs = {}} of diagram.parts) {
     if (parts.has(id)) throw new Error(`duplicate part id: ${id}`);
-    const model = Object.hasOwn(PARTS, type) ? PARTS[type] : undefined;
+    const model = Object.hasOwn(types, type) ? types[type] : undefined;
     if (!model) warnings.push(`unsupported part type: ${type} (${id})`);
     parts.set(id, {type, attrs, model});
   }
@@ -212,6 +218,8 @@ export function toNetlist(diagram, {analysis, controls: start = {}} = {}) {
     const p = {
       id,
       attr,
+      resistor,
+      pulseSource,
       num(name, fallback) {
         try {
           return parseValue(attr(name, fallback));

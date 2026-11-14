@@ -48,13 +48,15 @@ export class Simulation {
    * @param {number} [options.frameInterval] Time between trace records, in
    *     seconds. LED brightness is the mean over this time.
    * @param {string[]} [options.probes] Pins to record in the trace.
+   * @param {Record<string, import('./parts.js').PartModel>} [options.parts]
+   *     Part types to add, such as from loadPlugins().
    */
   constructor(
     diagram,
-    {maxStep = 10e-6, frameInterval = 0.01, probes = []} = {},
+    {maxStep = 10e-6, frameInterval = 0.01, probes = [], parts} = {},
   ) {
     if (current) throw new Error('only one Simulation can be open at a time');
-    this.#circuit = toNetlist(diagram);
+    this.#circuit = toNetlist(diagram, {parts});
     this.#frameInterval = frameInterval;
     this.#probes = probes;
     for (const pin of probes) this.#node(pin);

@@ -35,6 +35,9 @@ const STROKE = 'stroke="currentColor" stroke-width="2" fill="none"';
  *     Adds a 0 V source to read the current from `from` to `to`.
  * @property {(unit: string, values: Record<string, number>,
  *     render: Render) => void} unit Adds elements that controls change.
+ * @property {typeof resistor} resistor For plugins, which cannot import
+ *     this file.
+ * @property {typeof pulseSource} pulseSource For plugins.
  */
 
 /**

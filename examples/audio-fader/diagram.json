@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "author": "esp-spice",
+  "editor": "esp-spice",
+  "esp-spice": { "parts": ["fader.js"] },
+  "parts": [
+    { "type": "wokwi-vcc", "id": "vcc", "top": 0, "left": 4, "attrs": { "voltage": "3.3" } },
+    { "type": "audio-fader", "id": "fader", "top": 60, "left": 0, "attrs": { "resistance": "10k", "value": "512" } },
+    { "type": "wokwi-gnd", "id": "gnd", "top": 200, "left": 8, "attrs": {} }
+  ],
+  "connections": [
+    ["vcc:VCC", "fader:B", "red", []],
+    ["fader:A", "gnd:GND", "black", []]
+  ]
+}

@@ -48,7 +48,8 @@ async function main() {
   const demoUrl = new URL(`../${demo}/`, location.href);
   document.querySelector('#demo').textContent = demo;
 
-  const response = await fetch(new URL('diagram.json', demoUrl));
+  const diagramUrl = new URL('diagram.json', demoUrl).href;
+  const response = await fetch(diagramUrl);
   if (!response.ok) throw new Error(`${demo}/diagram.json: ${response.status}`);
   const diagram = await response.json();
   // With the integrity check, a changed or blocked bundle does not run.
@@ -58,8 +59,8 @@ async function main() {
   const firmwareUrl = new URL('firmware.bin', demoUrl);
   const hasFirmware = (await fetch(firmwareUrl, {method: 'HEAD'})).ok;
   serialView.hidden = !hasFirmware;
-  ({elements: parts} =
-      await renderCircuit(document.querySelector('#circuit'), diagram));
+  ({elements: parts} = await renderCircuit(
+      document.querySelector('#circuit'), diagram, {diagramUrl}));
 
   const worker = new Worker('sim-worker.js', {type: 'module'});
   // For example, when the worker cannot import ngspice.
@@ -97,6 +98,7 @@ async function main() {
   worker.postMessage({
     type: 'start',
     diagram,
+    diagramUrl,
     firmwareUrl: hasFirmware ? firmwareUrl.href : null,
   });
 }
