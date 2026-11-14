@@ -18,7 +18,10 @@ pub fn flash() -> Vec<u8> {
 }
 
 pub fn rom() -> Vec<u8> {
-    std::fs::read(esp_soc::rom::require(esp_bridge::ROM_ELF)).unwrap()
+    std::fs::read(esp_soc::rom::require(
+        esp_bridge::rom_elf(&diagram()).unwrap(),
+    ))
+    .unwrap()
 }
 
 /// Each board pin is its own net: the pin drive in parallel with the

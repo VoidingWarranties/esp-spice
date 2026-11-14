@@ -2,6 +2,8 @@
 
 use serde_json::Value;
 
+use crate::chip::{self, ChipEntry};
+
 /// A board pin that is wired to the circuit.
 #[derive(Clone, Debug, PartialEq)]
 pub struct BoardPin {
@@ -10,14 +12,24 @@ pub struct BoardPin {
     pub gpio: u8,
 }
 
-/// Returns the GPIO pins of the ESP32 board that connect to circuit parts.
-pub fn board_pins(diagram: &Value) -> Result<Vec<BoardPin>, String> {
-    let board = diagram["parts"]
+/// The ESP32 board part and its chip.
+fn board(diagram: &Value) -> Result<(&Value, ChipEntry), String> {
+    diagram["parts"]
         .as_array()
         .into_iter()
         .flatten()
-        .find(|part| part["type"].as_str().is_some_and(is_board))
-        .ok_or("diagram.json has no ESP32 board part")?;
+        .find_map(|part| Some((part, chip::for_board(part["type"].as_str()?)?)))
+        .ok_or_else(|| "diagram.json has no ESP32 board part".into())
+}
+
+/// The chip on the board.
+pub(crate) fn chip(diagram: &Value) -> Result<ChipEntry, String> {
+    Ok(board(diagram)?.1)
+}
+
+/// Returns the GPIO pins of the ESP32 board that connect to circuit parts.
+pub fn board_pins(diagram: &Value) -> Result<Vec<BoardPin>, String> {
+    let (board, _) = board(diagram)?;
     let kind = board["type"].as_str().unwrap();
     let prefix = format!("{}:", board["id"].as_str().ok_or("board part has no id")?);
     let mut pins: Vec<BoardPin> = Vec::new();
@@ -41,10 +53,6 @@ pub fn board_pins(diagram: &Value) -> Result<Vec<BoardPin>, String> {
         }
     }
     Ok(pins)
-}
-
-fn is_board(kind: &str) -> bool {
-    matches!(kind, "board-esp32-devkit-c-v4" | "wokwi-esp32-devkit-v1")
 }
 
 /// The GPIO behind a board pin name. Pin names are in docs/circuit-format.md.
