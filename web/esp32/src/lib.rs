@@ -72,6 +72,21 @@ fn with_bridge<T>(f: impl FnOnce(&mut Bridge<DeferredCircuit>) -> T) -> Result<T
     BRIDGE.with_borrow_mut(|b| b.as_mut().map(f).ok_or_else(|| "no bridge".into()))
 }
 
+/// Puts the name of the mask ROM ELF for the board in a diagram.json in the
+/// output buffer.
+///
+/// # Safety
+/// The pointer and length must give readable memory.
+#[no_mangle]
+pub unsafe extern "C" fn esp_web_rom_name(diagram: *const u8, diagram_len: usize) -> u32 {
+    let diagram = unsafe { bytes(diagram, diagram_len) };
+    status((|| {
+        let diagram = std::str::from_utf8(diagram).map_err(|e| e.to_string())?;
+        set_out(esp_bridge::rom_elf(diagram)?.as_bytes());
+        Ok(())
+    })())
+}
+
 /// Boots the ESP32 from the mask ROM with a merged flash image.
 ///
 /// # Safety

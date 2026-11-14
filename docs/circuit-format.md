@@ -103,6 +103,9 @@ warning. Their pins are not connected to anything in the circuit.
 | `spice-opamp`                                | `IN+` `IN-` `OUT` `V+` `V-`           | `model` `LM358` or `MCP6002` (`LM358`)            |                                |                                     |
 | `board-esp32-devkit-c-v4`                    | see [Boards](#boards)                 |                                                   | pin drive, see [Boards](#boards) |                                   |
 | `wokwi-esp32-devkit-v1`                      | see [Boards](#boards)                 |                                                   | pin drive, see [Boards](#boards) |                                   |
+| `board-esp32-s3-devkitc-1`                   | see [Boards](#boards)                 |                                                   | pin drive, see [Boards](#boards) |                                   |
+| `board-esp32-c3-devkitm-1`                   | see [Boards](#boards)                 |                                                   | pin drive, see [Boards](#boards) |                                   |
+| `board-esp32-c6-devkitc-1`                   | see [Boards](#boards)                 |                                                   | pin drive, see [Boards](#boards) |                                   |
 
 The `spice-*` types are not Wokwi parts. Wokwi does not simulate analog
 circuits, so it has no capacitor, inductor, diode, transistor, op-amp or
@@ -154,6 +157,9 @@ circuit. They still take drive changes, and their voltage is their own drive
 | ------------------------- | ----------------------- | ----- | ----- | ----------------------------------------------------------------------------------------- |
 | `board-esp32-devkit-c-v4` | `GND.1` `GND.2` `GND.3` | `3V3` | `5V`  | `0` `2` `4` `5` `12`..`19` `21`..`23` `25`..`27` `32`..`35` `TX` `RX` `VP` `VN`          |
 | `wokwi-esp32-devkit-v1`   | `GND.1` `GND.2`         | `3V3` | `VIN` | `D2` `D4` `D5` `D12`..`D15` `D18` `D19` `D21`..`D23` `D25`..`D27` `D32`..`D35` `TX0` `RX0` `TX2` `RX2` `VP` `VN` |
+| `board-esp32-s3-devkitc-1` | `GND.1`..`GND.4`       | `3V3.1` `3V3.2` | `5V` | `0`..`21` `35`..`42` `45`..`48` `TX` `RX`                                     |
+| `board-esp32-c3-devkitm-1` | `GND.1`..`GND.10`      | `3V3.1` `3V3.2` | `5V.1` `5V.2` | `0`..`10` `18` `19` `TX` `RX`                                        |
+| `board-esp32-c6-devkitc-1` | `GND.1`..`GND.4`       | `3V3` | `5V`  | `0`..`13` `15` `18`..`23` `TX` `RX`                                                       |
 
 A pin driver is a Thevenin source: a voltage source with a series resistor.
 The ESP32 bridge sets it with a drive:
@@ -239,8 +245,9 @@ pin.
 
 ## Process protocol
 
-`node circuit/server.js diagram.json [--max-step 10e-6]` reads one JSON
-command per line on stdin and writes one JSON reply per line on stdout.
+`node circuit/server.js diagram.json [--max-step 10e-6] [--probe PIN]...`
+reads one JSON command per line on stdin and writes one JSON reply per line
+on stdout. Each `--probe` adds a pin to the `probes` of the trace.
 A failed command replies `{ "error": "message" }`.
 
 | Command                                                          | Reply                                        |

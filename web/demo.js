@@ -8,7 +8,7 @@
 
 import {renderCircuit} from '../render/src/circuit.js';
 
-const DEFAULT_DEMO = 'examples/esp32-pot-button-leds';
+const DEFAULT_DEMO = 'examples/esp32-s3-button-led';
 
 const status = document.querySelector('#status');
 const error = document.querySelector('#error');
@@ -24,7 +24,7 @@ const serialView = document.querySelector('#serial');
  */
 const INPUTS = {};
 INPUTS['wokwi-potentiometer'] = INPUTS['wokwi-slide-potentiometer'] =
-    (id, el, control) => el.addEventListener(
+    INPUTS['wokwi-slide-switch'] = (id, el, control) => el.addEventListener(
         'input', () => control(`${id}.value`, el.value));
 INPUTS['wokwi-pushbutton'] = INPUTS['wokwi-pushbutton-6mm'] =
     (id, el, control) => {

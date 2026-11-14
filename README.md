@@ -51,10 +51,10 @@ Turn the pot or push the button, and the page solves the circuit again.
 ```sh
 tools/build-web.sh    # the ESP32 module and the ROM, into web/dist
 python3 -m http.server 8790
-# Open http://127.0.0.1:8790/web/?demo=examples/esp32-pot-button-leds
+# Open http://127.0.0.1:8790/web/?demo=examples/esp32-s3-button-led
 ```
 
-Without `?demo`, the page opens `examples/esp32-pot-button-leds`. Demos
+Without `?demo`, the page opens `examples/esp32-s3-button-led`. Demos
 without firmware do not need `tools/build-web.sh`. The page loads ngspice
 and wokwi-elements from a CDN, so it needs a network connection.
 
@@ -63,6 +63,11 @@ push to `main`, when Pages is set to deploy from GitHub Actions.
 
 [eecircuit-engine]: https://github.com/eelab-dev/EEcircuit-engine
 [wokwi-elements]: https://github.com/wokwi/wokwi-elements
+
+## Contributing
+
+[CONTRIBUTING.md](CONTRIBUTING.md) tells where to put pictures for pull
+requests.
 
 ## License
 

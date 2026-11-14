@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "author": "esp-spice",
+  "editor": "esp-spice",
+  "parts": [
+    { "type": "wokwi-vcc", "id": "vcc", "top": 93, "left": 344, "attrs": { "voltage": "5" } },
+    { "type": "wokwi-gnd", "id": "gnd1", "top": 165, "left": 8, "attrs": {} },
+    { "type": "wokwi-potentiometer", "id": "pot1", "top": 51, "left": 41, "attrs": { "value": "1023" } },
+    { "type": "wokwi-resistor", "id": "r1", "top": 201.05, "left": 47.95, "rotate": 90, "attrs": { "value": "220" } },
+    { "type": "wokwi-potentiometer", "id": "pot2", "top": 51, "left": 136, "attrs": { "value": "0" } },
+    { "type": "wokwi-resistor", "id": "r2", "top": 201.05, "left": 142.95, "rotate": 90, "attrs": { "value": "220" } },
+    { "type": "wokwi-potentiometer", "id": "pot3", "top": 51, "left": 231, "attrs": { "value": "1023" } },
+    { "type": "wokwi-resistor", "id": "r3", "top": 201.05, "left": 237.95, "rotate": 90, "attrs": { "value": "220" } },
+    { "type": "wokwi-rgb-led", "id": "rgb1", "top": 196, "left": 391, "attrs": { "common": "cathode" } },
+    { "type": "wokwi-gnd", "id": "gnd2", "top": 300, "left": 397, "attrs": {} }
+  ],
+  "connections": [
+    ["pot1:VCC", "vcc:VCC", "red", ["v15"]],
+    ["pot1:GND", "gnd1:GND", "black", ["v30"]],
+    ["pot1:SIG", "r1:1", "red", []],
+    ["r1:2", "rgb1:R", "red", ["v15"]],
+    ["pot2:VCC", "vcc:VCC", "red", ["v15"]],
+    ["pot2:GND", "gnd1:GND", "black", ["v30"]],
+    ["pot2:SIG", "r2:1", "green", []],
+    ["r2:2", "rgb1:G", "green", ["v25"]],
+    ["pot3:VCC", "vcc:VCC", "red", ["v15"]],
+    ["pot3:GND", "gnd1:GND", "black", ["v30"]],
+    ["pot3:SIG", "r3:1", "blue", []],
+    ["r3:2", "rgb1:B", "blue", ["v35"]],
+    ["rgb1:COM", "gnd2:GND", "black", []]
+  ]
+}
