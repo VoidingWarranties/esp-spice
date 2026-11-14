@@ -109,7 +109,8 @@ warning. Their pins are not connected to anything in the circuit.
 
 The `spice-*` types are not Wokwi parts. Wokwi does not simulate analog
 circuits, so it has no capacitor, inductor, diode, transistor, op-amp or
-sine source. A renderer must draw them itself.
+sine source. A renderer must draw them itself. The `drawing` of each type in
+`circuit/parts.js` has its SVG and pin positions.
 
 Notes on the models:
 

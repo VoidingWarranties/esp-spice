@@ -13,6 +13,9 @@ export const TOGGLE_AMPS = 1e-3;
 export const LED_FULL_AMPS = 5e-3;
 /** kT/q at 27 C, the ngspice default temperature, in volts. */
 const THERMAL_VOLTS = 0.025865;
+// currentColor, so the drawings follow the page text color, also in dark
+// mode.
+const STROKE = 'stroke="currentColor" stroke-width="2" fill="none"';
 
 /**
  * Context that a part model uses to add itself to the netlist.
@@ -67,6 +70,21 @@ const THERMAL_VOLTS = 0.025865;
  * @property {string[][]} [shorts] Groups of pins that the part connects.
  * @property {(p: PartContext) => void} build
  * @property {(r: Reader) => Record<string, unknown>} [state] Trace props.
+ * @property {Drawing} [drawing] For a type that wokwi-elements does not
+ *     have.
+ */
+
+/**
+ * Static SVG for a part type. render/ makes it a custom element with the
+ * type as its tag.
+ * @typedef {object} Drawing
+ * @property {number} width Pixels.
+ * @property {number} height Pixels.
+ * @property {Array<[string, number, number]>} pins Name, x and y of each pin.
+ * @property {string} svg
+ * @property {{x: number, y: number, attr: string, fallback: string,
+ *     suffix?: string, anchor?: string}} [label] Text that shows an attr
+ *     value.
  */
 
 /**
@@ -508,12 +526,25 @@ export const PARTS = {
       p.add(`${p.el('v')} ${inner} 0 dc ${p.num('voltage', '3.3')}`);
       p.add(`${p.el('r')} ${inner} ${p.node('VCC')} 0.01`);
     },
+    drawing: {
+      width: 32,
+      height: 32,
+      pins: [['VCC', 16, 32]],
+      svg: `<path d="M16 32V18M6 18H26" ${STROKE}/>`,
+      label: {x: 16, y: 12, attr: 'voltage', fallback: '3.3', suffix: 'V'},
+    },
   },
 
   'wokwi-gnd': {
     pins: ['GND'],
     ground: ['GND'],
     build() {},
+    drawing: {
+      width: 24,
+      height: 24,
+      pins: [['GND', 12, 0]],
+      svg: `<path d="M12 0V12M2 12H22M6 17H18M10 22H14" ${STROKE}/>`,
+    },
   },
 
   'spice-capacitor': {
@@ -522,6 +553,16 @@ export const PARTS = {
       p.add(
         `${p.el('c')} ${p.node('1')} ${p.node('2')} ${p.num('value', '1u')}`,
       );
+    },
+    drawing: {
+      width: 40,
+      height: 30,
+      pins: [
+        ['1', 0, 10],
+        ['2', 40, 10],
+      ],
+      svg: `<path d="M0 10H17M23 10H40M17 1V19M23 1V19" ${STROKE}/>`,
+      label: {x: 20, y: 29, attr: 'value', fallback: '1u'},
     },
   },
 
@@ -535,12 +576,91 @@ export const PARTS = {
       );
       p.add(`${p.el('d')} ${p.node('A')} ${p.node('C')} ${model}`);
     },
+    drawing: {
+      width: 40,
+      height: 30,
+      pins: [
+        ['A', 0, 10],
+        ['C', 40, 10],
+      ],
+      svg: `
+        <path d="M0 10H40M26 2V18" ${STROKE}/>
+        <path d="M14 2L26 10L14 18Z" fill="currentColor"/>`,
+      label: {x: 20, y: 29, attr: 'model', fallback: '1N4148'},
+    },
   },
 
-  'spice-npn': transistor('q', NPNS, '2N2222', ['C', 'B', 'E']),
-  'spice-pnp': transistor('q', PNPS, '2N3906', ['C', 'B', 'E']),
-  'spice-nmos': transistor('m', NMOS, '2N7000', ['D', 'G', 'S']),
-  'spice-pmos': transistor('m', PMOS, 'BS250', ['D', 'G', 'S']),
+  'spice-npn': {
+    ...transistor('q', NPNS, '2N2222', ['C', 'B', 'E']),
+    drawing: {
+      width: 44,
+      height: 50,
+      pins: [
+        ['C', 30, 0],
+        ['B', 0, 25],
+        ['E', 30, 50],
+      ],
+      svg: `
+        <circle cx="22" cy="25" r="16" ${STROKE}/>
+        <path d="M0 25H16M16 15V35M16 20L30 11V0M16 30L30 39V50" ${STROKE}/>
+        <path d="M30 39L21 37L25 31Z" fill="currentColor"/>`,
+      label: {x: 34, y: 50, attr: 'model', fallback: '2N2222', anchor: 'start'},
+    },
+  },
+
+  'spice-pnp': {
+    ...transistor('q', PNPS, '2N3906', ['C', 'B', 'E']),
+    drawing: {
+      width: 44,
+      height: 50,
+      pins: [
+        ['E', 30, 0],
+        ['B', 0, 25],
+        ['C', 30, 50],
+      ],
+      svg: `
+        <circle cx="22" cy="25" r="16" ${STROKE}/>
+        <path d="M0 25H16M16 15V35M16 20L30 11V0M16 30L30 39V50" ${STROKE}/>
+        <path d="M17 19L26 17L22 11Z" fill="currentColor"/>`,
+      label: {x: 34, y: 50, attr: 'model', fallback: '2N3906', anchor: 'start'},
+    },
+  },
+
+  'spice-nmos': {
+    ...transistor('m', NMOS, '2N7000', ['D', 'G', 'S']),
+    drawing: {
+      width: 44,
+      height: 50,
+      pins: [
+        ['D', 30, 0],
+        ['G', 0, 25],
+        ['S', 30, 50],
+      ],
+      svg: `
+        <path d="M0 25H12M12 14V36M17 12V19M17 21.5V28.5M17 31V38
+            M17 15.5H30V0M17 34.5H30V50M17 25H30V34.5" ${STROKE}/>
+        <path d="M18 25L25 21.5V28.5Z" fill="currentColor"/>`,
+      label: {x: 34, y: 50, attr: 'model', fallback: '2N7000', anchor: 'start'},
+    },
+  },
+
+  'spice-pmos': {
+    ...transistor('m', PMOS, 'BS250', ['D', 'G', 'S']),
+    drawing: {
+      width: 44,
+      height: 50,
+      pins: [
+        ['S', 30, 0],
+        ['G', 0, 25],
+        ['D', 30, 50],
+      ],
+      svg: `
+        <path d="M0 25H12M12 14V36M17 12V19M17 21.5V28.5M17 31V38
+            M17 15.5H30V0M17 34.5H30V50M17 25H30V15.5" ${STROKE}/>
+        <path d="M28 25L21 21.5V28.5Z" fill="currentColor"/>`,
+      label: {x: 34, y: 50, attr: 'model', fallback: 'BS250', anchor: 'start'},
+    },
+  },
 
   'spice-zener': {
     pins: ['A', 'C'],
@@ -557,6 +677,18 @@ export const PARTS = {
       );
       p.add(`${p.el('d')} ${p.node('A')} ${p.node('C')} ${model}`);
     },
+    drawing: {
+      width: 40,
+      height: 30,
+      pins: [
+        ['A', 0, 10],
+        ['C', 40, 10],
+      ],
+      svg: `
+        <path d="M0 10H40M22 0L26 2V18L30 20" ${STROKE}/>
+        <path d="M14 2L26 10L14 18Z" fill="currentColor"/>`,
+      label: {x: 20, y: 29, attr: 'model', fallback: '1N4733A'},
+    },
   },
 
   'spice-inductor': {
@@ -565,6 +697,17 @@ export const PARTS = {
       p.add(
         `${p.el('l')} ${p.node('1')} ${p.node('2')} ${p.num('value', '1m')}`,
       );
+    },
+    drawing: {
+      width: 48,
+      height: 30,
+      pins: [
+        ['1', 0, 10],
+        ['2', 48, 10],
+      ],
+      svg: `<path d="M0 10H8a4 4 0 0 1 8 0a4 4 0 0 1 8 0a4 4 0 0 1 8 0
+          a4 4 0 0 1 8 0H48" ${STROKE}/>`,
+      label: {x: 24, y: 26, attr: 'value', fallback: '1m'},
     },
   },
 
@@ -580,6 +723,19 @@ export const PARTS = {
           `sin(${offset} ${amplitude} ${freq})`,
       );
       p.add(`${p.el('r')} ${inner} ${p.node('+')} 0.01`);
+    },
+    drawing: {
+      width: 40,
+      height: 60,
+      pins: [
+        ['+', 20, 0],
+        ['-', 20, 60],
+      ],
+      svg: `
+        <circle cx="20" cy="30" r="14" ${STROKE}/>
+        <path d="M20 0V16M20 44V60M12 30C15 21 17 21 20 30S25 39 28 30
+            M27 7H33M30 4V10" ${STROKE}/>`,
+      label: {x: 36, y: 34, attr: 'frequency', fallback: '1k', anchor: 'start'},
     },
   },
 
@@ -617,6 +773,21 @@ export const PARTS = {
       );
       p.add(`${p.el('e')} ${out} 0 ${x} 0 1`);
       p.add(`${p.el('r', 'out')} ${out} ${p.node('OUT')} 10`);
+    },
+    drawing: {
+      width: 60,
+      height: 60,
+      pins: [
+        ['IN-', 0, 20],
+        ['IN+', 0, 40],
+        ['OUT', 60, 30],
+        ['V+', 30, 0],
+        ['V-', 30, 60],
+      ],
+      svg: `
+        <path d="M8 5L52 30L8 55Z M0 20H8M0 40H8M52 30H60M30 0V17.5M30 60V42.5
+            M12 20H18M12 40H18M15 37V43" ${STROKE}/>`,
+      label: {x: 27, y: 33, attr: 'model', fallback: 'LM358'},
     },
   },
 

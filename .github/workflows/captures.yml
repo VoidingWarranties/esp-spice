@@ -7,6 +7,8 @@ on:
     paths:
       - examples/**
       - render/**
+      # Drawings of parts are in circuit/parts.js.
+      - circuit/parts.js
       - tools/capture-examples.sh
       - .github/workflows/captures.yml
   workflow_dispatch:
