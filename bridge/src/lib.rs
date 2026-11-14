@@ -14,10 +14,12 @@ use esp_soc::Stop;
 
 mod chip;
 pub mod circuit;
+mod heap;
 pub mod pins;
 
 use chip::Esp;
 pub use circuit::{Circuit, DeferredCircuit, Drive, ProcessCircuit};
+pub use heap::Heap;
 
 /// How often the circuit catches up with the ESP32 when no pin changes, per
 /// second. GPIO reads see the circuit as of the last catch-up.
@@ -45,6 +47,9 @@ pub struct Bridge<C: Circuit> {
     machine: Box<dyn Esp>,
     shared: Rc<RefCell<Shared<C>>>,
     serial: Vec<u8>,
+    /// The address of ESP-IDF's heap list, from the firmware ELF, and the
+    /// bytes that the firmware takes off each heap.
+    heap_list: Option<(u32, u32)>,
 }
 
 impl<C: Circuit + 'static> Bridge<C> {
@@ -82,6 +87,7 @@ impl<C: Circuit + 'static> Bridge<C> {
             machine,
             shared,
             serial: Vec::new(),
+            heap_list: None,
         })
     }
 
@@ -96,7 +102,14 @@ impl<C: Circuit + 'static> Bridge<C> {
             {
                 Stop::Halted => {}
                 // A software or watchdog reset reboots the chip, as on a board.
-                Stop::SwReset => self.machine.reboot(),
+                Stop::SwReset => {
+                    self.machine.reboot();
+                    // RAM keeps the old heap list until the new app sets up
+                    // its heap. Clear it, so that no sample reads old heaps.
+                    if let Some((list, _)) = self.heap_list {
+                        self.machine.write_word(list, 0);
+                    }
+                }
                 stop => {
                     // Keep the firmware's last output, such as a panic message.
                     self.machine.take_serial(&mut self.serial);
@@ -141,6 +154,30 @@ impl<C: Circuit + 'static> Bridge<C> {
     /// Sends bytes to UART0, as from a serial monitor.
     pub fn serial_input(&mut self, data: &[u8]) {
         self.machine.serial_input(data);
+    }
+
+    /// Loads the symbols of the firmware ELF, for `heap`. It must be the ELF
+    /// of the app in the flash image.
+    pub fn load_elf(&mut self, elf: &[u8]) -> Result<(), String> {
+        let symbols = esp_soc::elf::parse(elf)?.by_name;
+        let list = *symbols.get(heap::SYMBOL).ok_or(format!(
+            "the ELF has no {} symbol, so it is not ESP-IDF firmware",
+            heap::SYMBOL
+        ))?;
+        let overhead = if heap::poisoned(&symbols) {
+            heap::POISON_OVERHEAD
+        } else {
+            0
+        };
+        self.heap_list = Some((list, overhead));
+        Ok(())
+    }
+
+    /// The free heap now, from ESP-IDF's own counters. None without
+    /// `load_elf`, or before the firmware sets up its heap.
+    pub fn heap(&mut self) -> Option<Heap> {
+        let (list, overhead) = self.heap_list?;
+        heap::read(list, overhead, |addr| self.machine.read_word(addr))
     }
 
     /// The voltage at a board pin, such as "esp:2", as of the last step.

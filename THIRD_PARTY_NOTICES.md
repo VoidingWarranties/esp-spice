@@ -14,6 +14,8 @@ the Apache License 2.0, in [LICENSES/Apache-2.0.txt](LICENSES/Apache-2.0.txt).
 [`examples/esp32-button-led/firmware`](examples/esp32-button-led/firmware).
 `examples/esp32-gpio`, `examples/esp32-pwm` and `examples/esp32-adc` each
 have a `firmware.bin` that is a build of the `firmware` folder next to it.
+`examples/esp32-heap-leak` has a `firmware.bin` and its `firmware.elf`,
+built from the `firmware` folder next to them.
 All use the pioarduino platform-espressif32 55.03.38-1.
 `examples/esp32-pot-button-leds/firmware.bin` is a link to the first, and
 `examples/esp32-rectifier/firmware.bin` is a link to the esp32-pwm image. The

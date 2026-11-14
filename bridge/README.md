@@ -35,6 +35,42 @@ time T. The serial output goes to stdout. `--trace` writes the circuit trace.
 `--probe PIN` adds the voltage of a pin's net to the trace, for example
 `--probe c1:1`.
 
+## Free heap
+
+The bridge reads ESP-IDF's own heap counters from emulated memory, so the
+firmware needs no code to report them. A sample is the value that
+`esp_get_free_heap_size()` and `esp_get_minimum_free_heap_size()` give at
+that time. `--elf`, the ELF of the app such as PlatformIO's
+`firmware.elf`, turns on the samples. The other flags are the same as
+wokwi-cli's:
+
+```sh
+cargo run --release --manifest-path bridge/Cargo.toml -- \
+    examples/esp32-heap-leak/diagram.json \
+    examples/esp32-heap-leak/firmware.bin \
+    --elf examples/esp32-heap-leak/firmware.elf \
+    --seconds 2 --set 0.5:btn1.pressed=1 --set 0.6:btn1.pressed=0 \
+    --heap-interval 0.1 --heap-csv heap.csv --heap-min-free 200000
+```
+
+- `--heap-interval S` is the time between samples. The default is 0.1 s.
+- `--heap-csv FILE` writes the samples as `time_s,free,min_free`.
+- `--heap-min-free BYTES` stops the run with exit code 1 when the free heap
+  is below BYTES.
+
+The run also fails with exit code 1 when it got no samples, for example
+when the ELF is not of the firmware. If the firmware stops, the run still
+writes the samples. After a reset, the samples start again when the new
+boot sets up its heap. At the end, the run writes a summary
+such as `Heap: 20 samples, free 267824 -> 262684, lowest 256956` to stderr.
+
+To find a leak, do the same request many times, back to back, and set the
+limit below the free heap that you see after start-up. Each run takes about
+2 s of real time for each second of emulated time.
+
+The library gives the same samples: `Bridge::load_elf`, then
+`Bridge::heap`.
+
 ## Library
 
 ```rust
@@ -82,6 +118,9 @@ after each `run_for` and gives back the pin voltages.
   (`board-esp32-c6-devkitc-1`). esp32sim rates the C3 and C6 as drafts, so
   some firmware may not boot on them.
 - An input sees the circuit up to 100 µs late.
+- The heap samples need ESP-IDF 5.x (Arduino-ESP32 3.x) and its heap
+  layout. They were checked on each chip with Arduino-ESP32 3.3.8. If the
+  firmware uses a heap with another layout, the run gets no samples.
 - Only GPIO levels (push-pull and open-drain) and LEDC PWM go to the
   circuit. I2C, SPI, UART and RMT signals and the DAC do not: a pin that
   the GPIO matrix gives to one of them has only its pulls in the circuit.
