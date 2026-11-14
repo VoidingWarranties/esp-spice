@@ -2,6 +2,7 @@
 name = "esp-bridge"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
 description = "Runs ESP32 firmware in esp32sim, in lockstep with a circuit simulation"
 
 [dependencies]
