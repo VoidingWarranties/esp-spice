@@ -10,6 +10,7 @@ emu-core = { git = "https://github.com/mikroverk/esp32sim", rev = "3bdb9582a9109
 esp-periph = { git = "https://github.com/mikroverk/esp32sim", rev = "3bdb9582a910974e4e025d274d6ec61e5c481be6" }
 esp-soc = { git = "https://github.com/mikroverk/esp32sim", rev = "3bdb9582a910974e4e025d274d6ec61e5c481be6" }
 esp32 = { git = "https://github.com/mikroverk/esp32sim", rev = "3bdb9582a910974e4e025d274d6ec61e5c481be6" }
+esp32s3 = { git = "https://github.com/mikroverk/esp32sim", rev = "3bdb9582a910974e4e025d274d6ec61e5c481be6" }
 serde_json = "1"
 
 # The emulator is too slow to boot firmware without optimization.

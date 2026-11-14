@@ -1,4 +1,4 @@
-//! Runs the esp32-button-led example firmware against a stub circuit.
+//! Runs the button and LED example firmware against a stub circuit.
 
 mod common;
 
@@ -6,12 +6,21 @@ use common::StubCircuit;
 use esp_bridge::{Bridge, Drive};
 
 #[test]
-fn button_lights_led() {
+fn button_lights_led_esp32() {
+    button_lights_led(common::ESP32);
+}
+
+#[test]
+fn button_lights_led_s3() {
+    button_lights_led(common::S3);
+}
+
+fn button_lights_led(example: &str) {
     let circuit = StubCircuit::default();
     let mut bridge = Bridge::new(
-        &common::diagram(),
-        &common::flash(),
-        &common::rom(),
+        &common::diagram(example),
+        &common::flash(example),
+        &common::rom(example),
         circuit,
     )
     .unwrap();

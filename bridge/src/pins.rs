@@ -60,22 +60,28 @@ fn gpio(kind: &str, name: &str) -> Option<u8> {
     let number = match (kind, name) {
         (_, "VP") => return Some(36),
         (_, "VN") => return Some(39),
+        ("board-esp32-s3-devkitc-1", "TX") => return Some(43),
+        ("board-esp32-s3-devkitc-1", "RX") => return Some(44),
         ("board-esp32-devkit-c-v4", "TX") | ("wokwi-esp32-devkit-v1", "TX0") => return Some(1),
         ("board-esp32-devkit-c-v4", "RX") | ("wokwi-esp32-devkit-v1", "RX0") => return Some(3),
         ("wokwi-esp32-devkit-v1", "TX2") => return Some(17),
         ("wokwi-esp32-devkit-v1", "RX2") => return Some(16),
-        ("board-esp32-devkit-c-v4", n) => n,
-        (_, n) => n.strip_prefix('D')?,
+        ("wokwi-esp32-devkit-v1", n) => n.strip_prefix('D')?,
+        (_, n) => n,
     };
     // Digits only: "D2" on the C-V4 board is a flash pin, not GPIO 2.
     if !number.bytes().all(|b| b.is_ascii_digit()) {
         return None;
     }
-    // GPIO 6 to 11 connect to the flash chip.
-    number
-        .parse()
-        .ok()
-        .filter(|&n| n <= 39 && !(6..=11).contains(&n))
+    let n = number.parse().ok()?;
+    let valid = match kind {
+        // GPIO 22 to 25 are not on the chip. GPIO 26 to 32 connect to the
+        // flash and PSRAM chips.
+        "board-esp32-s3-devkitc-1" => n <= 48 && !(22..=32).contains(&n),
+        // GPIO 6 to 11 connect to the flash chip.
+        _ => n <= 39 && !(6..=11).contains(&n),
+    };
+    valid.then_some(n)
 }
 
 #[cfg(test)]
@@ -112,6 +118,16 @@ mod tests {
         assert_eq!(gpio(kind, "RX0"), Some(3));
         assert_eq!(gpio(kind, "23"), None);
         assert_eq!(gpio(kind, "VIN"), None);
+    }
+
+    #[test]
+    fn maps_s3_names() {
+        let kind = "board-esp32-s3-devkitc-1";
+        assert_eq!(gpio(kind, "48"), Some(48));
+        assert_eq!(gpio(kind, "TX"), Some(43));
+        assert_eq!(gpio(kind, "RX"), Some(44));
+        assert_eq!(gpio(kind, "26"), None);
+        assert_eq!(gpio(kind, "3V3.1"), None);
     }
 
     #[test]

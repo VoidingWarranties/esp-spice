@@ -243,20 +243,17 @@ const pushbutton = {
 
 /**
  * A board with power pins and GPIO pin drivers.
- * @param {{gpio: string[], ground: string[], v3: string, v5: string,
+ * @param {{gpio: string[], ground: string[], v3: string[], v5: string,
  *     other: string[]}} pins
  * @return {PartModel}
  */
 function board({gpio, ground, v3, v5, other}) {
   return {
-    pins: [...gpio, ...ground, v3, v5, ...other],
+    pins: [...gpio, ...ground, ...v3, v5, ...other],
     ground,
     build(p) {
       /** @type {Array<[string, number]>} */
-      const supplies = [
-        [v3, 3.3],
-        [v5, 5],
-      ];
+      const supplies = [...v3.map((pin) => [pin, 3.3]), [v5, 5]];
       for (const [pin, volts] of supplies) {
         if (!p.wired(pin)) continue;
         const inner = p.inner(pin);
@@ -459,7 +456,7 @@ export const PARTS = {
       'VN',
     ],
     ground: ['GND.1', 'GND.2', 'GND.3'],
-    v3: '3V3',
+    v3: ['3V3'],
     v5: '5V',
     other: ['EN', 'CMD', 'CLK', 'D0', 'D1', 'D2', 'D3'],
   }),
@@ -493,8 +490,53 @@ export const PARTS = {
       'VN',
     ],
     ground: ['GND.1', 'GND.2'],
-    v3: '3V3',
+    v3: ['3V3'],
     v5: 'VIN',
     other: ['EN'],
+  }),
+
+  'board-esp32-s3-devkitc-1': board({
+    gpio: [
+      '0',
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8',
+      '9',
+      '10',
+      '11',
+      '12',
+      '13',
+      '14',
+      '15',
+      '16',
+      '17',
+      '18',
+      '19',
+      '20',
+      '21',
+      '35',
+      '36',
+      '37',
+      '38',
+      '39',
+      '40',
+      '41',
+      '42',
+      '45',
+      '46',
+      '47',
+      '48',
+      'TX',
+      'RX',
+    ],
+    ground: ['GND.1', 'GND.2', 'GND.3', 'GND.4'],
+    v3: ['3V3.1', '3V3.2'],
+    v5: '5V',
+    other: ['RST'],
   }),
 };

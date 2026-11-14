@@ -75,7 +75,7 @@ impl<S: Chip> Esp for Machine<S> {
             mode.pull_down = state.pull_down;
         }
         // PAD_DRIVER is bit 2 of GPIO_PINn_REG, and OUT_SEL is bits 0..8 of
-        // GPIO_FUNCn_OUT_SEL_CFG_REG, on the classic ESP32.
+        // GPIO_FUNCn_OUT_SEL_CFG_REG, on the classic ESP32 and the S3.
         let pin_reg = bus.read32_unpriced(S::PIN_REG + 4 * u32::from(gpio));
         mode.open_drain = pin_reg.is_ok_and(|v| v & 1 << 2 != 0);
         let out_sel = bus.read32_unpriced(S::OUT_SEL_REG + 4 * u32::from(gpio));
@@ -108,6 +108,7 @@ pub(crate) struct ChipEntry {
 pub(crate) fn for_board(kind: &str) -> Option<ChipEntry> {
     match kind {
         "board-esp32-devkit-c-v4" | "wokwi-esp32-devkit-v1" => Some(entry::<esp32::Esp32>()),
+        "board-esp32-s3-devkitc-1" => Some(entry::<esp32s3::S3>()),
         _ => None,
     }
 }
@@ -152,6 +153,20 @@ impl Chip for esp32::Esp32 {
         };
         let reg = bus.read32_unpriced(0x3ff4_8400 + offset).unwrap_or(0);
         (reg >> up & 1 != 0, reg >> down & 1 != 0)
+    }
+}
+
+impl Chip for esp32s3::S3 {
+    // From ESP-IDF v5.5.4 components/soc/esp32s3/register/soc/gpio_reg.h.
+    const PIN_REG: u32 = 0x6000_4074;
+    const OUT_SEL_REG: u32 = 0x6000_4554;
+    const GPIO_OUT_SIGNAL: u32 = 256;
+
+    fn machine(board: Board) -> Machine<Self> {
+        let mut machine = esp32s3::machine([0x34, 0x85, 0x18, 0x00, 0x11, 0x22]);
+        machine.bus.board = board;
+        machine.bus.attach_board_devices();
+        machine
     }
 }
 

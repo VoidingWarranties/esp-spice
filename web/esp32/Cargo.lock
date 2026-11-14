@@ -15,6 +15,7 @@ dependencies = [
  "esp-periph",
  "esp-soc",
  "esp32",
+ "esp32s3",
  "serde_json",
 ]
 
@@ -45,6 +46,17 @@ dependencies = [
 
 [[package]]
 name = "esp32"
+version = "0.3.0"
+source = "git+https://github.com/mikroverk/esp32sim?rev=3bdb9582a910974e4e025d274d6ec61e5c481be6#3bdb9582a910974e4e025d274d6ec61e5c481be6"
+dependencies = [
+ "emu-core",
+ "esp-periph",
+ "esp-soc",
+ "xtensa-lx7",
+]
+
+[[package]]
+name = "esp32s3"
 version = "0.3.0"
 source = "git+https://github.com/mikroverk/esp32sim?rev=3bdb9582a910974e4e025d274d6ec61e5c481be6#3bdb9582a910974e4e025d274d6ec61e5c481be6"
 dependencies = [
