@@ -25,7 +25,9 @@ import {chromium} from 'playwright';
 import {traceEnd} from './src/trace.js';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
-// Not a real host: page.route serves files from ROOT for this origin.
+// The repository, because the viewer imports from circuit/ too.
+const SERVED = path.dirname(ROOT);
+// Not a real host: page.route serves files from SERVED for this origin.
 const ORIGIN = 'http://esp-spice.invalid';
 const BUNDLE = 'node_modules/@wokwi/elements/dist/wokwi-elements.bundle.js';
 
@@ -62,13 +64,13 @@ export async function openCircuit(
     });
     await page.route(`${ORIGIN}/**`, (route) => {
       const url = new URL(route.request().url());
-      const file = path.join(ROOT, url.pathname);
-      if (!file.startsWith(ROOT + path.sep) || !existsSync(file)) {
+      const file = path.join(SERVED, url.pathname);
+      if (!file.startsWith(SERVED + path.sep) || !existsSync(file)) {
         return route.fulfill({status: 404});
       }
       return route.fulfill({path: file});
     });
-    await page.goto(`${ORIGIN}/viewer.html`);
+    await page.goto(`${ORIGIN}/render/viewer.html`);
     await page.waitForFunction(() => window.espSpice);
     await page.evaluate(([d, t]) => window.espSpice.load(d, t), [
       diagram,

@@ -39,17 +39,19 @@ draw the circuit on the dark grey panel that the viewer uses in dark mode.
 
 ## Interactive viewer
 
-Serve this folder with a static file server, then open
-`viewer.html?diagram=<path>&trace=<path>`:
+Serve the repository root with a static file server, because the viewer
+imports `circuit/parts.js`. Then open
+`render/viewer.html?diagram=<path>&trace=<path>`:
 
 ```sh
 python3 -m http.server
-# http://localhost:8000/viewer.html?diagram=examples/blink/diagram.json&trace=examples/blink/trace.json
+# http://localhost:8000/render/viewer.html?diagram=examples/blink/diagram.json&trace=examples/blink/trace.json
 ```
 
 ## Use in your own page
 
-`src/` is plain ES modules for the browser, with no build step. Load the
+`src/` is plain ES modules for the browser, with no build step. It imports
+`../circuit/parts.js`, so serve the repository root. Load the
 wokwi-elements bundle first.
 
 ```html
@@ -86,7 +88,9 @@ its value until a later key frame changes it. Times are in seconds.
   `wokwi-esp32-devkit-v1`. `src/parts.js` draws the types that
   wokwi-elements does not have: `wokwi-vcc`, `wokwi-gnd`, the `spice-*`
   types in [docs/circuit-format.md](../docs/circuit-format.md#supported-parts),
-  and the boards `board-esp32-devkit-c-v4`, `board-esp32-s3-devkitc-1`,
+  from the `drawing` of each type in
+  [circuit/parts.js](../circuit/parts.js), and the boards
+  `board-esp32-devkit-c-v4`, `board-esp32-s3-devkitc-1`,
   `board-esp32-c3-devkitm-1` and `board-esp32-c6-devkitc-1`. The boards use
   Wokwi's pin names and pin positions, so Wokwi diagrams keep their wires.
   Their drawings in `src/boards/` are from

@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {afterEach, test} from 'node:test';
 import {toNetlist} from '../netlist.js';
+import {PARTS} from '../parts.js';
 import {Simulation} from '../simulation.js';
 
 /** kT/q at 27 C. */
@@ -80,6 +81,14 @@ function peak(s, pin, period) {
 /** @type {Simulation | undefined} */
 let sim;
 afterEach(() => sim?.close());
+
+test('drawings have the same pins as their models', () => {
+  for (const [type, {pins, drawing}] of Object.entries(PARTS)) {
+    if (!drawing) continue;
+    const drawn = drawing.pins.map(([name]) => name);
+    assert.deepEqual(drawn.toSorted(), pins.toSorted(), type);
+  }
+});
 
 test('unknown models list the known ones', () => {
   for (const [type, models] of [
