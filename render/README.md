@@ -84,9 +84,10 @@ its value until a later key frame changes it. Times are in seconds.
 
 - Parts: any `type` that is a wokwi-elements tag, for example `wokwi-led` or
   `wokwi-esp32-devkit-v1`. `src/parts.js` draws the types that
-  wokwi-elements does not have: `wokwi-vcc`, `wokwi-gnd`, `spice-capacitor`,
-  `spice-diode` and `spice-npn`. Other types show as a dashed box, with a
-  labeled pin on its edge for each wire.
+  wokwi-elements does not have: `wokwi-vcc`, `wokwi-gnd` and the `spice-*`
+  types in [docs/circuit-format.md](../docs/circuit-format.md#supported-parts).
+  Other types show as a dashed box, with a labeled pin on its edge for each
+  wire.
 - A wire to a pin that the part does not have ends at the part center, with a
   red "?" badge. The renderer logs a warning for each unknown part and pin.
 

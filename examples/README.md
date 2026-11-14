@@ -3,7 +3,8 @@
 Each folder has a `diagram.json`. A folder with a `firmware.bin` also runs
 an ESP32. The examples in this table use each supported part type. The
 tests check them against hand calculations:
-[circuit/test/examples.test.js](../circuit/test/examples.test.js) for the
+[circuit/test/examples.test.js](../circuit/test/examples.test.js) and
+[circuit/test/parts.test.js](../circuit/test/parts.test.js) for the
 circuits, and [bridge/tests/examples.rs](../bridge/tests/examples.rs) for
 the firmware.
 
@@ -18,6 +19,9 @@ the firmware.
 | [esp32-pwm](esp32-pwm)                     | ESP32, RGB LED, buzzer, 2N2222          | The RGB LED fades. The buzzer plays 2 kHz while the button is down. |
 | [esp32-rectifier](esp32-rectifier)         | ESP32 PWM, 1N4148, capacitor            | 2.72 V with 14 mV ripple from a 1 kHz, 3.3 V square wave             |
 | [esp32-adc](esp32-adc)                     | ESP32 ADC, pot, LED bar graph           | Pot at 512 reads 1652 mV and lights 5 segments                       |
+| [zener-regulator](zener-regulator)         | resistors, 1N4733A zener                | 9 V in: 4.75 V on the 1k load                                        |
+| [opamp-amplifier](opamp-amplifier)         | sine source, LM358, resistors           | Gain 1 + 22k / 10k = 3.2: 0.75 V ± 0.25 V in, 2.4 V ± 0.8 V out      |
+| [rlc-resonance](rlc-resonance)             | sine source, R, inductor, capacitor     | f0 = 1592 Hz and Q = 5: 0.5 V in, 2.5 V peak on the capacitor        |
 
 [esp32-rectifier](esp32-rectifier) uses the firmware of
 [esp32-pwm](esp32-pwm): `firmware.bin` is a link to it.
