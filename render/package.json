@@ -1,0 +1,17 @@
+{
+  "name": "esp-spice-render",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Draw a Wokwi diagram.json, play back sim state, and capture PNG and video.",
+  "type": "module",
+  "bin": {
+    "esp-spice-capture": "./capture.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@wokwi/elements": "1.9.2",
+    "playwright": "1.63.0"
+  }
+}
