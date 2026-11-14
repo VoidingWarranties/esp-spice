@@ -54,8 +54,8 @@ self.onmessage = ({data}) => {
  */
 async function run(diagram, firmwareUrl, circuit) {
   self.postMessage({type: 'status', text: 'Loading the ESP32…'});
-  const firmwareBytes = fetchBytes(firmwareUrl);
-  const wasm = await fetchBytes(WASM_URL);
+  const [wasm, firmware] =
+      await Promise.all([WASM_URL, firmwareUrl].map(fetchBytes));
   // The emulator can compile hot code at run time. 0 tells it to interpret.
   const {instance} = await WebAssembly.instantiate(wasm, {
     env: {host_jit_compile: () => 0, host_jit_release: () => {}},
@@ -84,8 +84,7 @@ async function run(diagram, firmwareUrl, circuit) {
   const diagramBytes = encoder.encode(JSON.stringify(diagram));
   // The board part selects the chip, and so the ROM.
   check(withBytes([diagramBytes], w.esp_web_rom_name));
-  const [firmware, rom] = await Promise.all(
-      [firmwareBytes, fetchBytes(`dist/${decoder.decode(out())}`)]);
+  const rom = await fetchBytes(`dist/${decoder.decode(out())}`);
   check(withBytes([diagramBytes, firmware, rom], w.esp_web_new));
 
   let wallStart = performance.now();
