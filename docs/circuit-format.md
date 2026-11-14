@@ -123,7 +123,8 @@ Notes on the models:
 
 A board part puts its power pins into the circuit and makes each GPIO pin
 that is wired to a part a pin driver. Pins that are not wired are not in the
-circuit, and drive changes to them are ignored.
+circuit. They still take drive changes, and their voltage is their own drive
+(the drive volts if `ohms` is less than 1 Gohm, else 0).
 
 | Board                     | Ground                  | 3.3 V | 5 V   | GPIO pins                                                                                 |
 | ------------------------- | ----------------------- | ----- | ----- | ----------------------------------------------------------------------------------------- |

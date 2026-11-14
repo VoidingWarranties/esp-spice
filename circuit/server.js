@@ -9,6 +9,7 @@
 import {readFileSync} from 'node:fs';
 import {createInterface} from 'node:readline';
 import {parseArgs} from 'node:util';
+import {parseValue} from './netlist.js';
 import {Simulation} from './simulation.js';
 
 const {values, positionals} = parseArgs({
@@ -23,7 +24,7 @@ if (positionals.length !== 1) {
 }
 
 const diagram = JSON.parse(readFileSync(positionals[0], 'utf8'));
-const maxStep = values['max-step'] ? Number(values['max-step']) : undefined;
+const maxStep = values['max-step'] ? parseValue(values['max-step']) : undefined;
 const sim = new Simulation(diagram, {maxStep});
 for (const warning of sim.warnings)
   process.stderr.write(`warning: ${warning}\n`);
