@@ -25,7 +25,7 @@ const serialView = document.querySelector('#serial');
  */
 const INPUTS = {};
 INPUTS['wokwi-potentiometer'] = INPUTS['wokwi-slide-potentiometer'] =
-    (id, el, control) => el.addEventListener(
+    INPUTS['wokwi-slide-switch'] = (id, el, control) => el.addEventListener(
         'input', () => control(`${id}.value`, el.value));
 INPUTS['wokwi-pushbutton'] = INPUTS['wokwi-pushbutton-6mm'] =
     (id, el, control) => {

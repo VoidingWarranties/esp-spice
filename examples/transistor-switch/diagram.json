@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "author": "esp-spice",
+  "editor": "esp-spice",
+  "parts": [
+    { "type": "wokwi-vcc", "id": "vcc1", "top": 58, "left": 4, "attrs": {} },
+    { "type": "wokwi-pushbutton", "id": "btn1", "top": 93, "left": 50, "attrs": { "color": "green" } },
+    { "type": "wokwi-resistor", "id": "r1", "top": 119, "left": 140, "attrs": { "value": "10k" } },
+    { "type": "spice-npn", "id": "q1", "top": 100, "left": 220, "attrs": { "model": "2N2222" } },
+    { "type": "wokwi-gnd", "id": "gnd", "top": 175, "left": 238, "attrs": {} },
+    { "type": "wokwi-led", "id": "led1", "top": 38, "left": 235, "attrs": { "color": "red" } },
+    { "type": "wokwi-resistor", "id": "r2", "top": 74, "left": 290, "attrs": { "value": "220" } },
+    { "type": "wokwi-vcc", "id": "vcc2", "top": 28, "left": 354, "attrs": { "voltage": "5" } }
+  ],
+  "connections": [
+    ["vcc1:VCC", "btn1:1.l", "red", ["v14"]],
+    ["btn1:2.r", "r1:1", "green", []],
+    ["r1:2", "q1:B", "green", []],
+    ["q1:E", "gnd:GND", "black", []],
+    ["led1:C", "q1:C", "green", []],
+    ["led1:A", "r2:1", "orange", []],
+    ["r2:2", "vcc2:VCC", "red", []]
+  ]
+}

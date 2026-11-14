@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "author": "esp-spice",
+  "editor": "esp-spice",
+  "parts": [
+    { "type": "wokwi-vcc", "id": "vcc", "top": 8, "left": 24, "attrs": { "voltage": "5" } },
+    { "type": "wokwi-resistor", "id": "r1", "top": 81.05, "left": 7.95, "rotate": 90, "attrs": { "value": "10k" } },
+    { "type": "wokwi-resistor", "id": "r2", "top": 161.05, "left": 7.95, "rotate": 90, "attrs": { "value": "4.7k" } },
+    { "type": "wokwi-gnd", "id": "gnd", "top": 220, "left": 28, "attrs": {} }
+  ],
+  "connections": [
+    ["vcc:VCC", "r1:1", "red", []],
+    ["r1:2", "r2:1", "orange", []],
+    ["r2:2", "gnd:GND", "black", []]
+  ]
+}

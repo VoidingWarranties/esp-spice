@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "author": "esp-spice",
+  "editor": "esp-spice",
+  "parts": [
+    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    { "type": "spice-diode", "id": "d1", "top": 72, "left": 130, "attrs": { "model": "1N4148" } },
+    { "type": "spice-capacitor", "id": "c1", "top": 105, "left": 175, "rotate": 90, "attrs": { "value": "10u" } },
+    { "type": "wokwi-gnd", "id": "gnd1", "top": 160, "left": 188, "attrs": {} },
+    { "type": "wokwi-resistor", "id": "r1", "top": 121.05, "left": 217.95, "rotate": 90, "attrs": { "value": "10k" } },
+    { "type": "wokwi-gnd", "id": "gnd2", "top": 180, "left": 238, "attrs": {} }
+  ],
+  "connections": [
+    ["esp:TX0", "$serialMonitor:RX", "", []],
+    ["esp:RX0", "$serialMonitor:TX", "", []],
+    ["esp:D18", "d1:A", "orange", []],
+    ["d1:C", "c1:1", "orange", []],
+    ["d1:C", "r1:1", "orange", []],
+    ["c1:2", "gnd1:GND", "black", []],
+    ["r1:2", "gnd2:GND", "black", []]
+  ]
+}

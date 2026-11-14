@@ -1,0 +1,36 @@
+# Draws each example circuit, so reviewers can see a pull request's
+# changes without pictures in the branch. Download "captures" from the run.
+name: Captures
+
+on:
+  pull_request:
+    paths:
+      - examples/**
+      - render/**
+      - tools/capture-examples.sh
+      - .github/workflows/captures.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: render/package-lock.json
+      - name: Install the renderer and Chromium
+        working-directory: render
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - run: tools/capture-examples.sh captures
+      - uses: actions/upload-artifact@v4
+        with:
+          name: captures
+          path: captures/

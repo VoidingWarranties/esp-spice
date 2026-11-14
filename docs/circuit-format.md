@@ -94,6 +94,13 @@ warning. Their pins are not connected to anything in the circuit.
 | `spice-capacitor`                            | `1` `2`                               | `value` farads (`1u`)                             |                                |                                     |
 | `spice-diode`                                | `A` `C`                               | `model` `1N4148` or `1N4007` (`1N4148`)           |                                |                                     |
 | `spice-npn`                                  | `C` `B` `E`                           | `model` `2N2222` or `2N3904` (`2N2222`)           |                                |                                     |
+| `spice-pnp`                                  | `C` `B` `E`                           | `model` `2N3906` or `2N2907` (`2N3906`)           |                                |                                     |
+| `spice-nmos`                                 | `D` `G` `S`                           | `model` `2N7000` or `IRLZ44N` (`2N7000`)          |                                |                                     |
+| `spice-pmos`                                 | `D` `G` `S`                           | `model` `BS250` or `IRF9540` (`BS250`)            |                                |                                     |
+| `spice-zener`                                | `A` `C`                               | `model` `1N4728A` (3.3 V), `1N4733A` (5.1 V) or `1N4742A` (12 V) (`1N4733A`) |                |                                     |
+| `spice-inductor`                             | `1` `2`                               | `value` henries (`1m`)                            |                                |                                     |
+| `spice-sine-source`                          | `+` `-`                               | `amplitude` peak volts (`1`), `frequency` Hz (`1k`), `offset` volts (`0`) |        |                                     |
+| `spice-opamp`                                | `IN+` `IN-` `OUT` `V+` `V-`           | `model` `LM358` or `MCP6002` (`LM358`)            |                                |                                     |
 | `board-esp32-devkit-c-v4`                    | see [Boards](#boards)                 |                                                   | pin drive, see [Boards](#boards) |                                   |
 | `wokwi-esp32-devkit-v1`                      | see [Boards](#boards)                 |                                                   | pin drive, see [Boards](#boards) |                                   |
 | `board-esp32-s3-devkitc-1`                   | see [Boards](#boards)                 |                                                   | pin drive, see [Boards](#boards) |                                   |
@@ -101,8 +108,8 @@ warning. Their pins are not connected to anything in the circuit.
 | `board-esp32-c6-devkitc-1`                   | see [Boards](#boards)                 |                                                   | pin drive, see [Boards](#boards) |                                   |
 
 The `spice-*` types are not Wokwi parts. Wokwi does not simulate analog
-circuits, so it has no capacitor, diode or transistor. A renderer must draw
-them itself.
+circuits, so it has no capacitor, inductor, diode, transistor, op-amp or
+sine source. A renderer must draw them itself.
 
 Notes on the models:
 
@@ -112,13 +119,36 @@ Notes on the models:
   connects `2` to `1`. Value 1 (handle right) connects `2` to `3`.
 - In a potentiometer, value 1023 puts `SIG` at `VCC`, and value 0 puts
   `SIG` at `GND`.
-- An LED is a diode with a forward voltage from its color: red, orange and
-  yellow about 2.0 V, green, blue, white and purple about 3.0 V.
+- An LED is a diode with a forward voltage from its color: red, orange,
+  yellow and lime about 2.0 V, green, cyan, blue, white and purple about
+  3.0 V. Another color gets 2.0 V and a warning. A bar graph with color
+  `GYR` or `BCYR` uses the color of each segment.
   `brightness` is the LED current divided by 5 mA, limited to 0..1.
   `value` is `brightness > 0`.
+- A buzzer is a resistor. `hasSignal` is true when its current goes between
+  low and high at least 3 times in the last 50 ms, with a change of 1 mA or
+  more. So DC is silent, as in a piezo buzzer, and tones from about 30 Hz
+  sound.
 - A closed switch is 0.05 ohm. An open switch is 1 Gohm.
 - `wokwi-vcc` is an ideal source with 0.01 ohm in series, so two sources on
   one net do not make an error.
+- `spice-sine-source` is `offset + amplitude * sin(2 pi frequency t)` from
+  `+` to `-`, with 0.01 ohm in series. It starts at time 0.
+- The MOSFETs are ngspice `vdmos` models, with a body diode. Their threshold
+  and on resistance are near the typical datasheet values.
+- A zener has its datasheet voltage at its datasheet test current, and its
+  datasheet impedance there. Below the test current, the voltage falls
+  faster than in a real zener: the `1N4733A` is at about 4.74 V at 4 mA.
+- An op-amp has one pole, so its gain times bandwidth is constant. It has
+  infinite input resistance and 10 ohm output resistance. Its output stops
+  short of `V+` and `V-` by the model's swing, and changes no faster than the
+  model's slew rate. The output current comes from ground, not from `V+` or
+  `V-`.
+
+  | Model     | Open-loop gain | Gain-bandwidth | Slew rate  | Swing to `V+` | Swing to `V-` |
+  | --------- | -------------- | -------------- | ---------- | ------------- | ------------- |
+  | `LM358`   | 100k           | 1 MHz          | 0.3 V/us   | 1.5 V         | 20 mV         |
+  | `MCP6002` | 400k           | 1 MHz          | 0.6 V/us   | 25 mV         | 25 mV         |
 - Each node has 1 Gohm to ground, so a node with no connection does not
   make an error.
 
@@ -211,9 +241,10 @@ Options:
   10 ms. The simulation also records when a control or pin drive changes.
 - `probes`: pins whose net voltage the trace records.
 
-`state()` and the trace use the mean part current since the last record,
-so an LED on a PWM pin has a steady brightness. Node voltages are the
-value now.
+`state()` and the trace use the mean part current since the last record.
+While a pin has PWM with a period of one frame or less, that time grows to
+whole periods of the slowest such PWM, so an LED on a PWM pin has a steady
+brightness. Slower PWM shows as blinks. Node voltages are the value now.
 
 Ngspice keeps every time point in memory, so memory grows with the
 simulated time: about 50 MB for each simulated second with a 5 kHz PWM
@@ -221,8 +252,9 @@ pin.
 
 ## Process protocol
 
-`node circuit/server.js diagram.json [--max-step 10e-6]` reads one JSON
-command per line on stdin and writes one JSON reply per line on stdout.
+`node circuit/server.js diagram.json [--max-step 10e-6] [--probe PIN]...`
+reads one JSON command per line on stdin and writes one JSON reply per line
+on stdout. Each `--probe` adds a pin to the `probes` of the trace.
 A failed command replies `{ "error": "message" }`.
 
 | Command                                                          | Reply                                        |

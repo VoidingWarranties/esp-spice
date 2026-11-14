@@ -7,8 +7,12 @@
 export const CLOSED_OHMS = 0.05;
 /** Resistance of an open switch, in ohms. */
 export const OPEN_OHMS = 1e9;
+/** Smallest current change that counts as a buzzer signal, in amps. */
+export const TOGGLE_AMPS = 1e-3;
 /** LED current for full brightness, in amps. */
 export const LED_FULL_AMPS = 5e-3;
+/** kT/q at 27 C, the ngspice default temperature, in volts. */
+const THERMAL_VOLTS = 0.025865;
 
 /**
  * Context that a part model uses to add itself to the netlist.
@@ -22,6 +26,7 @@ export const LED_FULL_AMPS = 5e-3;
  * @property {(suffix: string) => string} inner A node inside the part.
  * @property {(letter: string, suffix?: string) => string} el Element name.
  * @property {(line: string) => void} add Adds a netlist line.
+ * @property {(message: string) => void} warn Adds a warning, once.
  * @property {(name: string, body: string) => string} model Adds a .model.
  * @property {(label: string, from: string, to: string) => void} sense
  *     Adds a 0 V source to read the current from `from` to `to`.
@@ -49,6 +54,9 @@ export const LED_FULL_AMPS = 5e-3;
  * @typedef {object} Reader
  * @property {(pin: string) => number} v Volts at a pin.
  * @property {(label: string) => number} i Amps through a sense source.
+ * @property {(label: string) => number} [toggles] How many times the
+ *     current through a sense source changed between low and high, in the
+ *     last 50 ms. Missing in a DC solve.
  * @property {(name: string) => number} control Value of a control.
  */
 
@@ -113,10 +121,27 @@ const LED_VOLTS = {
   red: 1.9,
   orange: 2.0,
   yellow: 2.0,
+  lime: 2.0,
   green: 3.0,
+  cyan: 3.0,
   blue: 3.0,
   white: 3.0,
   purple: 3.0,
+};
+
+/**
+ * Segment colors of the wokwi-led-bar-graph palettes.
+ * @type {Record<string, string[]>}
+ */
+const BAR_PALETTES = {
+  GYR: [...Array(5).fill('lime'), ...Array(3).fill('yellow'), 'red', 'red'],
+  BCYR: [
+    'blue',
+    ...Array(4).fill('cyan'),
+    ...Array(3).fill('yellow'),
+    'red',
+    'red',
+  ],
 };
 
 /**
@@ -126,7 +151,12 @@ const LED_VOLTS = {
  * @return {string}
  */
 function ledModel(p, color) {
-  const volts = LED_VOLTS[color.toLowerCase()] ?? 2.0;
+  const key = color.toLowerCase();
+  let volts = LED_VOLTS[key];
+  if (!Object.hasOwn(LED_VOLTS, key)) {
+    volts = 2.0;
+    p.warn(`unknown LED color "${color}", using ${volts} V`);
+  }
   const n = 2;
   const vt = 0.02585;
   const is = 0.01 * Math.exp(-volts / (n * vt));
@@ -175,11 +205,92 @@ const NPNS = {
     'tf=301.2p itf=0.4 vtf=4 xtf=2 rb=10)',
 };
 
+/** @type {Record<string, string>} */
+const PNPS = {
+  '2N3906':
+    'pnp(is=1.41f xti=3 eg=1.11 vaf=18.7 bf=180.7 ne=1.5 ikf=80m xtb=1.5 ' +
+    'br=4.977 nc=2 rc=2.5 cjc=9.728p mjc=0.5776 vjc=0.75 fc=0.5 ' +
+    'cje=8.063p mje=0.3677 vje=0.75 tr=33.42n tf=179.3p itf=0.4 vtf=4 ' +
+    'xtf=6 rb=10)',
+  '2N2907':
+    'pnp(is=650.6e-18 xti=3 eg=1.11 vaf=115.7 bf=231.7 ne=1.829 ' +
+    'ise=54.81f ikf=1.079 xtb=1.5 br=3.563 nc=2 rc=0.715 cjc=14.76p ' +
+    'mjc=0.5383 vjc=0.75 fc=0.5 cje=19.82p mje=0.3357 vje=0.75 tr=111.3n ' +
+    'tf=603.7p itf=0.65 vtf=5 xtf=1.7 rb=10)',
+};
+
+// ngspice VDMOS models: three pins and a body diode. The values are near
+// the typical datasheet threshold and on resistance.
+/** @type {Record<string, string>} */
+const NMOS = {
+  '2N7000':
+    'vdmos(vto=1.6 kp=0.17 rs=0.75 rg=3 cgs=50p cgdmin=12p cgdmax=80p ' +
+    'cjo=50p is=0.04p)',
+  IRLZ44N:
+    'vdmos(vto=1.5 kp=12 rd=3m rs=3m rg=3 cgs=1.6n cgdmin=0.1n ' +
+    'cgdmax=1.8n cjo=0.6n is=72p)',
+};
+
+/** @type {Record<string, string>} */
+const PMOS = {
+  BS250:
+    'vdmos(pchan vto=-2.2 kp=0.056 rd=1 rs=1 rg=3 cgs=60p cgdmin=10p ' +
+    'cgdmax=60p cjo=30p is=0.04p)',
+  IRF9540:
+    'vdmos(pchan vto=-3 kp=1.3 rd=10m rs=10m rg=3 cgs=1.2n cgdmin=0.2n ' +
+    'cgdmax=1n cjo=0.6n is=40p)',
+};
+
 /**
+ * Zener voltage at the test current, test current, and impedance at the
+ * test current, from datasheets.
+ * @type {Record<string, {vz: number, izt: number, zzt: number}>}
+ */
+const ZENERS = {
+  '1N4728A': {vz: 3.3, izt: 76e-3, zzt: 10},
+  '1N4733A': {vz: 5.1, izt: 49e-3, zzt: 7},
+  '1N4742A': {vz: 12, izt: 21e-3, zzt: 9},
+};
+
+/**
+ * Open-loop gain, gain-bandwidth in Hz, slew rate in V/s, and how close the
+ * output gets to each supply rail, in volts.
+ * @type {Record<string, {gain: number, gbw: number, slew: number,
+ *     high: number, low: number}>}
+ */
+const OPAMPS = {
+  LM358: {gain: 1e5, gbw: 1e6, slew: 0.3e6, high: 1.5, low: 0.02},
+  MCP6002: {gain: 4e5, gbw: 1e6, slew: 0.6e6, high: 0.025, low: 0.025},
+};
+
+/**
+ * Adds a transistor whose model is from `table`.
+ * @param {string} letter Element letter and model name prefix.
  * @param {Record<string, string>} table
+ * @param {string} fallback Default model.
+ * @param {string[]} pins In netlist order.
+ * @return {PartModel}
+ */
+function transistor(letter, table, fallback, pins) {
+  return {
+    pins,
+    build(p) {
+      const key = p.attr('model', fallback);
+      const model = p.model(
+        `${letter}_${key.toLowerCase()}`,
+        lookup(table, key, p.id),
+      );
+      p.add(`${p.el(letter)} ${pins.map(p.node).join(' ')} ${model}`);
+    },
+  };
+}
+
+/**
+ * @template T
+ * @param {Record<string, T>} table
  * @param {string} key
  * @param {string} id
- * @return {string}
+ * @return {T}
  */
 function lookup(table, key, id) {
   const body = table[key.toUpperCase()];
@@ -328,12 +439,13 @@ export const PARTS = {
   'wokwi-led-bar-graph': {
     pins: [...Array(10)].flatMap((_, i) => [`A${i + 1}`, `C${i + 1}`]),
     build(p) {
+      const color = p.attr('color', 'red');
       for (let i = 1; i <= 10; i++) {
         addLed(
           p,
           p.node(`A${i}`),
           p.node(`C${i}`),
-          p.attr('color', 'red'),
+          BAR_PALETTES[color]?.[i - 1] ?? color,
           `i${i}`,
         );
       }
@@ -379,7 +491,14 @@ export const PARTS = {
       p.sense('i', p.node('1'), mid);
       p.add(`${p.el('r')} ${mid} ${p.node('2')} ${p.num('resistance', '42')}`);
     },
-    state: (r) => ({hasSignal: Math.abs(r.i('i')) > 1e-3}),
+    // A piezo buzzer sounds only while its current goes up and down, so DC
+    // is silent. 3 toggles, so that one short DC pulse is silent too. A DC
+    // solve has no toggles, so it reads any current.
+    state: (r) => ({
+      hasSignal: r.toggles
+        ? r.toggles('i') >= 3
+        : Math.abs(r.i('i')) > TOGGLE_AMPS,
+    }),
   },
 
   'wokwi-vcc': {
@@ -418,14 +537,86 @@ export const PARTS = {
     },
   },
 
-  'spice-npn': {
-    pins: ['C', 'B', 'E'],
+  'spice-npn': transistor('q', NPNS, '2N2222', ['C', 'B', 'E']),
+  'spice-pnp': transistor('q', PNPS, '2N3906', ['C', 'B', 'E']),
+  'spice-nmos': transistor('m', NMOS, '2N7000', ['D', 'G', 'S']),
+  'spice-pmos': transistor('m', PMOS, 'BS250', ['D', 'G', 'S']),
+
+  'spice-zener': {
+    pins: ['A', 'C'],
     build(p) {
-      const key = p.attr('model', '2N2222');
-      const model = p.model(`q_${key.toLowerCase()}`, lookup(NPNS, key, p.id));
-      p.add(
-        `${p.el('q')} ${p.node('C')} ${p.node('B')} ${p.node('E')} ${model}`,
+      const key = p.attr('model', '1N4733A');
+      const {vz, izt, zzt} = lookup(ZENERS, key, p.id);
+      // Breakdown current is izt * exp((v - bv) / vt) + a drop on rs, so
+      // these give vz at izt and a slope of zzt there.
+      const rs = zzt - THERMAL_VOLTS / izt;
+      const bv = vz - izt * rs;
+      const model = p.model(
+        `dz_${key.toLowerCase()}`,
+        `d(is=1n n=1 rs=${rs} bv=${bv} ibv=${izt} nbv=1)`,
       );
+      p.add(`${p.el('d')} ${p.node('A')} ${p.node('C')} ${model}`);
+    },
+  },
+
+  'spice-inductor': {
+    pins: ['1', '2'],
+    build(p) {
+      p.add(
+        `${p.el('l')} ${p.node('1')} ${p.node('2')} ${p.num('value', '1m')}`,
+      );
+    },
+  },
+
+  'spice-sine-source': {
+    pins: ['+', '-'],
+    build(p) {
+      const inner = p.inner('src');
+      const offset = p.num('offset', '0');
+      const amplitude = p.num('amplitude', '1');
+      const freq = p.num('frequency', '1k');
+      p.add(
+        `${p.el('v')} ${inner} ${p.node('-')} ` +
+          `sin(${offset} ${amplitude} ${freq})`,
+      );
+      p.add(`${p.el('r')} ${inner} ${p.node('+')} 0.01`);
+    },
+  },
+
+  'spice-opamp': {
+    pins: ['IN+', 'IN-', 'OUT', 'V+', 'V-'],
+    build(p) {
+      const {gain, gbw, slew, high, low} = lookup(
+        OPAMPS,
+        p.attr('model', 'LM358'),
+        p.id,
+      );
+      const [inp, inn, vp, vn] = ['IN+', 'IN-', 'V+', 'V-'].map(p.node);
+      const x = p.inner('x');
+      const out = p.inner('out');
+      // A current into a capacitor sets the gain-bandwidth, and its limit
+      // sets the slew rate. A large cap keeps r far below the 1 Gohm
+      // rshunt, which would lower the gain.
+      const cap = 1e-6;
+      const gm = 2 * Math.PI * gbw * cap;
+      const imax = slew * cap;
+      /** @param {number} n */
+      const f = (n) => n.toPrecision(4);
+      p.add(
+        `${p.el('b', 'in')} 0 ${x} i = ${f(imax)} * ` +
+          `tanh(${f(gm)} * (v(${inp}) - v(${inn})) / ${f(imax)})`,
+      );
+      p.add(`${p.el('r')} ${x} 0 ${f(gain / gm)}`);
+      p.add(`${p.el('c')} ${x} 0 ${cap}`);
+      // 1 kS pulls x back inside the output range, so it leaves a rail at
+      // once.
+      p.add(
+        `${p.el('b', 'clamp')} ${x} 0 i = 1000 * (` +
+          `max(v(${x}) - v(${vp}) + ${high}, 0) - ` +
+          `max(v(${vn}) + ${low} - v(${x}), 0))`,
+      );
+      p.add(`${p.el('e')} ${out} 0 ${x} 0 1`);
+      p.add(`${p.el('r', 'out')} ${out} ${p.node('OUT')} 10`);
     },
   },
 

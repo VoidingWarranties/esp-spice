@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "author": "esp-spice",
+  "editor": "esp-spice",
+  "parts": [
+    { "type": "spice-sine-source", "id": "sig", "top": 60, "left": 0, "attrs": { "amplitude": "0.5", "frequency": "1592Hz" } },
+    { "type": "wokwi-resistor", "id": "r1", "top": 24.35, "left": 50, "attrs": { "value": "20" } },
+    { "type": "spice-inductor", "id": "l1", "top": 20, "left": 130, "attrs": { "value": "10m" } },
+    { "type": "spice-capacitor", "id": "c1", "top": 65, "left": 185, "rotate": 90, "attrs": { "value": "1u" } },
+    { "type": "wokwi-gnd", "id": "gnd", "top": 140, "left": 103, "attrs": {} }
+  ],
+  "connections": [
+    ["sig:+", "r1:1", "green", ["v-30"]],
+    ["r1:2", "l1:1", "green", []],
+    ["l1:2", "c1:1", "green", []],
+    ["c1:2", "gnd:GND", "black", ["v40"]],
+    ["sig:-", "gnd:GND", "black", ["v20"]]
+  ]
+}

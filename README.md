@@ -68,6 +68,11 @@ push to `main`, when Pages is set to deploy from GitHub Actions.
 [eecircuit-engine]: https://github.com/eelab-dev/EEcircuit-engine
 [wokwi-elements]: https://github.com/wokwi/wokwi-elements
 
+## Contributing
+
+[CONTRIBUTING.md](CONTRIBUTING.md) tells where to put pictures for pull
+requests.
+
 ## License
 
 esp-spice is under the MIT License, in [LICENSE](LICENSE).
