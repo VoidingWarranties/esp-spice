@@ -14,7 +14,10 @@
           packages = with pkgs; [
             nodejs_22
             ffmpeg
+            ngspice
           ];
+          # circuit/ngspice.js loads the ngspice shared library from here.
+          NGSPICE_LIBRARY = "${pkgs.libngspice}/lib/libngspice${pkgs.stdenv.hostPlatform.extensions.sharedLibrary}";
         }
         # Browsers that Playwright downloads do not run on NixOS. The render
         # tests pass with this Chromium. On macOS, run
