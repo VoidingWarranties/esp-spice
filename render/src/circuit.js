@@ -13,6 +13,9 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
 const PADDING = 20;
 // Hidden parts are still in the sim, so we show them, but greyed out.
 const HIDDEN_STYLE = 'opacity: 0.35; filter: grayscale(1);';
+// A light edge under each wire, so dark wires show on dark parts and
+// panels.
+const HALO_COLOR = 'rgb(255 255 255 / 0.5)';
 
 // The sim gives slide pot values as 0..1023, as for the rotary pot.
 const DEFAULT_ATTRS = {'wokwi-slide-potentiometer': {max: '1023'}};
@@ -191,20 +194,39 @@ function drawWires(wires, shift) {
   svg.style.cssText =
     'position: absolute; inset: 0; width: 100%; height: 100%;' +
     ' overflow: visible; pointer-events: none;';
+  const halos = [];
+  const lines = [];
   for (const {color, hidden, points} of wires) {
-    const line = document.createElementNS(SVG_NS, 'polyline');
     const moved = points.map(([x, y]) => `${x + shift[0]},${y + shift[1]}`);
-    line.setAttribute('points', moved.join(' '));
-    line.setAttribute('fill', 'none');
-    line.setAttribute('stroke', color);
-    line.setAttribute('stroke-width', '2');
-    line.setAttribute('stroke-linejoin', 'round');
-    line.setAttribute('stroke-linecap', 'round');
+    const halo = polyline(moved, HALO_COLOR, 4);
+    const line = polyline(moved, color, 2);
     if (hidden) {
-      line.dataset.hidden = '';
-      line.style.cssText = HIDDEN_STYLE;
+      for (const el of [halo, line]) {
+        el.dataset.hidden = '';
+        el.style.cssText = HIDDEN_STYLE;
+      }
     }
-    svg.append(line);
+    halos.push(halo);
+    lines.push(line);
   }
+  // All halos go first, so a halo never covers a wire that crosses it.
+  svg.append(...halos, ...lines);
   return svg;
+}
+
+/**
+ * @param {!Array<string>} points "x,y" pairs.
+ * @param {string} color
+ * @param {number} width
+ * @return {!SVGPolylineElement}
+ */
+function polyline(points, color, width) {
+  const line = document.createElementNS(SVG_NS, 'polyline');
+  line.setAttribute('points', points.join(' '));
+  line.setAttribute('fill', 'none');
+  line.setAttribute('stroke', color);
+  line.setAttribute('stroke-width', String(width));
+  line.setAttribute('stroke-linejoin', 'round');
+  line.setAttribute('stroke-linecap', 'round');
+  return line;
 }

@@ -6,7 +6,9 @@
  * renderer can treat all parts the same.
  */
 
-const STROKE = 'stroke="#333" stroke-width="2" fill="none"';
+// currentColor, so the drawings follow the page text color, also in dark
+// mode.
+const STROKE = 'stroke="currentColor" stroke-width="2" fill="none"';
 
 /**
  * Each part has static SVG markup and an optional text label. The label
@@ -39,7 +41,7 @@ const PARTS = {
     pins: [['A', 0, 10], ['C', 40, 10]],
     svg: `
       <path d="M0 10H40M26 2V18" ${STROKE}/>
-      <path d="M14 2L26 10L14 18Z" fill="#333"/>`,
+      <path d="M14 2L26 10L14 18Z" fill="currentColor"/>`,
     label: {x: 20, y: 29, attr: 'model', fallback: '1N4148'},
   },
   'spice-npn': {
@@ -49,7 +51,7 @@ const PARTS = {
     svg: `
       <circle cx="22" cy="25" r="16" ${STROKE}/>
       <path d="M0 25H16M16 15V35M16 20L30 11V0M16 30L30 39V50" ${STROKE}/>
-      <path d="M30 39L21 37L25 31Z" fill="#333"/>`,
+      <path d="M30 39L21 37L25 31Z" fill="currentColor"/>`,
     label: {x: 34, y: 50, attr: 'model', fallback: '2N2222', anchor: 'start'},
   },
 };
@@ -59,7 +61,7 @@ const sheet = new CSSStyleSheet();
 sheet.replaceSync(`
   :host { display: inline-block; }
   svg { display: block; overflow: visible; }
-  text { font: 9px sans-serif; fill: #333; }
+  text { font: 9px sans-serif; fill: currentColor; }
 `);
 
 for (const [tag, {width, height, pins, svg, label}] of Object.entries(PARTS)) {

@@ -10,11 +10,16 @@
       color-scheme: light dark;
       --bg: #fff;
       --text: #222;
+      --panel: #fff;
+      --muted: #666;
     }
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #1e1e1e;
         --text: #ddd;
+        /* Dark grey, not black, so black wires and parts still show. */
+        --panel: #2a2a2a;
+        --muted: #aaa;
       }
     }
     body {
@@ -23,21 +28,17 @@
       background: var(--bg);
       color: var(--text);
     }
-    /* The parts are drawn for a light background, so the stage stays light,
-       also in dark mode. */
     #stage {
       display: inline-block;
       position: relative;
-      color-scheme: light;
-      background: #fff;
-      color: #222;
+      background: var(--panel);
     }
     #time {
       position: absolute;
       right: 8px;
       bottom: 4px;
       font: 12px ui-monospace, monospace;
-      color: #666;
+      color: var(--muted);
     }
     #controls { display: flex; gap: 8px; align-items: center; padding: 8px; }
     #controls input { flex: 1; }

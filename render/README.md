@@ -5,6 +5,11 @@ a trace file, and exports PNG screenshots and MP4 or GIF video.
 
 ![Blink example](examples/blink/blink.gif)
 
+Each wire has a light edge, so black wires show on dark parts. In dark mode,
+the circuit is on a dark grey panel:
+
+![Blink example in dark mode](examples/blink/blink-dark.png)
+
 ## Setup
 
 ```sh
@@ -29,7 +34,8 @@ node capture.js examples/blink/diagram.json --trace examples/blink/trace.json \
 ```
 
 `--scale` sets the device pixel ratio (default 2). Parts with `"hide": true`
-show greyed out. Give `--no-hidden` to leave them out.
+show greyed out. Give `--no-hidden` to leave them out. Give `--dark` to
+draw the circuit on the dark grey panel that the viewer uses in dark mode.
 
 ## Interactive viewer
 
