@@ -21,13 +21,32 @@ fn run(bridge: &mut Bridge<DeferredCircuit>, circuit: &mut StubCircuit, seconds:
 }
 
 #[test]
-fn deferred_circuit_drives_firmware() {
+fn deferred_circuit_drives_firmware_esp32() {
+    deferred_circuit_drives_firmware(common::ESP32);
+}
+
+#[test]
+fn deferred_circuit_drives_firmware_s3() {
+    deferred_circuit_drives_firmware(common::S3);
+}
+
+#[test]
+fn deferred_circuit_drives_firmware_c3() {
+    deferred_circuit_drives_firmware(common::C3);
+}
+
+#[test]
+fn deferred_circuit_drives_firmware_c6() {
+    deferred_circuit_drives_firmware(common::C6);
+}
+
+fn deferred_circuit_drives_firmware(example: &str) {
     let mut circuit = StubCircuit::default();
     let deferred = DeferredCircuit::default();
     let mut bridge = Bridge::new(
-        &common::diagram(),
-        &common::flash(),
-        &common::rom(),
+        &common::diagram(example),
+        &common::flash(example),
+        &common::rom(example),
         deferred,
     )
     .unwrap();

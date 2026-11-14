@@ -11,6 +11,9 @@ for the terms and the source. To build it again, with PlatformIO Core 6.1:
 
 ```sh
 cd firmware
-pio run
+pio run -e esp32dev
 cp .pio/build/esp32dev/firmware.factory.bin ../firmware.bin
 ```
+
+The same sketch is the firmware of
+[esp32-s3-button-led](../esp32-s3-button-led).
