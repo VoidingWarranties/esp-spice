@@ -128,8 +128,8 @@ Notes on the models:
 - The MOSFETs are ngspice `vdmos` models, with a body diode. Their threshold
   and on resistance are near the typical datasheet values.
 - A zener has its datasheet voltage at its datasheet test current, and its
-  datasheet impedance there. Below the test current, the voltage falls by
-  26 mV for each factor of e.
+  datasheet impedance there. Below the test current, the voltage falls
+  faster than in a real zener: the `1N4733A` is at about 4.74 V at 4 mA.
 - An op-amp has one pole, so its gain times bandwidth is constant. It has
   infinite input resistance and 10 ohm output resistance. Its output stops
   short of `V+` and `V-` by the model's swing, and changes no faster than the

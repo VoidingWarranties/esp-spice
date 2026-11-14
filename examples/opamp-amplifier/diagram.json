@@ -3,7 +3,7 @@
   "author": "esp-spice",
   "editor": "esp-spice",
   "parts": [
-    { "type": "spice-sine-source", "id": "sig", "top": 90, "left": 40, "attrs": { "amplitude": "0.25", "frequency": "1k", "offset": "0.75" } },
+    { "type": "spice-sine-source", "id": "sig", "top": 90, "left": 40, "attrs": { "amplitude": "0.25", "frequency": "1kHz", "offset": "0.75" } },
     { "type": "spice-opamp", "id": "u1", "top": 40, "left": 120, "attrs": { "model": "LM358" } },
     { "type": "wokwi-vcc", "id": "vcc", "top": -12, "left": 134, "attrs": { "voltage": "5" } },
     { "type": "wokwi-resistor", "id": "rf", "top": 134.35, "left": 100, "attrs": { "value": "22k" } },

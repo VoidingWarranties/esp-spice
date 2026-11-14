@@ -3,7 +3,7 @@
   "author": "esp-spice",
   "editor": "esp-spice",
   "parts": [
-    { "type": "spice-sine-source", "id": "sig", "top": 60, "left": 0, "attrs": { "amplitude": "0.5", "frequency": "1592" } },
+    { "type": "spice-sine-source", "id": "sig", "top": 60, "left": 0, "attrs": { "amplitude": "0.5", "frequency": "1592Hz" } },
     { "type": "wokwi-resistor", "id": "r1", "top": 24.35, "left": 50, "attrs": { "value": "20" } },
     { "type": "spice-inductor", "id": "l1", "top": 20, "left": 130, "attrs": { "value": "10m" } },
     { "type": "spice-capacitor", "id": "c1", "top": 65, "left": 185, "rotate": 90, "attrs": { "value": "1u" } },

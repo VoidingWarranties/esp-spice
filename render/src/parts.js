@@ -109,14 +109,7 @@ const PARTS = {
       <circle cx="20" cy="30" r="14" ${STROKE}/>
       <path d="M20 0V16M20 44V60M12 30C15 21 17 21 20 30S25 39 28 30
           M27 7H33M30 4V10" ${STROKE}/>`,
-    label: {
-      x: 36,
-      y: 34,
-      attr: 'frequency',
-      fallback: '1k',
-      suffix: 'Hz',
-      anchor: 'start',
-    },
+    label: {x: 36, y: 34, attr: 'frequency', fallback: '1k', anchor: 'start'},
   },
   'spice-opamp': {
     width: 60,

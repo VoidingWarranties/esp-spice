@@ -237,20 +237,19 @@ const OPAMPS = {
 
 /**
  * Adds a transistor whose model is from `table`.
- * @param {string} letter Element letter.
- * @param {string} prefix Model name prefix.
+ * @param {string} letter Element letter and model name prefix.
  * @param {Record<string, string>} table
  * @param {string} fallback Default model.
  * @param {string[]} pins In netlist order.
  * @return {PartModel}
  */
-function transistor(letter, prefix, table, fallback, pins) {
+function transistor(letter, table, fallback, pins) {
   return {
     pins,
     build(p) {
       const key = p.attr('model', fallback);
       const model = p.model(
-        `${prefix}_${key.toLowerCase()}`,
+        `${letter}_${key.toLowerCase()}`,
         lookup(table, key, p.id),
       );
       p.add(`${p.el(letter)} ${pins.map(p.node).join(' ')} ${model}`);
@@ -502,10 +501,10 @@ export const PARTS = {
     },
   },
 
-  'spice-npn': transistor('q', 'q', NPNS, '2N2222', ['C', 'B', 'E']),
-  'spice-pnp': transistor('q', 'q', PNPS, '2N3906', ['C', 'B', 'E']),
-  'spice-nmos': transistor('m', 'm', NMOS, '2N7000', ['D', 'G', 'S']),
-  'spice-pmos': transistor('m', 'm', PMOS, 'BS250', ['D', 'G', 'S']),
+  'spice-npn': transistor('q', NPNS, '2N2222', ['C', 'B', 'E']),
+  'spice-pnp': transistor('q', PNPS, '2N3906', ['C', 'B', 'E']),
+  'spice-nmos': transistor('m', NMOS, '2N7000', ['D', 'G', 'S']),
+  'spice-pmos': transistor('m', PMOS, 'BS250', ['D', 'G', 'S']),
 
   'spice-zener': {
     pins: ['A', 'C'],
@@ -518,8 +517,7 @@ export const PARTS = {
       const bv = vz - izt * rs;
       const model = p.model(
         `dz_${key.toLowerCase()}`,
-        `d(is=1n n=1 rs=${rs.toPrecision(4)} bv=${bv.toPrecision(4)} ` +
-          `ibv=${izt} nbv=1)`,
+        `d(is=1n n=1 rs=${rs} bv=${bv} ibv=${izt} nbv=1)`,
       );
       p.add(`${p.el('d')} ${p.node('A')} ${p.node('C')} ${model}`);
     },
@@ -561,8 +559,9 @@ export const PARTS = {
       const x = p.inner('x');
       const out = p.inner('out');
       // A current into a capacitor sets the gain-bandwidth, and its limit
-      // sets the slew rate.
-      const cap = 1e-9;
+      // sets the slew rate. A large cap keeps r far below the 1 Gohm
+      // rshunt, which would lower the gain.
+      const cap = 1e-6;
       const gm = 2 * Math.PI * gbw * cap;
       const imax = slew * cap;
       /** @param {number} n */
@@ -573,12 +572,12 @@ export const PARTS = {
       );
       p.add(`${p.el('r')} ${x} 0 ${f(gain / gm)}`);
       p.add(`${p.el('c')} ${x} 0 ${cap}`);
-      // 1 S pulls x back inside the output range, so it leaves a rail at
+      // 1 kS pulls x back inside the output range, so it leaves a rail at
       // once.
       p.add(
-        `${p.el('b', 'clamp')} ${x} 0 i = ` +
+        `${p.el('b', 'clamp')} ${x} 0 i = 1000 * (` +
           `max(v(${x}) - v(${vp}) + ${high}, 0) - ` +
-          `max(v(${vn}) + ${low} - v(${x}), 0)`,
+          `max(v(${vn}) + ${low} - v(${x}), 0))`,
       );
       p.add(`${p.el('e')} ${out} 0 ${x} 0 1`);
       p.add(`${p.el('r', 'out')} ${out} ${p.node('OUT')} 10`);

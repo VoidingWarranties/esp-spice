@@ -107,6 +107,7 @@ test('draws on a dark grey panel in dark mode', async () => {
 test('draws the analog examples with no warnings', async () => {
   const names = ['zener-regulator', 'opamp-amplifier', 'rlc-resonance'];
   const warn = mock.method(console, 'warn', () => {});
+  const error = mock.method(console, 'error', () => {});
   try {
     for (const name of names) {
       const dir = new URL(`../../examples/${name}/`, import.meta.url);
@@ -114,7 +115,9 @@ test('draws the analog examples with no warnings', async () => {
       await view.close();
     }
     assert.deepEqual(warn.mock.calls.map((c) => c.arguments), []);
+    assert.deepEqual(error.mock.calls.map((c) => c.arguments), []);
   } finally {
     warn.mock.restore();
+    error.mock.restore();
   }
 });
