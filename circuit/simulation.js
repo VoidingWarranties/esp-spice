@@ -5,9 +5,11 @@
 
 import {toNetlist} from './netlist.js';
 import {ngspice} from './ngspice.js';
-import {OPEN_OHMS} from './parts.js';
+import {OPEN_OHMS, TOGGLE_AMPS} from './parts.js';
 import {TraceRecorder} from './trace.js';
 
+/** Time over which toggles() counts, in seconds. */
+const TOGGLE_SECONDS = 0.05;
 /** Times closer than this are equal, in seconds. */
 const EPSILON = 1e-12;
 
@@ -252,27 +254,63 @@ export class Simulation {
 
   /**
    * Reads the circuit. Currents are the mean since the last record, or
-   * over the last frame if there are no new points.
+   * over the last frame if there are no new points. While a pin has PWM
+   * that is faster than a frame, that time grows to whole periods of the
+   * slowest such PWM, so the mean does not depend on the PWM phase.
    * @return {import('./netlist.js').CircuitReader}
    */
   #reader() {
     const mark =
       this.#ng.length('time') > this.#mark ? this.#mark : this.#previousMark;
-    const from = Math.max(0, mark - 1);
-    const times = this.#ng.vector('time', from) ?? [];
+    const last = this.#ng.vector('time', Math.max(0, mark - 1))?.[0] ?? 0;
+    const period = this.#pwmPeriod();
+    const meanStart =
+      period > 0
+        ? Math.max(
+            0,
+            this.#time -
+              period * Math.ceil((this.#time - last) / period - 1e-6),
+          )
+        : last;
+    const toggleStart = this.#time - TOGGLE_SECONDS;
+    const {from, times} = this.#timesSince(Math.min(meanStart, toggleStart));
+    /** @param {string} source */
+    const values = (source) => this.#ng.vector(`${source}#branch`, from) ?? [];
     return {
       v: (node) => this.#volts(node),
-      i: (source) => {
-        const values = this.#ng.vector(`${source}#branch`, from) ?? [];
-        const span = times[times.length - 1] - times[0];
-        if (!(span > 0)) return values[values.length - 1];
-        let sum = 0;
-        for (let k = 1; k < times.length; k++) {
-          sum += ((values[k] + values[k - 1]) / 2) * (times[k] - times[k - 1]);
-        }
-        return sum / span;
-      },
+      i: (source) => mean(times, values(source), meanStart),
+      toggles: (source) => toggles(times, values(source), toggleStart),
     };
+  }
+
+  /**
+   * @return {number} The longest period of a PWM pin that is not longer
+   *     than a frame, or 0, in seconds. Slower PWM shows as blinks.
+   */
+  #pwmPeriod() {
+    const controls = this.#circuit.controls;
+    let period = 0;
+    for (const name of Object.keys(controls)) {
+      const p = 1 / controls[name];
+      if (!name.endsWith('.freqHz') || !(p <= this.#frameInterval)) continue;
+      const duty = controls[name.replace(/freqHz$/, 'duty')];
+      if (duty > 0 && duty < 1) period = Math.max(period, p);
+    }
+    return period;
+  }
+
+  /**
+   * @param {number} t Seconds.
+   * @return {{from: number, times: number[]}} The time vector from an
+   *     index `from` at or before time t.
+   */
+  #timesSince(t) {
+    const length = this.#ng.length('time');
+    for (let n = 1024; ; n *= 4) {
+      const from = Math.max(0, length - n);
+      const times = this.#ng.vector('time', from) ?? [];
+      if (from === 0 || times[0] <= t) return {from, times};
+    }
   }
 
   #record() {
@@ -290,4 +328,49 @@ export class Simulation {
     if (length > this.#mark)
       [this.#previousMark, this.#mark] = [this.#mark, length];
   }
+}
+
+/**
+ * @param {number[]} times
+ * @param {number[]} values
+ * @param {number} start Seconds.
+ * @return {number} The mean of the values from `start` to the last time.
+ */
+function mean(times, values, start) {
+  const from = Math.max(start, times[0]);
+  const span = times[times.length - 1] - from;
+  if (!(span > 0)) return values[values.length - 1];
+  let sum = 0;
+  for (let k = 1; k < times.length; k++) {
+    if (times[k] <= from) continue;
+    const a = Math.max(times[k - 1], from);
+    const slope = (values[k] - values[k - 1]) / (times[k] - times[k - 1]);
+    const va = values[k - 1] + slope * (a - times[k - 1]);
+    sum += ((va + values[k]) / 2) * (times[k] - a);
+  }
+  return sum / span;
+}
+
+/**
+ * @param {number[]} times
+ * @param {number[]} values
+ * @param {number} start Seconds.
+ * @return {number} How many times the values from `start` cross the middle
+ *     of their range. 0 if the range is less than TOGGLE_AMPS.
+ */
+function toggles(times, values, start) {
+  const window = values.filter((_, k) => times[k] >= start);
+  let low = Infinity;
+  let high = -Infinity;
+  for (const value of window) {
+    low = Math.min(low, value);
+    high = Math.max(high, value);
+  }
+  if (!(high - low >= TOGGLE_AMPS)) return 0;
+  const middle = (low + high) / 2;
+  let count = 0;
+  for (let k = 1; k < window.length; k++) {
+    if (window[k] > middle !== window[k - 1] > middle) count++;
+  }
+  return count;
 }

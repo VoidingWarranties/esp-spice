@@ -10,7 +10,8 @@ const DIAGRAM = fileURLToPath(
 );
 
 test('the server answers each command with one line', async () => {
-  const child = spawn(process.execPath, [SERVER, DIAGRAM], {
+  const args = [SERVER, DIAGRAM, '--probe', 'esp:34'];
+  const child = spawn(process.execPath, args, {
     stdio: ['pipe', 'pipe', 'inherit'],
   });
   const lines = createInterface({input: child.stdout})[Symbol.asyncIterator]();
@@ -37,7 +38,9 @@ test('the server answers each command with one line', async () => {
   assert.ok(Math.abs(step.v['esp:4']) < 0.01);
   assert.ok((await send({cmd: 'voltage', pin: 'esp:34'})).v > 1);
   assert.equal((await send({cmd: 'state', part: 'led1'})).value, true);
-  assert.equal((await send({cmd: 'trace'})).version, 1);
+  const trace = await send({cmd: 'trace'});
+  assert.equal(trace.version, 1);
+  assert.ok(trace.probes['esp:34'][0].v > 1);
   assert.deepEqual(await send({cmd: 'nope'}), {error: 'unknown command: nope'});
   assert.match((await send({cmd: 'voltage', pin: 'x:1'})).error, /unknown pin/);
 
