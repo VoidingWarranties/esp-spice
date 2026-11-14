@@ -38,8 +38,9 @@ time T. The serial output goes to stdout. `--trace` writes the circuit trace.
 The bridge reads ESP-IDF's own heap counters from emulated memory, so the
 firmware needs no code to report them. A sample is the value that
 `esp_get_free_heap_size()` and `esp_get_minimum_free_heap_size()` give at
-that time. Give the ELF of the app with `--elf`, as PlatformIO's
-`firmware.elf`. The flags are the same as wokwi-cli's:
+that time. `--elf`, the ELF of the app such as PlatformIO's
+`firmware.elf`, turns on the samples. The other flags are the same as
+wokwi-cli's:
 
 ```sh
 cargo run --release --manifest-path bridge/Cargo.toml -- \
@@ -56,7 +57,9 @@ cargo run --release --manifest-path bridge/Cargo.toml -- \
   is below BYTES.
 
 The run also fails with exit code 1 when it got no samples, for example
-when the ELF is not of the firmware. At the end, the run writes a summary
+when the ELF is not of the firmware. If the firmware stops, the run still
+writes the samples. After a reset, the samples start again when the new
+boot sets up its heap. At the end, the run writes a summary
 such as `Heap: 20 samples, free 267824 -> 262684, lowest 256956` to stderr.
 
 To find a leak, do the same request many times, back to back, and set the

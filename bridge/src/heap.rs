@@ -10,6 +10,9 @@
 //! poisoning, multi_heap_poisoning.c takes 12 bytes (POISON_OVERHEAD) off
 //! each.
 
+use std::collections::HashMap;
+use std::ops::Range;
+
 /// The free heap that `esp_get_free_heap_size()` and
 /// `esp_get_minimum_free_heap_size()` give, in bytes.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -20,10 +23,11 @@ pub struct Heap {
 
 /// The symbol of the list head.
 pub(crate) const SYMBOL: &str = "registered_heaps";
-/// A function of multi_heap_poisoning.c, which ESP-IDF builds only with
-/// heap poisoning.
-pub(crate) const POISONING_SYMBOL: &str = "poison_allocated_region";
 pub(crate) const POISON_OVERHEAD: u32 = 12;
+/// The peripheral registers of the chips. A read there can change a
+/// peripheral, so a bad pointer must not reach them. The S3's RTC fast
+/// memory, a heap, starts at 0x600f_e000.
+const MMIO: [Range<u32>; 2] = [0x3ff0_0000..0x3ff8_0000, 0x6000_0000..0x600f_e000];
 /// From components/heap/include/esp_heap_caps.h.
 const MALLOC_CAP_DEFAULT: u32 = 1 << 12;
 const START_OFFSET: u32 = 12;
@@ -33,20 +37,38 @@ const NEXT_OFFSET: u32 = 32;
 /// Stops the walk if the list is corrupt or the ELF is not of this firmware.
 const MAX_HEAPS: usize = 64;
 
+/// Whether the firmware takes POISON_OVERHEAD off each heap, from the
+/// symbols of its ELF.
+pub(crate) fn poisoned(symbols: &HashMap<String, u32>) -> bool {
+    // ESP-IDF builds multi_heap_poisoning.c only with heap poisoning.
+    // Without it, multi_heap_free_size is an alias of the _impl function.
+    let public = symbols.get("multi_heap_free_size");
+    let inner = symbols.get("multi_heap_free_size_impl");
+    symbols.contains_key("poison_allocated_region")
+        || matches!((public, inner), (Some(a), Some(b)) if a != b)
+}
+
 /// Adds up the heaps that `malloc` uses, as `heap_caps_get_free_size`
-/// does. None before the firmware registers its heaps, or if the memory
-/// does not have this layout.
-/// `overhead` is what the firmware takes off each heap.
+/// does. `overhead` is what the firmware takes off each heap. None before
+/// the firmware registers its heaps, or if the memory does not have this
+/// layout.
 pub(crate) fn read(
     head: u32,
     overhead: u32,
-    mut word: impl FnMut(u32) -> Option<u32>,
+    mut read_word: impl FnMut(u32) -> Option<u32>,
 ) -> Option<Heap> {
+    let mut word = |base: u32, offset: u32| {
+        let addr = base.checked_add(offset)?;
+        if MMIO.iter().any(|r| r.contains(&addr)) {
+            return None;
+        }
+        read_word(addr)
+    };
     let mut heap = Heap {
         free: 0,
         min_free: 0,
     };
-    let mut node = word(head)?;
+    let mut node = word(head, 0)?;
     if node == 0 {
         return None;
     }
@@ -54,16 +76,19 @@ pub(crate) fn read(
         if node == 0 {
             return Some(heap);
         }
-        let caps = (0..3).try_fold(0, |all, i| Some(all | word(node + 4 * i)?))?;
-        let info = word(node + HEAP_OFFSET)?;
-        if !(word(node + START_OFFSET)?..word(node + END_OFFSET)?).contains(&info) {
+        let caps = (0..3).try_fold(0, |all, i| Some(all | word(node, 4 * i)?))?;
+        let info = word(node, HEAP_OFFSET)?;
+        if !(word(node, START_OFFSET)?..word(node, END_OFFSET)?).contains(&info) {
             return None;
         }
         if caps & MALLOC_CAP_DEFAULT != 0 {
-            heap.free += word(info + 4)?.saturating_sub(overhead);
-            heap.min_free += word(info + 8)?.saturating_sub(overhead);
+            // multi_heap_poisoning.c gives max(n, overhead) - overhead.
+            let free = word(info, 4)?.saturating_sub(overhead);
+            let min_free = word(info, 8)?.saturating_sub(overhead);
+            heap.free = heap.free.checked_add(free)?;
+            heap.min_free = heap.min_free.checked_add(min_free)?;
         }
-        node = word(node + NEXT_OFFSET)?;
+        node = word(node, NEXT_OFFSET)?;
     }
     None
 }
@@ -120,5 +145,29 @@ mod tests {
         // No heaps yet, or another layout.
         assert_eq!(read(0x999, 0, word), None);
         assert_eq!(read(0x600, 0, word), None);
+        // A bad pointer never reaches the peripherals.
+        let mmio = |a| {
+            assert!(a < 0x6000_0000, "read {a:#x}");
+            Some(0x6000_0000)
+        };
+        assert_eq!(read(0x100, 0, mmio), None);
+    }
+
+    #[test]
+    fn finds_poisoning() {
+        let symbols = |list: &[(&str, u32)]| -> HashMap<String, u32> {
+            list.iter().map(|&(n, a)| (n.to_string(), a)).collect()
+        };
+        let alias = [
+            ("multi_heap_free_size", 1),
+            ("multi_heap_free_size_impl", 1),
+        ];
+        assert!(!poisoned(&symbols(&alias)));
+        let wrapper = [
+            ("multi_heap_free_size", 2),
+            ("multi_heap_free_size_impl", 1),
+        ];
+        assert!(poisoned(&symbols(&wrapper)));
+        assert!(poisoned(&symbols(&[("poison_allocated_region", 3)])));
     }
 }

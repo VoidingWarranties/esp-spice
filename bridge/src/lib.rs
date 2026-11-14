@@ -102,7 +102,14 @@ impl<C: Circuit + 'static> Bridge<C> {
             {
                 Stop::Halted => {}
                 // A software or watchdog reset reboots the chip, as on a board.
-                Stop::SwReset => self.machine.reboot(),
+                Stop::SwReset => {
+                    self.machine.reboot();
+                    // RAM keeps the old heap list until the new app sets up
+                    // its heap. Clear it, so that no sample reads old heaps.
+                    if let Some((list, _)) = self.heap_list {
+                        self.machine.write_word(list, 0);
+                    }
+                }
                 stop => {
                     // Keep the firmware's last output, such as a panic message.
                     self.machine.take_serial(&mut self.serial);
@@ -152,13 +159,12 @@ impl<C: Circuit + 'static> Bridge<C> {
     /// Loads the symbols of the firmware ELF, for `heap`. It must be the ELF
     /// of the app in the flash image.
     pub fn load_elf(&mut self, elf: &[u8]) -> Result<(), String> {
-        let symbols = esp_soc::elf::parse(elf)?.symbols;
-        let addr = |name| symbols.iter().find(|(_, n)| *n == name).map(|(&a, _)| a);
-        let list = addr(heap::SYMBOL).ok_or(format!(
+        let symbols = esp_soc::elf::parse(elf)?.by_name;
+        let list = *symbols.get(heap::SYMBOL).ok_or(format!(
             "the ELF has no {} symbol, so it is not ESP-IDF firmware",
             heap::SYMBOL
         ))?;
-        let overhead = if addr(heap::POISONING_SYMBOL).is_some() {
+        let overhead = if heap::poisoned(&symbols) {
             heap::POISON_OVERHEAD
         } else {
             0
