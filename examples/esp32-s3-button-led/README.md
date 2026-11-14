@@ -18,5 +18,4 @@ cp .pio/build/esp32-s3-devkitc-1/firmware.factory.bin \
     ../../esp32-s3-button-led/firmware.bin
 ```
 
-Open it in the web demo: `web/?demo=examples/esp32-s3-button-led`. The
-renderer does not draw this board yet.
+The web demo opens it by default: `web/`.

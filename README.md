@@ -51,10 +51,10 @@ Turn the pot or push the button, and the page solves the circuit again.
 ```sh
 tools/build-web.sh    # the ESP32 module and the ROM, into web/dist
 python3 -m http.server 8790
-# Open http://127.0.0.1:8790/web/?demo=examples/esp32-pot-button-leds
+# Open http://127.0.0.1:8790/web/?demo=examples/esp32-s3-button-led
 ```
 
-Without `?demo`, the page opens `examples/esp32-pot-button-leds`. Demos
+Without `?demo`, the page opens `examples/esp32-s3-button-led`. Demos
 without firmware do not need `tools/build-web.sh`. The page loads ngspice
 and wokwi-elements from a CDN, so it needs a network connection.
 
