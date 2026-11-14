@@ -1,0 +1,35 @@
+# Publishes the web demo to GitHub Pages, at <pages URL>/web/.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}web/
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the ESP32 module and get the ROM
+        run: tools/build-web.sh
+        env:
+          # Keeps the build files out of the published folder.
+          CARGO_TARGET_DIR: ${{ runner.temp }}/target
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deploy
+        uses: actions/deploy-pages@v4
