@@ -14,8 +14,9 @@
     tbody th, td { font-family: ui-monospace, monospace; font-weight: normal; }
     pre { font-size: 12px; }
     #error:empty { margin: 0; }
-    /* The parts and wires are drawn for a light background. */
-    #circuit { color-scheme: light; background: #fff; color: #222; }
+    /* Dark grey, not black, in dark mode, so black wires and parts show. */
+    #circuit { background: #fff; }
+    @media (prefers-color-scheme: dark) { #circuit { background: #2a2a2a; } }
     #serial { width: 40ch; height: 12em; overflow: auto; padding: 8px;
               border: 1px solid #8888; }
   </style>

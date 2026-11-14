@@ -92,3 +92,14 @@ test('draws hidden parts greyed out, or not at all', async () => {
   assert.notEqual(grey, plain, 'hidden part is greyed out');
   assert.notEqual(greyNoHidden, grey, 'hidden part is not drawn');
 });
+
+test('draws on a dark grey panel in dark mode', async () => {
+  const diagram = await readJson('diagram.json');
+  const shots = [];
+  for (const dark of [false, true]) {
+    const view = await openCircuit(diagram, undefined, {scale: 1, dark});
+    shots.push(await view.shoot(0));
+    await view.close();
+  }
+  assert.notDeepEqual(shots[0], shots[1]);
+});
