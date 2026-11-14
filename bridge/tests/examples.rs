@@ -110,7 +110,8 @@ fn pwm_fades_rgb_and_drives_buzzer() {
     assert_eq!(state(&mut bridge, "bz1")["hasSignal"], true);
     set(&mut bridge, "btn1.pressed", 0);
     wait(&mut bridge, "tone off");
-    bridge.run_for(0.01).unwrap();
+    // The buzzer counts toggles over the last 50 ms.
+    bridge.run_for(0.06).unwrap();
     assert_eq!(state(&mut bridge, "bz1")["hasSignal"], false);
 }
 

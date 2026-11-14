@@ -112,10 +112,16 @@ Notes on the models:
   connects `2` to `1`. Value 1 (handle right) connects `2` to `3`.
 - In a potentiometer, value 1023 puts `SIG` at `VCC`, and value 0 puts
   `SIG` at `GND`.
-- An LED is a diode with a forward voltage from its color: red, orange and
-  yellow about 2.0 V, green, blue, white and purple about 3.0 V.
+- An LED is a diode with a forward voltage from its color: red, orange,
+  yellow and lime about 2.0 V, green, cyan, blue, white and purple about
+  3.0 V. Another color gets 2.0 V and a warning. A bar graph with color
+  `GYR` or `BCYR` uses the color of each segment.
   `brightness` is the LED current divided by 5 mA, limited to 0..1.
   `value` is `brightness > 0`.
+- A buzzer is a resistor. `hasSignal` is true when its current goes between
+  low and high at least 3 times in the last 50 ms, with a change of 1 mA or
+  more. So DC is silent, as in a piezo buzzer, and tones from about 30 Hz
+  sound.
 - A closed switch is 0.05 ohm. An open switch is 1 Gohm.
 - `wokwi-vcc` is an ideal source with 0.01 ohm in series, so two sources on
   one net do not make an error.
@@ -211,9 +217,10 @@ Options:
   10 ms. The simulation also records when a control or pin drive changes.
 - `probes`: pins whose net voltage the trace records.
 
-`state()` and the trace use the mean part current since the last record,
-so an LED on a PWM pin has a steady brightness. Node voltages are the
-value now.
+`state()` and the trace use the mean part current since the last record.
+While a pin has PWM with a period of one frame or less, that time grows to
+whole periods of the slowest such PWM, so an LED on a PWM pin has a steady
+brightness. Slower PWM shows as blinks. Node voltages are the value now.
 
 Ngspice keeps every time point in memory, so memory grows with the
 simulated time: about 50 MB for each simulated second with a 5 kHz PWM

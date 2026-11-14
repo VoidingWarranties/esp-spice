@@ -91,10 +91,16 @@ its value until a later key frame changes it. Times are in seconds.
   positions, so Wokwi diagrams keep their wires. Their drawings in
   `src/boards/` are from [ESPboards](https://www.espboards.dev/), under
   CC BY-NC 4.0, so pages and pictures that show them must credit ESPboards
-  and must not be for commercial use. Other types show as a dashed
-  box.
+  and must not be for commercial use. Other types show as a dashed box, with
+  a labeled pin on its edge for each wire.
+- A wire to a pin that the part does not have ends at the part center, with a
+  red "?" badge. The renderer logs a warning for each unknown part and pin.
+
+  ![Wires to an unknown part and an unknown pin](examples/missing-pins/missing-pins.png)
 - `wokwi-slide-potentiometer` gets `max` 1023, because the sim gives pot
   values as 0..1023.
+- A `wokwi-led-bar-graph` segment with a value between 0 and 1 shows dim,
+  as a `wokwi-led` does.
 - `top`, `left`, `rotate` and `attrs` are supported.
 - Parts with `"hide": true` are still in the sim, so they and their wires
   show greyed out. The viewer has a "Show hidden parts" toggle, and pages can
