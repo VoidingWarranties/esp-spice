@@ -9,7 +9,7 @@
 
 import {renderCircuit} from '../render/src/circuit.js';
 
-const DEFAULT_DEMO = 'examples/esp32-pot-button-leds';
+const DEFAULT_DEMO = 'examples/esp32-s3-button-led';
 
 const status = document.querySelector('#status');
 const error = document.querySelector('#error');

@@ -10,7 +10,7 @@
 use std::io::Write;
 use std::process::{exit, Command};
 
-use esp_bridge::{Bridge, ProcessCircuit, ROM_ELF};
+use esp_bridge::{rom_elf, Bridge, ProcessCircuit};
 use serde_json::{json, Value};
 
 const USAGE: &str = "usage: esp-spice-run DIAGRAM FIRMWARE [--seconds S] \
@@ -82,8 +82,9 @@ fn run(options: &Options) -> Result<(), String> {
     let read = |path: &str| std::fs::read(path).map_err(|e| format!("{path}: {e}"));
     let diagram = String::from_utf8(read(&options.diagram)?).map_err(|e| e.to_string())?;
     let flash = read(&options.firmware)?;
-    let rom_path = esp_soc::rom::find(ROM_ELF).ok_or(format!(
-        "no {ROM_ELF}: run tools/fetch-esp32-rom.sh and set ESP32SIM_ROM_DIR"
+    let rom_name = rom_elf(&diagram)?;
+    let rom_path = esp_soc::rom::find(rom_name).ok_or(format!(
+        "no {rom_name}: run tools/fetch-esp32-rom.sh and set ESP32SIM_ROM_DIR"
     ))?;
     let rom = read(&rom_path.to_string_lossy())?;
     let circuit =
