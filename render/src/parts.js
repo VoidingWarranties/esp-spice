@@ -44,9 +44,10 @@ function board({width, height, left, right, art}) {
   const gx = (Math.min(...xs) + Math.max(...xs)) / 2;
   const gy = (Math.min(...ys) + Math.max(...ys)) / 2;
   const k = (PITCH * MM) / ART_PITCH;
-  const [w, h] = [art.width * k, art.height * k];
-  const x = gx - w + art.center[0] * k;
-  const y = gy - h + art.center[1] * k;
+  const round = (n) => +n.toFixed(2);
+  const [w, h] = [round(art.width * k), round(art.height * k)];
+  const x = round(gx - w + art.center[0] * k);
+  const y = round(gy - h + art.center[1] * k);
   const href = new URL(`boards/${art.file}`, import.meta.url).href;
   return {
     // Whole pixels, because the renderer reads the size with offsetWidth and
@@ -185,7 +186,11 @@ for (const [tag, {width, height, pins, svg, label}] of Object.entries(PARTS)) {
       const image = this.shadowRoot.querySelector('image');
       if (image) {
         this.updateComplete = new Promise((resolve) => {
-          image.onload = image.onerror = () => resolve(true);
+          image.onload = () => resolve(true);
+          image.onerror = () => {
+            console.warn(`Cannot load ${image.getAttribute('href')}`);
+            resolve(false);
+          };
         });
       }
     }
