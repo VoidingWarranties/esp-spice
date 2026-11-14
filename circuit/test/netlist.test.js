@@ -13,7 +13,7 @@ const example = (name) =>
   );
 
 /**
- * @param {Array<{type: string, id: string, attrs?: Record<string, string>}>} parts
+ * @param {Array<{type: string, id: string, attrs?: Record<string, string | number | boolean>}>} parts
  * @param {string[][]} connections
  */
 const diagram = (parts, connections) => ({version: 1, parts, connections});
@@ -25,6 +25,7 @@ test('parseValue reads SI prefixes and ignores units', () => {
   assert.equal(parseValue('10meg'), 10e6);
   assert.equal(parseValue('100nF'), 100e-9);
   assert.equal(parseValue('1µF'), 1e-6);
+  assert.equal(parseValue('2.2μF'), 2.2e-6);
   assert.equal(parseValue('3m'), 3e-3);
   assert.equal(parseValue('1e3'), 1000);
   assert.equal(parseValue(' 5 V '), 5);
@@ -111,14 +112,56 @@ test('only wired board pins get a driver', () => {
   const circuit = toNetlist(example('esp32-led'));
   assert.equal(circuit.controls['esp:2.volts'], 0);
   assert.equal(circuit.controls['esp:2.ohms'], 1e9);
-  assert.equal(circuit.controls['esp:13.volts'], undefined);
+  assert.equal(circuit.controls['esp:13.volts'], 0);
   assert.deepEqual(circuit.setControl('esp:13.volts', 3.3, 0), []);
-  assert.throws(
-    () => circuit.setControl('esp:99.volts', 3.3, 0),
-    /unknown control/,
-  );
+  assert.doesNotMatch(circuit.netlist, /^[^*].*esp_13/m);
+  for (const name of [
+    'esp:99.volts',
+    'esp:2.volt',
+    'esp:3V3.volts',
+    'led1:A.volts',
+    'btn1.constructor',
+  ]) {
+    assert.throws(() => circuit.setControl(name, 1, 0), /unknown control/);
+  }
   assert.equal(circuit.nodes['esp:GND.1'], '0');
   assert.equal(circuit.nodes['$serialMonitor:RX'], undefined);
+});
+
+test('slide switch value attr reads "", "0" and "1"', () => {
+  for (const [value, expected] of [
+    ['', 0],
+    ['0', 0],
+    [0, 0],
+    [false, 0],
+    ['1', 1],
+    [1, 1],
+    [true, 1],
+  ]) {
+    const circuit = toNetlist(
+      diagram([{type: 'wokwi-slide-switch', id: 'sw', attrs: {value}}], []),
+    );
+    assert.equal(circuit.controls['sw.value'], expected, `value ${value}`);
+  }
+});
+
+test('PWM pulse width stays positive at tiny duty', () => {
+  const circuit = toNetlist(example('esp32-led'), {
+    controls: {
+      'esp:2.volts': 3.3,
+      'esp:2.freqHz': 5000,
+      'esp:2.duty': 1 / 65536,
+    },
+  });
+  const [, args] =
+    /pulse\(([^)]*)\)/.exec(
+      circuit
+        .setControl('esp:2.duty', 1 / 65536, 0)[0]
+        .replace(/\[ (.*) \]/, 'pulse($1)'),
+    ) ?? [];
+  const [, , , rise, fall, width, period] = args.split(' ').map(Number);
+  assert.ok(width > 0);
+  assert.ok(rise + width + fall <= period);
 });
 
 test('setControl returns alter commands for the new value', () => {

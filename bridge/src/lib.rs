@@ -95,18 +95,24 @@ impl<C: Circuit + 'static> Bridge<C> {
                 Stop::SwReset => {
                     self.machine.reboot();
                 }
-                stop => return Err(format!("the ESP32 stopped: {stop:?}")),
+                stop => {
+                    // Keep the firmware's last output, such as a panic message.
+                    self.serial.append(&mut self.machine.console.uart0);
+                    return Err(format!("the ESP32 stopped: {stop:?}"));
+                }
             }
             self.poll()?;
         }
         Ok(())
     }
 
-    /// Runs until the serial output contains `text`, for at most `timeout`
-    /// seconds. Returns whether the text came.
+    /// Runs until the serial output after this call contains `text`, for at
+    /// most `timeout` seconds. Returns whether the text came.
     pub fn run_until_serial(&mut self, text: &str, timeout: f64) -> Result<bool, String> {
         let end = self.time() + timeout;
-        while !self.serial().contains(text) {
+        let start = self.serial.len();
+        let text = text.as_bytes();
+        while !self.serial[start..].windows(text.len()).any(|w| w == text) {
             if self.time() >= end {
                 return Ok(false);
             }
@@ -141,9 +147,12 @@ impl<C: Circuit + 'static> Bridge<C> {
         shared.pins.iter().find(|p| p.name == pin).map(|p| p.volts)
     }
 
-    /// The circuit, to change its controls. Its time is the ESP32 time.
+    /// The circuit, to change its controls. It is first advanced to the
+    /// ESP32 time.
     pub fn circuit(&self) -> RefMut<'_, C> {
-        RefMut::map(self.shared.borrow_mut(), |s| &mut s.circuit)
+        let mut shared = self.shared.borrow_mut();
+        shared.sync(self.machine.bus.cycles());
+        RefMut::map(shared, |s| &mut s.circuit)
     }
 
     /// Reads the pin modes that the board callbacks do not get (pulls and
@@ -157,7 +166,8 @@ impl<C: Circuit + 'static> Bridge<C> {
             .map(|gpio| Mode::read(bus, gpio))
             .collect();
         let mut shared = self.shared.borrow_mut();
-        shared.catch_up(bus.cycles());
+        let cycle = bus.cycles();
+        shared.catch_up(cycle);
         let mut adc = Vec::new();
         for (pin, mode) in shared.pins.iter_mut().zip(modes) {
             pin.mode = mode;
@@ -166,7 +176,7 @@ impl<C: Circuit + 'static> Bridge<C> {
                 adc.push((pin.gpio, pin.volts));
             }
         }
-        shared.apply_drives();
+        shared.apply_drives(cycle);
         let error = shared.error.clone();
         drop(shared);
         for (gpio, volts) in adc {
@@ -184,6 +194,10 @@ struct Mode {
     out_enable: bool,
     pull_up: bool,
     pull_down: bool,
+    /// The pin drives only low; high releases it.
+    open_drain: bool,
+    /// The GPIO matrix routes a peripheral signal, not GPIO_OUT, to the pin.
+    peripheral: bool,
     /// (frequency in Hz, duty from 0 to 1).
     pwm: Option<(f64, f64)>,
 }
@@ -197,6 +211,13 @@ impl Mode {
             mode.pull_up = state.pull_up;
             mode.pull_down = state.pull_down;
         }
+        // GPIO_PINn_REG PAD_DRIVER (bit 2) and GPIO_FUNCn_OUT_SEL_CFG_REG
+        // OUT_SEL (bits 0..8, 256 is GPIO_OUT), from ESP-IDF v5.5.4
+        // components/soc/esp32/register/soc/gpio_reg.h.
+        let pin_reg = bus.read32_unpriced(GPIO_BASE + 0x88 + 4 * u32::from(gpio));
+        mode.open_drain = pin_reg.is_ok_and(|v| v & 1 << 2 != 0);
+        let out_sel = bus.read32_unpriced(GPIO_BASE + 0x530 + 4 * u32::from(gpio));
+        mode.peripheral = out_sel.is_ok_and(|v| v & 0x1ff != 256);
         if let Some((off, up, down)) = rtc_pulls(gpio) {
             let reg = bus.read32_unpriced(RTCIO_BASE + off).unwrap_or(0);
             mode.pull_up |= reg >> up & 1 != 0;
@@ -210,6 +231,7 @@ impl Mode {
     }
 }
 
+const GPIO_BASE: u32 = 0x3ff4_4000;
 const RTCIO_BASE: u32 = 0x3ff4_8400;
 
 /// The RTC IO pull register of a pad as (offset, pull-up bit, pull-down bit).
@@ -267,11 +289,15 @@ impl Pin {
                 ..Drive::new(VDD, OUTPUT_OHMS)
             },
             (Some((_, duty)), ..) => Drive::new(if duty > 0.0 { VDD } else { 0.0 }, OUTPUT_OHMS),
-            (None, true, ..) => Drive::new(if mode.out { VDD } else { 0.0 }, OUTPUT_OHMS),
-            (None, false, true, true) => Drive::new(VDD / 2.0, PULL_OHMS / 2.0),
-            (None, false, true, false) => Drive::new(VDD, PULL_OHMS),
-            (None, false, false, true) => Drive::new(0.0, PULL_OHMS),
-            (None, false, false, false) => Drive::HIGH_Z,
+            // The bridge does not model peripheral signals, and an open-drain
+            // high is released, so they fall through to the pulls.
+            (None, true, ..) if !mode.peripheral && !(mode.open_drain && mode.out) => {
+                Drive::new(if mode.out { VDD } else { 0.0 }, OUTPUT_OHMS)
+            }
+            (None, _, true, true) => Drive::new(VDD / 2.0, PULL_OHMS / 2.0),
+            (None, _, true, false) => Drive::new(VDD, PULL_OHMS),
+            (None, _, false, true) => Drive::new(0.0, PULL_OHMS),
+            (None, _, false, false) => Drive::HIGH_Z,
         }
     }
 
@@ -338,11 +364,13 @@ impl<C: Circuit> Shared<C> {
         }
     }
 
-    /// Sends the drives that changed to the circuit.
-    fn apply_drives(&mut self) {
-        for pin in &mut self.pins {
-            let drive = pin.wanted_drive();
-            if self.error.is_none() && drive != pin.drive {
+    /// Sends the drives that changed to the circuit, at `cycle`.
+    fn apply_drives(&mut self, cycle: u64) {
+        for i in 0..self.pins.len() {
+            let drive = self.pins[i].wanted_drive();
+            if self.error.is_none() && drive != self.pins[i].drive {
+                self.sync(cycle);
+                let pin = &mut self.pins[i];
                 pin.drive = drive;
                 self.dirty = true;
                 if let Err(e) = self.circuit.set_pin(&pin.name, drive) {
@@ -363,12 +391,11 @@ impl<C: Circuit> BoardModel for Board<C> {
 
     fn gpio_output_at(&mut self, cycle: u64, _: &[(u8, bool)], enabled: u64, output: u64) {
         let mut shared = self.0.borrow_mut();
-        shared.sync(cycle);
         for pin in &mut shared.pins {
             pin.mode.out_enable = enabled >> pin.gpio & 1 != 0;
             pin.mode.out = output >> pin.gpio & 1 != 0;
         }
-        shared.apply_drives();
+        shared.apply_drives(cycle);
     }
 
     fn advance_to(&mut self, cycle: u64) {
@@ -391,5 +418,64 @@ impl<C: Circuit> BoardModel for Board<C> {
             .iter()
             .map(|p| (p.gpio, p.level))
             .collect()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn drive(mode: Mode) -> Drive {
+        let mut pin = Pin::new(pins::BoardPin {
+            name: "esp:2".into(),
+            gpio: 2,
+        });
+        pin.mode = mode;
+        pin.wanted_drive()
+    }
+
+    #[test]
+    fn drives_follow_pin_mode() {
+        let output = Mode {
+            out_enable: true,
+            out: true,
+            ..Mode::default()
+        };
+        assert_eq!(drive(output), Drive::new(VDD, OUTPUT_OHMS));
+        let pull_up = Mode {
+            pull_up: true,
+            ..Mode::default()
+        };
+        assert_eq!(drive(pull_up), Drive::new(VDD, PULL_OHMS));
+        assert_eq!(drive(Mode::default()), Drive::HIGH_Z);
+        let pwm = Mode {
+            pwm: Some((5000.0, 0.25)),
+            ..output
+        };
+        assert_eq!(drive(pwm).pwm, Some((5000.0, 0.25)));
+    }
+
+    #[test]
+    fn open_drain_high_and_peripheral_pins_release() {
+        let open_drain = Mode {
+            out_enable: true,
+            open_drain: true,
+            pull_up: true,
+            ..Mode::default()
+        };
+        assert_eq!(
+            drive(Mode {
+                out: true,
+                ..open_drain
+            }),
+            Drive::new(VDD, PULL_OHMS)
+        );
+        assert_eq!(drive(open_drain), Drive::new(0.0, OUTPUT_OHMS));
+        let peripheral = Mode {
+            out_enable: true,
+            peripheral: true,
+            ..Mode::default()
+        };
+        assert_eq!(drive(peripheral), Drive::HIGH_Z);
     }
 }

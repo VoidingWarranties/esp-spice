@@ -181,6 +181,31 @@ test('only one simulation is open at a time', () => {
   assert.throws(() => new Simulation(example('led-button')), /only one/);
   sim.close();
   assert.throws(() => sim?.advanceTo(1), /closed/);
+  const old = sim;
   sim = new Simulation(example('led-button'));
-  sim.advanceTo(0.001);
+  old.close();
+  assert.equal(sim.advanceTo(0.001), 0.001);
+});
+
+test('a failed start frees ngspice', () => {
+  assert.throws(() => new Simulation(example('led-button'), {maxStep: -1}));
+  sim = new Simulation(example('led-button'));
+});
+
+test('pins that are not wired read their own drive', () => {
+  sim = new Simulation(example('esp32-led'), {probes: ['esp:5']});
+  assert.equal(sim.voltage('esp:5'), 0);
+  sim.setPin('esp:5', {volts: 3.3, ohms: 45000});
+  assert.equal(sim.voltage('esp:5'), 3.3);
+});
+
+test('setPin with a bad key changes nothing', () => {
+  sim = new Simulation(example('esp32-led'));
+  // A typo of freqHz.
+  const drive = /** @type {any} */ ({volts: 3.3, ohms: 40, freqhz: 5000});
+  assert.throws(
+    () => sim?.setPin('esp:2', drive),
+    /unknown control: "esp:2.freqhz"/,
+  );
+  assert.equal(sim.controls['esp:2.volts'], 0);
 });

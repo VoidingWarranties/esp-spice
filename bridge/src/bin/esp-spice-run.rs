@@ -99,13 +99,14 @@ fn run(options: &Options) -> Result<(), String> {
                 .request(&json!({ "cmd": "set", "name": name, "value": value }))?;
         }
         let next = sets.peek().map_or(options.seconds, |s| s.0);
-        bridge.run_for((next.min(bridge.time() + 0.01) - bridge.time()).max(1e-6))?;
+        let ran = bridge.run_for((next.min(bridge.time() + 0.01) - bridge.time()).max(1e-6));
         let serial = bridge.serial_bytes();
         let mut stdout = std::io::stdout();
         let _ = stdout
             .write_all(&serial[printed..])
             .and_then(|_| stdout.flush());
         printed = serial.len();
+        ran?;
     }
     if let Some(path) = &options.trace {
         let trace = bridge.circuit().request(&json!({ "cmd": "trace" }))?;
