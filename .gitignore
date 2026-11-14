@@ -2,4 +2,3 @@ node_modules/
 target/
 roms/
 .pio/
-web/dist/
