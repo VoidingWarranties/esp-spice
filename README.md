@@ -16,12 +16,15 @@ tools to `flake.nix`.
 and steps it in time. [docs/circuit-format.md](docs/circuit-format.md) is the
 spec for the diagram, the APIs and the trace format.
 
-Set up:
+Set up with Nix (`nix develop` gives Node, ngspice and `NGSPICE_LIBRARY`):
 
 ```sh
-sudo apt install libngspice0   # or: brew install libngspice
+nix develop
 npm install
 npm test
 ```
+
+Or without Nix, install the library first:
+`sudo apt install libngspice0`, or `brew install libngspice`.
 
 If Node cannot find the library, set `NGSPICE_LIBRARY` to its path.
