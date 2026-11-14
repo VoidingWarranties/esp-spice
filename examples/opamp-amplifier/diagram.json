@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "author": "esp-spice",
+  "editor": "esp-spice",
+  "parts": [
+    { "type": "spice-sine-source", "id": "sig", "top": 90, "left": 40, "attrs": { "amplitude": "0.25", "frequency": "1k", "offset": "0.75" } },
+    { "type": "spice-opamp", "id": "u1", "top": 40, "left": 120, "attrs": { "model": "LM358" } },
+    { "type": "wokwi-vcc", "id": "vcc", "top": -12, "left": 134, "attrs": { "voltage": "5" } },
+    { "type": "wokwi-resistor", "id": "rf", "top": 134.35, "left": 100, "attrs": { "value": "22k" } },
+    { "type": "wokwi-resistor", "id": "rg", "top": 183.895, "left": 70.415, "rotate": 90, "attrs": { "value": "10k" } },
+    { "type": "wokwi-gnd", "id": "gnd1", "top": 170, "left": 48, "attrs": {} },
+    { "type": "wokwi-gnd", "id": "gnd2", "top": 110, "left": 138, "attrs": {} },
+    { "type": "wokwi-gnd", "id": "gnd3", "top": 230, "left": 88, "attrs": {} }
+  ],
+  "connections": [
+    ["sig:+", "u1:IN+", "green", ["v-10"]],
+    ["sig:-", "gnd1:GND", "black", []],
+    ["vcc:VCC", "u1:V+", "red", []],
+    ["u1:V-", "gnd2:GND", "black", []],
+    ["u1:IN-", "rf:1", "blue", ["h-20"]],
+    ["rf:2", "u1:OUT", "blue", []],
+    ["rg:1", "rf:1", "blue", []],
+    ["rg:2", "gnd3:GND", "black", []]
+  ]
+}

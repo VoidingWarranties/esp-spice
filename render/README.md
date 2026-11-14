@@ -84,8 +84,9 @@ its value until a later key frame changes it. Times are in seconds.
 
 - Parts: any `type` that is a wokwi-elements tag, for example `wokwi-led` or
   `wokwi-esp32-devkit-v1`. `src/parts.js` draws the types that
-  wokwi-elements does not have: `wokwi-vcc`, `wokwi-gnd`, `spice-capacitor`,
-  `spice-diode` and `spice-npn`. Other types show as a dashed box.
+  wokwi-elements does not have: `wokwi-vcc`, `wokwi-gnd` and the `spice-*`
+  types in [docs/circuit-format.md](../docs/circuit-format.md#supported-parts).
+  Other types show as a dashed box.
 - `wokwi-slide-potentiometer` gets `max` 1023, because the sim gives pot
   values as 0..1023.
 - `top`, `left`, `rotate` and `attrs` are supported.

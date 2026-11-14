@@ -94,12 +94,19 @@ warning. Their pins are not connected to anything in the circuit.
 | `spice-capacitor`                            | `1` `2`                               | `value` farads (`1u`)                             |                                |                                     |
 | `spice-diode`                                | `A` `C`                               | `model` `1N4148` or `1N4007` (`1N4148`)           |                                |                                     |
 | `spice-npn`                                  | `C` `B` `E`                           | `model` `2N2222` or `2N3904` (`2N2222`)           |                                |                                     |
+| `spice-pnp`                                  | `C` `B` `E`                           | `model` `2N3906` or `2N2907` (`2N3906`)           |                                |                                     |
+| `spice-nmos`                                 | `D` `G` `S`                           | `model` `2N7000` or `IRLZ44N` (`2N7000`)          |                                |                                     |
+| `spice-pmos`                                 | `D` `G` `S`                           | `model` `BS250` or `IRF9540` (`BS250`)            |                                |                                     |
+| `spice-zener`                                | `A` `C`                               | `model` `1N4728A` (3.3 V), `1N4733A` (5.1 V) or `1N4742A` (12 V) (`1N4733A`) |                |                                     |
+| `spice-inductor`                             | `1` `2`                               | `value` henries (`1m`)                            |                                |                                     |
+| `spice-sine-source`                          | `+` `-`                               | `amplitude` peak volts (`1`), `frequency` Hz (`1k`), `offset` volts (`0`) |        |                                     |
+| `spice-opamp`                                | `IN+` `IN-` `OUT` `V+` `V-`           | `model` `LM358` or `MCP6002` (`LM358`)            |                                |                                     |
 | `board-esp32-devkit-c-v4`                    | see [Boards](#boards)                 |                                                   | pin drive, see [Boards](#boards) |                                   |
 | `wokwi-esp32-devkit-v1`                      | see [Boards](#boards)                 |                                                   | pin drive, see [Boards](#boards) |                                   |
 
 The `spice-*` types are not Wokwi parts. Wokwi does not simulate analog
-circuits, so it has no capacitor, diode or transistor. A renderer must draw
-them itself.
+circuits, so it has no capacitor, inductor, diode, transistor, op-amp or
+sine source. A renderer must draw them itself.
 
 Notes on the models:
 
@@ -116,6 +123,23 @@ Notes on the models:
 - A closed switch is 0.05 ohm. An open switch is 1 Gohm.
 - `wokwi-vcc` is an ideal source with 0.01 ohm in series, so two sources on
   one net do not make an error.
+- `spice-sine-source` is `offset + amplitude * sin(2 pi frequency t)` from
+  `+` to `-`, with 0.01 ohm in series. It starts at time 0.
+- The MOSFETs are ngspice `vdmos` models, with a body diode. Their threshold
+  and on resistance are near the typical datasheet values.
+- A zener has its datasheet voltage at its datasheet test current, and its
+  datasheet impedance there. Below the test current, the voltage falls by
+  26 mV for each factor of e.
+- An op-amp has one pole, so its gain times bandwidth is constant. It has
+  infinite input resistance and 10 ohm output resistance. Its output stops
+  short of `V+` and `V-` by the model's swing, and changes no faster than the
+  model's slew rate. The output current comes from ground, not from `V+` or
+  `V-`.
+
+  | Model     | Open-loop gain | Gain-bandwidth | Slew rate  | Swing to `V+` | Swing to `V-` |
+  | --------- | -------------- | -------------- | ---------- | ------------- | ------------- |
+  | `LM358`   | 100k           | 1 MHz          | 0.3 V/us   | 1.5 V         | 20 mV         |
+  | `MCP6002` | 400k           | 1 MHz          | 0.6 V/us   | 25 mV         | 25 mV         |
 - Each node has 1 Gohm to ground, so a node with no connection does not
   make an error.
 

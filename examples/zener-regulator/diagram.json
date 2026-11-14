@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "author": "esp-spice",
+  "editor": "esp-spice",
+  "parts": [
+    { "type": "wokwi-vcc", "id": "vcc", "top": 0, "left": 0, "attrs": { "voltage": "9" } },
+    { "type": "wokwi-resistor", "id": "r1", "top": 44.35, "left": 40, "attrs": { "value": "470" } },
+    { "type": "spice-zener", "id": "z1", "top": 85, "left": 125, "rotate": 270, "attrs": { "model": "1N4733A" } },
+    { "type": "wokwi-resistor", "id": "rl", "top": 93.895, "left": 170.415, "rotate": 90, "attrs": { "value": "1k" } },
+    { "type": "wokwi-gnd", "id": "gnd", "top": 150, "left": 158, "attrs": {} }
+  ],
+  "connections": [
+    ["vcc:VCC", "r1:1", "red", ["v18"]],
+    ["r1:2", "z1:C", "orange", []],
+    ["r1:2", "rl:1", "orange", []],
+    ["z1:A", "gnd:GND", "black", ["v30"]],
+    ["rl:2", "gnd:GND", "black", ["v21.2"]]
+  ]
+}
