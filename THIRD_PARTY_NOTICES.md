@@ -7,11 +7,13 @@ the Apache License 2.0, in [LICENSES/Apache-2.0.txt](LICENSES/Apache-2.0.txt).
 
 ## ESP32 firmware image
 
-`examples/esp32-button-led/firmware.bin` is a build of
-[`examples/esp32-button-led/firmware`](examples/esp32-button-led/firmware)
+Each `examples/*/firmware.bin` file is a build of the `firmware` folder
+next to it, for example
+[`examples/esp32-button-led/firmware`](examples/esp32-button-led/firmware),
 with the pioarduino platform-espressif32 55.03.38-1.
-`examples/esp32-pot-button-leds/firmware.bin` is a link to it. The
-repository and the web demo both distribute this image. It contains:
+`examples/esp32-pot-button-leds/firmware.bin` and
+`examples/esp32-rectifier/firmware.bin` are links to other images. The
+repository and the web demo both distribute these images. Each contains:
 
 - [Arduino-ESP32 3.3.8](https://github.com/espressif/arduino-esp32/tree/3.3.8),
   Copyright Espressif Systems and others. Parts are under the GNU Lesser
@@ -26,7 +28,7 @@ repository and the web demo both distribute this image. It contains:
   Systems, Apache-2.0. These include Espressif binary libraries (Apache-2.0)
   and the third-party parts in the
   [ESP-IDF copyright list](https://github.com/espressif/esp-idf/blob/v5.5.4/docs/en/COPYRIGHT.rst#firmware-components).
-  Of those, the image has:
+  Of those, each image has:
   - FreeRTOS Kernel V10.5.1, Copyright (C) 2021 Amazon.com, Inc. or its
     affiliates, MIT.
   - Xtensa header files and HAL, Copyright (C) 2003-2013 Tensilica Inc., MIT.
@@ -35,8 +37,8 @@ repository and the web demo both distribute this image. It contains:
 - The GCC runtime libraries, under GPL-3.0 with the GCC Runtime Library
   Exception 3.1.
 
-To use a changed Arduino-ESP32 core, build `examples/esp32-button-led/firmware`
-with it, as its [README](examples/esp32-button-led/README.md) tells.
+To use a changed Arduino-ESP32 core, build the `firmware` folder of an
+example with it, as [examples/README.md](examples/README.md#firmware) tells.
 
 ## ESP32 mask ROM
 

@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "author": "esp-spice",
+  "editor": "esp-spice",
+  "parts": [
+    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-resistor", "id": "r4", "top": 18, "left": 130, "attrs": { "value": "1k" } },
+    { "type": "spice-npn", "id": "q1", "top": -1, "left": 215, "attrs": { "model": "2N2222" } },
+    { "type": "wokwi-gnd", "id": "gnd1", "top": 74, "left": 233, "attrs": {} },
+    { "type": "wokwi-buzzer", "id": "bz1", "top": -104, "left": 218, "attrs": {} },
+    { "type": "wokwi-vcc", "id": "vcc", "top": -72, "left": 274, "attrs": { "voltage": "5" } },
+    { "type": "wokwi-pushbutton", "id": "btn1", "top": 107, "left": 140, "attrs": { "color": "green" } },
+    { "type": "wokwi-gnd", "id": "gnd2", "top": 165, "left": 118, "attrs": {} },
+    { "type": "wokwi-rgb-led", "id": "rgb1", "top": 57.15, "left": -162.25, "rotate": 270, "attrs": { "common": "cathode" } },
+    { "type": "wokwi-gnd", "id": "gnd3", "top": 140, "left": -127, "attrs": {} },
+    { "type": "wokwi-resistor", "id": "r1", "top": 66, "left": -79, "attrs": { "value": "47" } },
+    { "type": "wokwi-resistor", "id": "r2", "top": 85, "left": -79, "attrs": { "value": "47" } },
+    { "type": "wokwi-resistor", "id": "r3", "top": 105, "left": -79, "attrs": { "value": "220" } }
+  ],
+  "connections": [
+    ["esp:TX0", "$serialMonitor:RX", "", []],
+    ["esp:RX0", "$serialMonitor:TX", "", []],
+    ["esp:D23", "r4:1", "orange", []],
+    ["r4:2", "q1:B", "orange", []],
+    ["q1:E", "gnd1:GND", "black", []],
+    ["q1:C", "bz1:1", "black", []],
+    ["bz1:2", "vcc:VCC", "red", ["v6"]],
+    ["esp:D4", "btn1:1.l", "green", []],
+    ["btn1:2.l", "gnd2:GND", "black", ["h-10"]],
+    ["rgb1:COM", "gnd3:GND", "black", ["h10"]],
+    ["esp:D32", "r1:2", "blue", []],
+    ["rgb1:B", "r1:1", "blue", ["h40"]],
+    ["esp:D25", "r2:2", "green", []],
+    ["rgb1:G", "r2:1", "green", ["h30"]],
+    ["esp:D27", "r3:2", "red", []],
+    ["rgb1:R", "r3:1", "red", ["h20"]]
+  ]
+}
