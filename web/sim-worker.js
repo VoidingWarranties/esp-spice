@@ -19,7 +19,6 @@ import {toNetlist} from '../circuit/netlist.js';
 import {PARTS} from '../circuit/parts.js';
 
 const WASM_URL = 'dist/esp_spice_web.wasm';
-const ROM_URL = 'dist/esp32_rev300_rom.elf';
 
 /** Emulated time between circuit solves, in seconds. */
 const STEP_SECONDS = 1e-3;
@@ -201,8 +200,8 @@ function mix(base, others, weights) {
  */
 async function runEsp32(firmwareUrl) {
   post({type: 'status', text: 'Loading the ESP32…'});
-  const [wasm, firmware, rom] = await Promise.all(
-      [WASM_URL, firmwareUrl, ROM_URL].map(fetchBytes));
+  const firmwareBytes = fetchBytes(firmwareUrl);
+  const wasm = await fetchBytes(WASM_URL);
   // The emulator can compile hot code at run time. 0 tells it to interpret.
   const {instance} = await WebAssembly.instantiate(wasm, {
     env: {host_jit_compile: () => 0, host_jit_release: () => {}},
@@ -228,9 +227,12 @@ async function runEsp32(firmwareUrl) {
   const check = (code) => {
     if (code) throw new Error(decoder.decode(out()));
   };
-  check(withBytes(
-      [encoder.encode(JSON.stringify(diagram)), firmware, rom],
-      w.esp_web_new));
+  const diagramBytes = encoder.encode(JSON.stringify(diagram));
+  // The board part selects the chip, and so the ROM.
+  check(withBytes([diagramBytes], w.esp_web_rom_name));
+  const [firmware, rom] = await Promise.all(
+      [firmwareBytes, fetchBytes(`dist/${decoder.decode(out())}`)]);
+  check(withBytes([diagramBytes, firmware, rom], w.esp_web_new));
 
   let wallStart = performance.now();
   let simStart = 0;

@@ -9,50 +9,58 @@
 use std::cell::{RefCell, RefMut};
 use std::rc::Rc;
 
-use emu_core::Bus;
-use esp_periph::AnalogSource;
 use esp_soc::board::{BoardEdge, BoardModel};
-use esp_soc::{SocBus, Stop};
+use esp_soc::Stop;
 
+mod chip;
 pub mod circuit;
 pub mod pins;
 
+use chip::Esp;
 pub use circuit::{Circuit, DeferredCircuit, Drive, ProcessCircuit};
 
-/// The name of the mask ROM file that the bridge boots from.
-pub const ROM_ELF: &str = "esp32_rev300_rom.elf";
-
-const CPU_HZ: u64 = 240_000_000;
-/// How often the circuit catches up with the ESP32 when no pin changes.
-/// GPIO reads see the circuit as of the last catch-up.
-const STEP_CYCLES: u64 = CPU_HZ / 10_000;
+/// How often the circuit catches up with the ESP32 when no pin changes, per
+/// second. GPIO reads see the circuit as of the last catch-up.
+const STEPS_PER_SECOND: u64 = 10_000;
 /// How often the bridge reads the pin modes that the board callbacks do not
-/// get. A GPIO read sees a new mode only after this delay.
-const POLL_CYCLES: u64 = CPU_HZ / 1_000_000;
+/// get, per second. A GPIO read sees a new mode only after this delay.
+const POLLS_PER_SECOND: u64 = 1_000_000;
 const VDD: f64 = 3.3;
 /// Output resistance and pull resistance, from docs/circuit-format.md.
 const OUTPUT_OHMS: f64 = 40.0;
 const PULL_OHMS: f64 = 45_000.0;
 
+/// The name of the mask ROM ELF that `Bridge::new` needs for the board in
+/// `diagram`, the diagram.json text.
+pub fn rom_elf(diagram: &str) -> Result<&'static str, String> {
+    Ok(pins::chip(&parse(diagram)?)?.rom_elf)
+}
+
+fn parse(diagram: &str) -> Result<serde_json::Value, String> {
+    serde_json::from_str(diagram).map_err(|e| format!("diagram.json: {e}"))
+}
+
 /// An ESP32 that runs firmware against a circuit.
 pub struct Bridge<C: Circuit> {
-    machine: esp32::Machine,
+    machine: Box<dyn Esp>,
     shared: Rc<RefCell<Shared<C>>>,
     serial: Vec<u8>,
 }
 
 impl<C: Circuit + 'static> Bridge<C> {
-    /// Loads a merged flash image (bootloader at 0x1000, partition table at
-    /// 0x8000, app at 0x10000) and the ESP32 mask ROM ELF, and boots from
-    /// the ROM. `diagram` is the diagram.json text.
+    /// Loads a merged flash image (app at 0x10000) and the mask ROM ELF
+    /// from `rom_elf`, and boots from the ROM. `diagram` is the
+    /// diagram.json text. Its board part selects the chip.
     pub fn new(diagram: &str, flash: &[u8], rom: &[u8], circuit: C) -> Result<Self, String> {
-        let diagram = serde_json::from_str(diagram).map_err(|e| format!("diagram.json: {e}"))?;
+        let diagram = parse(diagram)?;
+        let chip = pins::chip(&diagram)?;
         let pins: Vec<Pin> = pins::board_pins(&diagram)?
             .into_iter()
             .map(Pin::new)
             .collect();
         let names = pins.iter().map(|p| p.name.clone()).collect();
         let mut shared = Shared {
+            hz: chip.hz,
             circuit,
             pins,
             names,
@@ -69,14 +77,7 @@ impl<C: Circuit + 'static> Bridge<C> {
         }
         let shared = Rc::new(RefCell::new(shared));
 
-        let mut machine = esp32::machine([0x24, 0x6f, 0x28, 0x00, 0x11, 0x22], 4 << 20);
-        machine.bus.board = Box::new(Board(shared.clone()));
-        machine.bus.attach_board_devices();
-        machine.load_rom(rom)?;
-        esp_soc::load::check_flash_image::<esp32::Esp32>(flash)?;
-        machine.write_flash(0, flash)?;
-        machine.console.capture = true;
-        machine.boot_rom();
+        let machine = (chip.boot)(Box::new(Board(shared.clone())), flash, rom)?;
         Ok(Bridge {
             machine,
             shared,
@@ -86,18 +87,19 @@ impl<C: Circuit + 'static> Bridge<C> {
 
     /// Runs for `seconds` of emulated time.
     pub fn run_for(&mut self, seconds: f64) -> Result<(), String> {
-        let end = self.machine.bus.cycles() + (seconds * CPU_HZ as f64).round() as u64;
-        while self.machine.bus.cycles() < end {
-            self.machine.max_cycles = (self.machine.bus.cycles() + POLL_CYCLES).min(end);
-            match self.machine.run(u64::MAX) {
+        let hz = self.machine.hz();
+        let end = self.machine.cycles() + (seconds * hz as f64).round() as u64;
+        while self.machine.cycles() < end {
+            match self
+                .machine
+                .run((self.machine.cycles() + hz / POLLS_PER_SECOND).min(end))
+            {
                 Stop::Halted => {}
                 // A software or watchdog reset reboots the chip, as on a board.
-                Stop::SwReset => {
-                    self.machine.reboot();
-                }
+                Stop::SwReset => self.machine.reboot(),
                 stop => {
                     // Keep the firmware's last output, such as a panic message.
-                    self.serial.append(&mut self.machine.console.uart0);
+                    self.machine.take_serial(&mut self.serial);
                     return Err(format!("the ESP32 stopped: {stop:?}"));
                 }
             }
@@ -116,14 +118,14 @@ impl<C: Circuit + 'static> Bridge<C> {
             if self.time() >= end {
                 return Ok(false);
             }
-            self.run_for(STEP_CYCLES as f64 / CPU_HZ as f64)?;
+            self.run_for(1.0 / STEPS_PER_SECOND as f64)?;
         }
         Ok(true)
     }
 
     /// Emulated time in seconds.
     pub fn time(&self) -> f64 {
-        self.machine.seconds()
+        self.machine.cycles() as f64 / self.machine.hz() as f64
     }
 
     /// All UART0 output so far.
@@ -138,7 +140,7 @@ impl<C: Circuit + 'static> Bridge<C> {
 
     /// Sends bytes to UART0, as from a serial monitor.
     pub fn serial_input(&mut self, data: &[u8]) {
-        self.machine.bus.uart_input(0, data);
+        self.machine.serial_input(data);
     }
 
     /// The voltage at a board pin, such as "esp:2", as of the last step.
@@ -151,7 +153,7 @@ impl<C: Circuit + 'static> Bridge<C> {
     /// ESP32 time.
     pub fn circuit(&self) -> RefMut<'_, C> {
         let mut shared = self.shared.borrow_mut();
-        shared.sync(self.machine.bus.cycles());
+        shared.sync(self.machine.cycles());
         RefMut::map(shared, |s| &mut s.circuit)
     }
 
@@ -159,14 +161,13 @@ impl<C: Circuit + 'static> Bridge<C> {
     /// PWM), and sets the ADC inputs.
     fn poll(&mut self) -> Result<(), String> {
         // Bus reads can call the board, so read them before the borrow.
-        let bus = &mut self.machine.bus;
         let gpios: Vec<u8> = self.shared.borrow().pins.iter().map(|p| p.gpio).collect();
         let modes: Vec<Mode> = gpios
             .into_iter()
-            .map(|gpio| Mode::read(bus, gpio))
+            .map(|gpio| self.machine.mode(gpio))
             .collect();
         let mut shared = self.shared.borrow_mut();
-        let cycle = bus.cycles();
+        let cycle = self.machine.cycles();
         shared.catch_up(cycle);
         let mut adc = Vec::new();
         for (pin, mode) in shared.pins.iter_mut().zip(modes) {
@@ -180,16 +181,16 @@ impl<C: Circuit + 'static> Bridge<C> {
         let error = shared.error.clone();
         drop(shared);
         for (gpio, volts) in adc {
-            bus.analog_set(gpio, AnalogSource::Const(volts as f32));
+            self.machine.set_analog(gpio, volts);
         }
-        self.serial.append(&mut self.machine.console.uart0);
+        self.machine.take_serial(&mut self.serial);
         error.map_or(Ok(()), Err)
     }
 }
 
 /// How the firmware set up a pin.
 #[derive(Clone, Copy, Default)]
-struct Mode {
+pub(crate) struct Mode {
     out: bool,
     out_enable: bool,
     pull_up: bool,
@@ -200,60 +201,6 @@ struct Mode {
     peripheral: bool,
     /// (frequency in Hz, duty from 0 to 1).
     pwm: Option<(f64, f64)>,
-}
-
-impl Mode {
-    fn read(bus: &mut esp32::bus::SocBus, gpio: u8) -> Self {
-        let mut mode = Mode::default();
-        if let Some(state) = bus.gpio_state(gpio) {
-            mode.out = state.output;
-            mode.out_enable = state.output_enable;
-            mode.pull_up = state.pull_up;
-            mode.pull_down = state.pull_down;
-        }
-        // GPIO_PINn_REG PAD_DRIVER (bit 2) and GPIO_FUNCn_OUT_SEL_CFG_REG
-        // OUT_SEL (bits 0..8, 256 is GPIO_OUT), from ESP-IDF v5.5.4
-        // components/soc/esp32/register/soc/gpio_reg.h.
-        let pin_reg = bus.read32_unpriced(GPIO_BASE + 0x88 + 4 * u32::from(gpio));
-        mode.open_drain = pin_reg.is_ok_and(|v| v & 1 << 2 != 0);
-        let out_sel = bus.read32_unpriced(GPIO_BASE + 0x530 + 4 * u32::from(gpio));
-        mode.peripheral = out_sel.is_ok_and(|v| v & 0x1ff != 256);
-        if let Some((off, up, down)) = rtc_pulls(gpio) {
-            let reg = bus.read32_unpriced(RTCIO_BASE + off).unwrap_or(0);
-            mode.pull_up |= reg >> up & 1 != 0;
-            mode.pull_down |= reg >> down & 1 != 0;
-        }
-        mode.pwm = bus
-            .pwm_output(gpio)
-            .map(|(hz, duty)| (hz, f64::from(duty) / 65535.0));
-
-        mode
-    }
-}
-
-const GPIO_BASE: u32 = 0x3ff4_4000;
-const RTCIO_BASE: u32 = 0x3ff4_8400;
-
-/// The RTC IO pull register of a pad as (offset, pull-up bit, pull-down bit).
-/// ESP-IDF sets the pulls of RTC pads here, not in IO_MUX, and esp32sim
-/// does not report them. From ESP-IDF v5.5.4
-/// components/soc/esp32/register/soc/rtc_io_reg.h.
-fn rtc_pulls(gpio: u8) -> Option<(u32, u32, u32)> {
-    Some(match gpio {
-        25 => (0x84, 27, 28),
-        26 => (0x88, 27, 28),
-        32 => (0x8c, 22, 23),
-        33 => (0x8c, 27, 28),
-        4 => (0x94, 27, 28),
-        0 => (0x98, 27, 28),
-        2 => (0x9c, 27, 28),
-        15 => (0xa0, 27, 28),
-        13 => (0xa4, 27, 28),
-        12 => (0xa8, 27, 28),
-        14 => (0xac, 27, 28),
-        27 => (0xb0, 27, 28),
-        _ => return None,
-    })
 }
 
 /// A board pin and what the bridge knows about it.
@@ -318,6 +265,8 @@ impl Pin {
 
 /// The state that the bridge and the board callbacks share.
 struct Shared<C> {
+    /// The chip clock, in cycles per second.
+    hz: u64,
     circuit: C,
     pins: Vec<Pin>,
     names: Vec<String>,
@@ -334,7 +283,7 @@ struct Shared<C> {
 impl<C: Circuit> Shared<C> {
     /// Advances the circuit to `cycle` and queues the input edges.
     fn sync(&mut self, cycle: u64) {
-        let t = cycle as f64 / CPU_HZ as f64;
+        let t = cycle as f64 / self.hz as f64;
         if self.error.is_some() || t <= self.time {
             return;
         }
@@ -353,7 +302,8 @@ impl<C: Circuit> Shared<C> {
             Err(e) => self.error = Some(e),
         }
         self.time = self.time.max(t);
-        self.next_sync = (cycle / STEP_CYCLES + 1) * STEP_CYCLES;
+        let step = self.hz / STEPS_PER_SECOND;
+        self.next_sync = (cycle / step + 1) * step;
         self.dirty = false;
     }
 

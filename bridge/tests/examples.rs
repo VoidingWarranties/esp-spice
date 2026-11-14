@@ -13,13 +13,13 @@ const ROOT: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/..");
 /// Starts an example and runs it until the firmware is ready.
 fn start(name: &str) -> Bridge<ProcessCircuit> {
     let dir = format!("{ROOT}/examples/{name}");
-    let diagram = format!("{dir}/diagram.json");
     let mut node = Command::new("node");
-    node.current_dir(ROOT).args(["circuit/server.js", &diagram]);
+    node.current_dir(ROOT)
+        .args(["circuit/server.js", &format!("{dir}/diagram.json")]);
     let mut bridge = Bridge::new(
-        &std::fs::read_to_string(&diagram).unwrap(),
-        &std::fs::read(format!("{dir}/firmware.bin")).unwrap(),
-        &common::rom(),
+        &common::diagram(&dir),
+        &common::flash(&dir),
+        &common::rom(&dir),
         ProcessCircuit::spawn(&mut node).unwrap(),
     )
     .unwrap();

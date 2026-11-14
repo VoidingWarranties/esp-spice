@@ -10,7 +10,7 @@ Runs ESP32 firmware in [esp32sim], in lockstep with the circuit in a
 
 1.  Set up the circuit simulation (libngspice and `npm install`), as the
     [top README](../README.md) tells.
-2.  Get the ESP32 mask ROM. esp32sim boots from it.
+2.  Get the mask ROMs. esp32sim boots from them.
 
     ```sh
     tools/fetch-esp32-rom.sh roms
@@ -23,8 +23,8 @@ From the repository root:
 
 ```sh
 cargo run --release --manifest-path bridge/Cargo.toml -- \
-    examples/esp32-button-led/diagram.json \
-    examples/esp32-button-led/firmware.bin \
+    examples/esp32-s3-button-led/diagram.json \
+    examples/esp32-s3-button-led/firmware.bin \
     --seconds 1 --set 0.3:btn1.pressed=1 --set 0.6:pot1.value=1023 \
     --trace trace.json
 ```
@@ -45,6 +45,9 @@ bridge.circuit().request(&json!({ "cmd": "set", "name": "btn1.pressed", "value":
 bridge.run_for(0.1)?;
 ```
 
+The board part in the diagram selects the chip. `rom_elf(&diagram)` gives
+the name of the mask ROM file that the chip boots from.
+
 A `Circuit` is anything that can set a pin drive and advance in time.
 `ProcessCircuit` speaks the process protocol. `DeferredCircuit` is for an
 async circuit, such as ngspice in a browser: the caller replays the drives
@@ -63,18 +66,21 @@ after each `run_for` and gives back the pin voltages.
 - **Inputs.** At each GPIO read, the input level comes from the pin voltage
   at the last circuit step. Above 0.75 × 3.3 V is high, below 0.25 × 3.3 V
   is low, and between them the level does not change.
-- **Pulls and PWM.** The bridge reads the pulls (IO_MUX and RTC IO) and the
-  LEDC PWM of each pin every 1 µs. A pull is 45 kΩ to 3.3 V or 0 V. A PWM
-  pin gives its frequency and duty to the circuit, and ngspice makes the
-  edges.
+- **Pulls and PWM.** The bridge reads the pulls (IO_MUX, and RTC IO on the
+  classic ESP32) and the PWM (LEDC, and MCPWM on the S3 and C6) of each pin
+  every 1 µs. A pull is 45 kΩ to 3.3 V or 0 V. A PWM pin gives its
+  frequency and duty to the circuit, and ngspice makes the edges.
 - **ADC.** The ADC input of a pin is its voltage at the last circuit step.
 - **Serial.** UART0 output is in `Bridge::serial`. `Bridge::serial_input`
   sends bytes to UART0.
 
 ## Limits
 
-- Only the classic ESP32: `board-esp32-devkit-c-v4` and
-  `wokwi-esp32-devkit-v1`.
+- The chips are the classic ESP32 (`board-esp32-devkit-c-v4` and
+  `wokwi-esp32-devkit-v1`), the ESP32-S3 (`board-esp32-s3-devkitc-1`), the
+  ESP32-C3 (`board-esp32-c3-devkitm-1`) and the ESP32-C6
+  (`board-esp32-c6-devkitc-1`). esp32sim rates the C3 and C6 as drafts, so
+  some firmware may not boot on them.
 - An input sees the circuit up to 100 µs late.
 - Only GPIO levels (push-pull and open-drain) and LEDC PWM go to the
   circuit. I2C, SPI, UART and RMT signals and the DAC do not: a pin that

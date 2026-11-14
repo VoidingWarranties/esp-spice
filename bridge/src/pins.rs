@@ -2,6 +2,8 @@
 
 use serde_json::Value;
 
+use crate::chip::{self, ChipEntry};
+
 /// A board pin that is wired to the circuit.
 #[derive(Clone, Debug, PartialEq)]
 pub struct BoardPin {
@@ -10,14 +12,24 @@ pub struct BoardPin {
     pub gpio: u8,
 }
 
-/// Returns the GPIO pins of the ESP32 board that connect to circuit parts.
-pub fn board_pins(diagram: &Value) -> Result<Vec<BoardPin>, String> {
-    let board = diagram["parts"]
+/// The ESP32 board part and its chip.
+fn board(diagram: &Value) -> Result<(&Value, ChipEntry), String> {
+    diagram["parts"]
         .as_array()
         .into_iter()
         .flatten()
-        .find(|part| part["type"].as_str().is_some_and(is_board))
-        .ok_or("diagram.json has no ESP32 board part")?;
+        .find_map(|part| Some((part, chip::for_board(part["type"].as_str()?)?)))
+        .ok_or_else(|| "diagram.json has no ESP32 board part".into())
+}
+
+/// The chip on the board.
+pub(crate) fn chip(diagram: &Value) -> Result<ChipEntry, String> {
+    Ok(board(diagram)?.1)
+}
+
+/// Returns the GPIO pins of the ESP32 board that connect to circuit parts.
+pub fn board_pins(diagram: &Value) -> Result<Vec<BoardPin>, String> {
+    let (board, chip) = board(diagram)?;
     let kind = board["type"].as_str().unwrap();
     let prefix = format!("{}:", board["id"].as_str().ok_or("board part has no id")?);
     let mut pins: Vec<BoardPin> = Vec::new();
@@ -29,7 +41,10 @@ pub fn board_pins(diagram: &Value) -> Result<Vec<BoardPin>, String> {
             continue;
         }
         for end in [a, b] {
-            let Some(gpio) = end.strip_prefix(&prefix).and_then(|n| gpio(kind, n)) else {
+            let Some(gpio) = end
+                .strip_prefix(&prefix)
+                .and_then(|n| gpio(kind, n, chip.usable))
+            else {
                 continue;
             };
             if !pins.iter().any(|p| p.name == end) {
@@ -43,31 +58,29 @@ pub fn board_pins(diagram: &Value) -> Result<Vec<BoardPin>, String> {
     Ok(pins)
 }
 
-fn is_board(kind: &str) -> bool {
-    matches!(kind, "board-esp32-devkit-c-v4" | "wokwi-esp32-devkit-v1")
-}
-
 /// The GPIO behind a board pin name. Pin names are in docs/circuit-format.md.
-fn gpio(kind: &str, name: &str) -> Option<u8> {
+fn gpio(kind: &str, name: &str, usable: fn(u8) -> bool) -> Option<u8> {
     let number = match (kind, name) {
         (_, "VP") => return Some(36),
         (_, "VN") => return Some(39),
+        ("board-esp32-s3-devkitc-1", "TX") => return Some(43),
+        ("board-esp32-s3-devkitc-1", "RX") => return Some(44),
+        ("board-esp32-c3-devkitm-1", "TX") => return Some(21),
+        ("board-esp32-c3-devkitm-1", "RX") => return Some(20),
+        ("board-esp32-c6-devkitc-1", "TX") => return Some(16),
+        ("board-esp32-c6-devkitc-1", "RX") => return Some(17),
         ("board-esp32-devkit-c-v4", "TX") | ("wokwi-esp32-devkit-v1", "TX0") => return Some(1),
         ("board-esp32-devkit-c-v4", "RX") | ("wokwi-esp32-devkit-v1", "RX0") => return Some(3),
         ("wokwi-esp32-devkit-v1", "TX2") => return Some(17),
         ("wokwi-esp32-devkit-v1", "RX2") => return Some(16),
-        ("board-esp32-devkit-c-v4", n) => n,
-        (_, n) => n.strip_prefix('D')?,
+        ("wokwi-esp32-devkit-v1", n) => n.strip_prefix('D')?,
+        (_, n) => n,
     };
     // Digits only: "D2" on the C-V4 board is a flash pin, not GPIO 2.
     if !number.bytes().all(|b| b.is_ascii_digit()) {
         return None;
     }
-    // GPIO 6 to 11 connect to the flash chip.
-    number
-        .parse()
-        .ok()
-        .filter(|&n| n <= 39 && !(6..=11).contains(&n))
+    number.parse().ok().filter(|&n| usable(n))
 }
 
 #[cfg(test)]
@@ -98,12 +111,41 @@ mod tests {
 
     #[test]
     fn maps_devkit_v1_names() {
-        let kind = "wokwi-esp32-devkit-v1";
-        assert_eq!(gpio(kind, "D23"), Some(23));
-        assert_eq!(gpio(kind, "TX2"), Some(17));
-        assert_eq!(gpio(kind, "RX0"), Some(3));
-        assert_eq!(gpio(kind, "23"), None);
-        assert_eq!(gpio(kind, "VIN"), None);
+        let pin = |name| usable_gpio("wokwi-esp32-devkit-v1", name);
+        assert_eq!(pin("D23"), Some(23));
+        assert_eq!(pin("TX2"), Some(17));
+        assert_eq!(pin("RX0"), Some(3));
+        assert_eq!(pin("D6"), None);
+        assert_eq!(pin("23"), None);
+        assert_eq!(pin("VIN"), None);
+    }
+
+    #[test]
+    fn maps_s3_names() {
+        let pin = |name| usable_gpio("board-esp32-s3-devkitc-1", name);
+        assert_eq!(pin("48"), Some(48));
+        assert_eq!(pin("TX"), Some(43));
+        assert_eq!(pin("RX"), Some(44));
+        assert_eq!(pin("26"), None);
+        assert_eq!(pin("3V3.1"), None);
+    }
+
+    #[test]
+    fn maps_c3_and_c6_names() {
+        let c3 = |name| usable_gpio("board-esp32-c3-devkitm-1", name);
+        assert_eq!(c3("TX"), Some(21));
+        assert_eq!(c3("RX"), Some(20));
+        assert_eq!(c3("10"), Some(10));
+        assert_eq!(c3("12"), None);
+        let c6 = |name| usable_gpio("board-esp32-c6-devkitc-1", name);
+        assert_eq!(c6("TX"), Some(16));
+        assert_eq!(c6("RX"), Some(17));
+        assert_eq!(c6("23"), Some(23));
+        assert_eq!(c6("24"), None);
+    }
+
+    fn usable_gpio(kind: &str, name: &str) -> Option<u8> {
+        gpio(kind, name, chip::for_board(kind).unwrap().usable)
     }
 
     #[test]
