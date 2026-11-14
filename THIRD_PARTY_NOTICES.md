@@ -1,8 +1,9 @@
 # Third-party notices
 
-esp-spice is under the Apache License 2.0, in [LICENSE](LICENSE). This file
+esp-spice is under the MIT License, in [LICENSE](LICENSE). This file
 lists the third-party code and data that the repository or the web demo
-distributes. Each keeps its own license.
+distributes. Each keeps its own license. Parts marked Apache-2.0 are under
+the Apache License 2.0, in [LICENSES/Apache-2.0.txt](LICENSES/Apache-2.0.txt).
 
 ## ESP32 firmware image
 
@@ -43,7 +44,7 @@ The web demo has `web/dist/esp32_rev300_rom.elf`. `tools/fetch-esp32-rom.sh`
 downloads it from the
 [espressif/esp-rom-elfs](https://github.com/espressif/esp-rom-elfs) release
 20260528. Copyright 2015-2022 Espressif Systems (Shanghai) Co. Ltd., under the
-Apache License 2.0. The license text is the same as in [LICENSE](LICENSE).
+Apache License 2.0, in [LICENSES/Apache-2.0.txt](LICENSES/Apache-2.0.txt).
 
 The ROM contains code from these parts, as the
 [ESP-IDF copyright list](https://github.com/espressif/esp-idf/blob/v5.5.4/docs/en/COPYRIGHT.rst#rom-source-code-copyrights)
@@ -65,7 +66,7 @@ The web demo has `web/dist/esp_spice_web.wasm`. It contains:
   2019-2024 Espressif Systems (Shanghai) CO LTD, Apache-2.0.
 - serde, serde_core and serde_json, Copyright Erick Tryzelaar and David
   Tolnay, and itoa, Copyright David Tolnay. Each is MIT or Apache-2.0, used
-  here under Apache-2.0.
+  here under MIT.
 - zmij, Copyright David Tolnay, a port of zmij, Copyright (c) 2025 Victor
   Zverovich. Both are MIT.
 - memchr, Copyright Andrew Gallant and bluss, Unlicense or MIT, used here
