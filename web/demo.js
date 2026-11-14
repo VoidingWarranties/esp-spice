@@ -1,5 +1,6 @@
 /**
- * @fileoverview Draws a demo and connects its parts to web/sim-worker.js.
+ * @fileoverview Draws a demo and connects its parts to web/sim-worker.js
+ * (the circuit) and web/esp32-worker.js (the ESP32).
  *
  * The page URL names the demo folder, for example
  * web/?demo=examples/led-button. The folder has a diagram.json, and a
@@ -42,7 +43,7 @@ let parts;
 
 main().catch((e) => showError(e.message));
 
-/** Loads the demo, draws it and starts the worker. */
+/** Loads the demo, draws it and starts the workers. */
 async function main() {
   const demo = new URLSearchParams(location.search).get('demo') ?? DEFAULT_DEMO;
   const demoUrl = new URL(`../${demo}/`, location.href);
@@ -61,17 +62,14 @@ async function main() {
   ({elements: parts} =
       await renderCircuit(document.querySelector('#circuit'), diagram));
 
-  const worker = new Worker('sim-worker.js', {type: 'module'});
-  // For example, when the worker cannot import ngspice.
-  worker.onerror = (e) => showError(e.message || 'the simulator did not load');
+  const circuit = new Worker('sim-worker.js', {type: 'module'});
   const control = (name, value) =>
-      worker.postMessage({type: 'control', name, value});
+      circuit.postMessage({type: 'control', name, value});
   for (const [id, el] of parts) INPUTS[el.localName]?.(id, el, control);
 
-  worker.onmessage = ({data}) => {
+  const onMessage = ({data}) => {
     switch (data.type) {
       case 'status':
-        error.textContent = '';
         status.textContent = data.text;
         break;
       case 'error':
@@ -86,19 +84,27 @@ async function main() {
         serialView.scrollTop = serialView.scrollHeight;
         break;
       case 'state':
-        error.textContent = '';
         show(data);
-        if (!hasFirmware) {
-          status.textContent = `Solved in ${data.ms.toFixed(1)} ms`;
-        }
         break;
     }
   };
-  worker.postMessage({
-    type: 'start',
-    diagram,
-    firmwareUrl: hasFirmware ? firmwareUrl.href : null,
-  });
+  // For example, when a worker cannot import its WebAssembly module.
+  const onError = (e) => showError(e.message || 'the simulator did not load');
+  circuit.onmessage = onMessage;
+  circuit.onerror = onError;
+  if (!hasFirmware) {
+    circuit.postMessage({type: 'start', diagram});
+    return;
+  }
+  // The ESP32 runs in its own worker, so that both can run in real time.
+  const esp32 = new Worker('esp32-worker.js', {type: 'module'});
+  esp32.onmessage = onMessage;
+  esp32.onerror = onError;
+  const {port1, port2} = new MessageChannel();
+  circuit.postMessage({type: 'start', diagram, port: port1}, [port1]);
+  esp32.postMessage(
+      {type: 'start', diagram, firmwareUrl: firmwareUrl.href, port: port2},
+      [port2]);
 }
 
 /**
@@ -114,7 +120,8 @@ function showError(message) {
 /**
  * Sets the part props and fills the readout table.
  *
- * @param {{parts: !Object, values: !Object, netlist: string}} state
+ * @param {{parts: !Object, values: !Object, netlist: (string|undefined)}}
+ *     state
  */
 function show({parts: states, values, netlist}) {
   for (const [id, props] of Object.entries(states)) {
@@ -129,7 +136,7 @@ function show({parts: states, values, netlist}) {
       if (!INPUT_PROPS.has(key)) el[key] = value;
     }
   }
-  netlistView.textContent = netlist;
+  if (netlist) netlistView.textContent = netlist;
   // Nodes with "__" are inside parts, so they do not help the reader.
   const shown = Object.entries(values).filter(([name]) => !name.includes('__'));
   readout.replaceChildren(...shown.map(([name, value]) => {

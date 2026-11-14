@@ -40,13 +40,17 @@ it.
 `web/` is a static page that runs a demo in the browser. A demo is a folder
 with a `diagram.json`, and a `firmware.bin` if it has an ESP32.
 
-- ngspice runs in a worker, through the [eecircuit-engine] WebAssembly
-  build. `circuit/` makes the netlist.
-- The ESP32 runs in the same worker: `web/esp32` builds `bridge/` to
-  WebAssembly.
+- ngspice runs a transient analysis in a worker, through the
+  [eecircuit-engine] WebAssembly build, at wall-clock speed.
+  `circuit/` makes the netlist, and `web/transient.js` steps it in time.
+- The ESP32 runs in a second worker: `web/esp32` builds `bridge/` to
+  WebAssembly. The circuit follows the ESP32's time, and the ESP32 reads
+  pin voltages that are up to 50 ms old.
 - `render/` draws the parts with [wokwi-elements].
 
-Turn the pot or push the button, and the page solves the circuit again.
+Turn the pot or push the button, and the circuit changes over time, so
+capacitors charge and PWM waves feed rectifiers. PWM above about 4 kHz,
+or on many pins, can run slower than real time.
 
 ```sh
 tools/build-web.sh    # the ESP32 module and the ROM, into web/dist
