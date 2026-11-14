@@ -4,12 +4,9 @@
 
 import {Simulation} from 'eecircuit-engine';
 
+import {toNetlist} from '../circuit/netlist.js';
+import {PARTS} from '../circuit/parts.js';
 import {renderCircuit} from '../render/src/circuit.js';
-
-import {toNetlist} from './netlist.js';
-
-/** The LED current that shows as full brightness, in amperes. */
-const FULL_BRIGHTNESS_AMPS = 5e-3;
 
 const status = document.querySelector('#status');
 const readout = document.querySelector('#readout');
@@ -21,27 +18,21 @@ const diagram = await (await fetch('diagram.json')).json();
 const {elements: parts} =
     await renderCircuit(document.querySelector('#circuit'), diagram);
 
-const inputs = {};
+const controls = {};
 for (const [id, el] of parts) {
+  const set = (name, value) => {
+    controls[`${id}.${name}`] = value;
+    solve();
+  };
   switch (el.localName) {
     case 'wokwi-potentiometer':
       el.value = 512;
-      inputs[id] = el.value / el.max;
-      el.addEventListener('input', () => {
-        inputs[id] = el.value / el.max;
-        solve();
-      });
+      controls[`${id}.value`] = el.value;
+      el.addEventListener('input', () => set('value', el.value));
       break;
     case 'wokwi-pushbutton':
-      inputs[id] = false;
-      el.addEventListener('button-press', () => {
-        inputs[id] = true;
-        solve();
-      });
-      el.addEventListener('button-release', () => {
-        inputs[id] = false;
-        solve();
-      });
+      el.addEventListener('button-press', () => set('pressed', 1));
+      el.addEventListener('button-release', () => set('pressed', 0));
       break;
   }
 }
@@ -66,33 +57,35 @@ async function solve() {
   running = true;
   do {
     pending = false;
-    const netlist = toNetlist(diagram, inputs);
-    netlistView.textContent = netlist;
-    sim.setNetList(netlist);
+    const circuit = toNetlist(diagram, {analysis: '.op', controls});
+    netlistView.textContent = circuit.netlist;
+    sim.setNetList(circuit.netlist);
     const start = performance.now();
     const result = await sim.runSim();
     const ms = performance.now() - start;
-    show(result);
+    show(circuit, result);
     status.textContent = `Solved in ${ms.toFixed(1)} ms`;
   } while (pending);
   running = false;
 }
 
 /**
- * Updates the LEDs and the readout table from an .op result.
+ * Updates the parts and the readout table from an .op result.
  *
- * @param {!Object} result An eecircuit-engine result.
+ * @param {!Object} circuit The toNetlist() result.
+ * @param {!Object} result The eecircuit-engine result.
  */
-function show(result) {
+function show(circuit, result) {
   const values = new Map(result.data.map((d) => [d.name, d.values[0]]));
-  for (const [id, el] of parts) {
-    if (el.localName !== 'wokwi-led') continue;
-    const amps = values.get(`i(v_${id})`) ?? 0;
-    el.brightness = Math.min(1, Math.max(0, amps / FULL_BRIGHTNESS_AMPS));
-    el.value = el.brightness > 0.01;
+  const read = {
+    v: (node) => node === '0' ? 0 : values.get(`v(${node})`) ?? 0,
+    i: (source) => values.get(`i(${source})`) ?? 0,
+  };
+  for (const {id, type} of diagram.parts) {
+    if (PARTS[type]?.state) Object.assign(parts.get(id), circuit.state(id, read));
   }
-  // The `_k` nodes are the LED current probes from netlist.js. They are 0 V.
-  const shown = [...values].filter(([name]) => !name.endsWith('_k)'));
+  // Nodes with "__" are inside parts, so they do not help the reader.
+  const shown = [...values].filter(([name]) => !name.includes('__'));
   readout.replaceChildren(...shown.map(([name, value]) => {
     const row = document.createElement('tr');
     const unit = name.startsWith('i(') ? 'A' : 'V';

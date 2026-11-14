@@ -24,9 +24,9 @@ If Node cannot find the library, set `NGSPICE_LIBRARY` to its path.
 ## Web demo
 
 `web/` is a static page that runs ngspice in the browser, through the
-[eecircuit-engine] WebAssembly build. It draws `web/diagram.json` with
-`render/` and [wokwi-elements]. Turn the pot or push the button, and the page solves the
-circuit again and sets the LED brightness from the current.
+[eecircuit-engine] WebAssembly build. It makes the netlist with `circuit/` and draws `web/diagram.json` with
+`render/` and [wokwi-elements]. Turn the pot or push the button, and the
+page solves the circuit again and sets the LED brightness from the current.
 
 ```sh
 python3 -m http.server 8790
