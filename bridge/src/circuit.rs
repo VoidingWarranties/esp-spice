@@ -84,13 +84,12 @@ impl ProcessCircuit {
 
 impl Circuit for ProcessCircuit {
     fn set_pin(&mut self, pin: &str, drive: Drive) -> Result<(), String> {
-        let mut command = json!({
+        // Always send the PWM keys: the circuit keeps them until changed.
+        let (freq_hz, duty) = drive.pwm.unwrap_or((0.0, 0.0));
+        let command = json!({
             "cmd": "set_pin", "pin": pin, "volts": drive.volts, "ohms": drive.ohms,
+            "freq_hz": freq_hz, "duty": duty,
         });
-        if let Some((freq_hz, duty)) = drive.pwm {
-            command["freq_hz"] = json!(freq_hz);
-            command["duty"] = json!(duty);
-        }
         self.request(&command).map(drop)
     }
 
