@@ -2,6 +2,7 @@
   "name": "esp-spice-render",
   "version": "0.1.0",
   "private": true,
+  "license": "Apache-2.0",
   "description": "Draw a Wokwi diagram.json, play back sim state, and capture PNG and video.",
   "type": "module",
   "bin": {

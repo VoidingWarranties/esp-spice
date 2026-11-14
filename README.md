@@ -63,3 +63,12 @@ push to `main`, when Pages is set to deploy from GitHub Actions.
 
 [eecircuit-engine]: https://github.com/eelab-dev/EEcircuit-engine
 [wokwi-elements]: https://github.com/wokwi/wokwi-elements
+
+## License
+
+esp-spice is under the Apache License 2.0, in [LICENSE](LICENSE).
+Third-party parts keep their own licenses, in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+esp-spice is unofficial. It is not affiliated with Espressif Systems or
+Wokwi.
