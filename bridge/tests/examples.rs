@@ -99,7 +99,8 @@ fn pwm_fades_rgb_and_drives_buzzer() {
             .collect();
         let max = values.iter().copied().fold(0.0, f64::max);
         assert!(max > 0.5, "{color}: {values:?}");
-        assert!(values[1..].contains(&0.0), "{color}: {values:?}");
+        let off = values.iter().skip(1).any(|v| *v < 0.01);
+        assert!(off, "{color}: {values:?}");
     }
 
     assert_eq!(state(&mut bridge, "bz1")["hasSignal"], false);

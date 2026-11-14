@@ -30,7 +30,15 @@ if (positionals.length !== 1) {
 
 const diagram = JSON.parse(readFileSync(positionals[0], 'utf8'));
 const maxStep = values['max-step'] ? parseValue(values['max-step']) : undefined;
-const sim = new Simulation(diagram, {maxStep, probes: values.probe});
+/** @type {Simulation} */
+let sim;
+try {
+  sim = new Simulation(diagram, {maxStep, probes: values.probe});
+} catch (e) {
+  // A message, not a stack trace, for a bad diagram or --probe pin.
+  process.stderr.write(`${/** @type {Error} */ (e).message}\n`);
+  process.exit(2);
+}
 for (const warning of sim.warnings)
   process.stderr.write(`warning: ${warning}\n`);
 

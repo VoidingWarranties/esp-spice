@@ -1,7 +1,8 @@
 # Examples
 
 Each folder has a `diagram.json`. A folder with a `firmware.bin` also runs
-an ESP32. The tests check these circuits against hand calculations:
+an ESP32. The examples in this table use each supported part type. The
+tests check them against hand calculations:
 [circuit/test/examples.test.js](../circuit/test/examples.test.js) for the
 circuits, and [bridge/tests/examples.rs](../bridge/tests/examples.rs) for
 the firmware.
@@ -34,9 +35,9 @@ Then draw the trace with [render/capture.js](../render/README.md).
 
 ## Firmware
 
-Each `firmware.bin` is the merged flash image of the `firmware/` folder
-next to it. It contains Arduino-ESP32 3.3.8 (LGPL-2.1) and ESP-IDF 5.5.4
-(Apache-2.0). See
+Each `firmware.bin` that is not a link is the merged flash image of the
+`firmware/` folder next to it. It contains Arduino-ESP32 3.3.8 (LGPL-2.1)
+and ESP-IDF 5.5.4 (Apache-2.0). See
 [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md#esp32-firmware-image)
 for the terms and the source. To build it again, with PlatformIO Core 6.1:
 

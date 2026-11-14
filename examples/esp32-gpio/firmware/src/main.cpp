@@ -10,6 +10,7 @@ constexpr uint32_t kBlinkMs = 50;
 
 int last_switch = -1;
 int last_button = -1;
+bool blink_on = false;
 uint32_t last_toggle = 0;
 
 void setup() {
@@ -28,11 +29,15 @@ void loop() {
   if (on != last_switch) {
     last_switch = on;
     Serial.println(on ? "switch on" : "switch off");
-    if (!on) digitalWrite(kBlinkLedPin, LOW);
+    if (!on) {
+      blink_on = false;
+      digitalWrite(kBlinkLedPin, LOW);
+    }
   }
   if (on && millis() - last_toggle >= kBlinkMs) {
     last_toggle = millis();
-    digitalWrite(kBlinkLedPin, !digitalRead(kBlinkLedPin));
+    blink_on = !blink_on;
+    digitalWrite(kBlinkLedPin, blink_on);
   }
   int pressed = digitalRead(kButtonPin) == LOW;
   if (pressed != last_button) {

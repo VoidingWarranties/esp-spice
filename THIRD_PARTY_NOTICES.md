@@ -7,8 +7,8 @@ the Apache License 2.0, in [LICENSES/Apache-2.0.txt](LICENSES/Apache-2.0.txt).
 
 ## ESP32 firmware image
 
-Each `examples/*/firmware.bin` file is a build of the `firmware` folder
-next to it, for example
+Each `examples/*/firmware.bin` file that is not a link is a build of the
+`firmware` folder next to it, for example
 [`examples/esp32-button-led/firmware`](examples/esp32-button-led/firmware),
 with the pioarduino platform-espressif32 55.03.38-1.
 `examples/esp32-pot-button-leds/firmware.bin` and
