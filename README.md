@@ -20,3 +20,9 @@ npm test
 ```
 
 If Node cannot find the library, set `NGSPICE_LIBRARY` to its path.
+
+## ESP32 bridge
+
+[`bridge/`](bridge) runs ESP32 firmware in esp32sim, in lockstep with the
+circuit. [bridge/README.md](bridge/README.md) tells how to set it up and run
+it.
