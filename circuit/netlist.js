@@ -52,6 +52,8 @@ function sanitize(text) {
  * @typedef {object} CircuitReader
  * @property {(node: string) => number} v Volts at a node.
  * @property {(source: string) => number} i Amps through a voltage source.
+ * @property {(source: string) => number} [toggles] How many times the
+ *     current through a voltage source changed between low and high.
  */
 
 /**
@@ -229,6 +231,10 @@ export function toNetlist(diagram, {analysis, controls: start = {}} = {}) {
       el: (letter, suffix = '') =>
         once(`${letter}_${id}${suffix && '_'}${suffix}`),
       add: (line) => void lines.push(line),
+      warn(message) {
+        const warning = `${id}: ${message}`;
+        if (!warnings.includes(warning)) warnings.push(warning);
+      },
       model(name, body) {
         models.set(name, `.model ${name} ${body}`);
         return name;
@@ -296,9 +302,13 @@ export function toNetlist(diagram, {analysis, controls: start = {}} = {}) {
       const model = parts.get(id)?.model;
       if (!model?.state) throw new Error(`part has no state: "${id}"`);
       const partSenses = /** @type {Map<string, string>} */ (senses.get(id));
+      /** @param {string} label @return {string} */
+      const sense = (label) => /** @type {string} */ (partSenses.get(label));
+      const {toggles} = read;
       return model.state({
         v: (pin) => read.v(nodes[`${id}:${pin}`]),
-        i: (label) => read.i(/** @type {string} */ (partSenses.get(label))),
+        i: (label) => read.i(sense(label)),
+        toggles: toggles && ((label) => toggles(sense(label))),
         control: (key) => controls[`${id}.${key}`],
       });
     },

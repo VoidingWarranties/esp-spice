@@ -7,6 +7,8 @@
 export const CLOSED_OHMS = 0.05;
 /** Resistance of an open switch, in ohms. */
 export const OPEN_OHMS = 1e9;
+/** Smallest current change that counts as a buzzer signal, in amps. */
+export const TOGGLE_AMPS = 1e-3;
 /** LED current for full brightness, in amps. */
 export const LED_FULL_AMPS = 5e-3;
 
@@ -22,6 +24,7 @@ export const LED_FULL_AMPS = 5e-3;
  * @property {(suffix: string) => string} inner A node inside the part.
  * @property {(letter: string, suffix?: string) => string} el Element name.
  * @property {(line: string) => void} add Adds a netlist line.
+ * @property {(message: string) => void} warn Adds a warning, once.
  * @property {(name: string, body: string) => string} model Adds a .model.
  * @property {(label: string, from: string, to: string) => void} sense
  *     Adds a 0 V source to read the current from `from` to `to`.
@@ -49,6 +52,9 @@ export const LED_FULL_AMPS = 5e-3;
  * @typedef {object} Reader
  * @property {(pin: string) => number} v Volts at a pin.
  * @property {(label: string) => number} i Amps through a sense source.
+ * @property {(label: string) => number} [toggles] How many times the
+ *     current through a sense source changed between low and high, in the
+ *     last frame. Missing in a DC solve.
  * @property {(name: string) => number} control Value of a control.
  */
 
@@ -113,10 +119,27 @@ const LED_VOLTS = {
   red: 1.9,
   orange: 2.0,
   yellow: 2.0,
+  lime: 2.0,
   green: 3.0,
+  cyan: 3.0,
   blue: 3.0,
   white: 3.0,
   purple: 3.0,
+};
+
+/**
+ * Segment colors of the wokwi-led-bar-graph palettes.
+ * @type {Record<string, string[]>}
+ */
+const BAR_PALETTES = {
+  GYR: [...Array(5).fill('lime'), ...Array(3).fill('yellow'), 'red', 'red'],
+  BCYR: [
+    'blue',
+    ...Array(4).fill('cyan'),
+    ...Array(3).fill('yellow'),
+    'red',
+    'red',
+  ],
 };
 
 /**
@@ -126,7 +149,12 @@ const LED_VOLTS = {
  * @return {string}
  */
 function ledModel(p, color) {
-  const volts = LED_VOLTS[color.toLowerCase()] ?? 2.0;
+  const key = color.toLowerCase();
+  let volts = LED_VOLTS[key];
+  if (!Object.hasOwn(LED_VOLTS, key)) {
+    volts = 2.0;
+    p.warn(`unknown LED color "${color}", using ${volts} V`);
+  }
   const n = 2;
   const vt = 0.02585;
   const is = 0.01 * Math.exp(-volts / (n * vt));
@@ -328,12 +356,13 @@ export const PARTS = {
   'wokwi-led-bar-graph': {
     pins: [...Array(10)].flatMap((_, i) => [`A${i + 1}`, `C${i + 1}`]),
     build(p) {
+      const color = p.attr('color', 'red');
       for (let i = 1; i <= 10; i++) {
         addLed(
           p,
           p.node(`A${i}`),
           p.node(`C${i}`),
-          p.attr('color', 'red'),
+          BAR_PALETTES[color]?.[i - 1] ?? color,
           `i${i}`,
         );
       }
@@ -379,7 +408,13 @@ export const PARTS = {
       p.sense('i', p.node('1'), mid);
       p.add(`${p.el('r')} ${mid} ${p.node('2')} ${p.num('resistance', '42')}`);
     },
-    state: (r) => ({hasSignal: Math.abs(r.i('i')) > 1e-3}),
+    // A piezo buzzer sounds only while its current changes, so DC is
+    // silent. A DC solve has no toggles, so it reads any current.
+    state: (r) => ({
+      hasSignal: r.toggles
+        ? r.toggles('i') >= 2
+        : Math.abs(r.i('i')) > TOGGLE_AMPS,
+    }),
   },
 
   'wokwi-vcc': {

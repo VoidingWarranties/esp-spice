@@ -133,6 +133,32 @@ test('PWM sets the mean LED brightness', () => {
   near(/** @type {number} */ (sim.state('led1').brightness), 0.25 * full, 0.1);
 });
 
+test('PWM LED brightness does not depend on when it is read', () => {
+  sim = new Simulation(example('esp32-led'));
+  sim.setPin('esp:2', {volts: 3.3, ohms: 40, freqHz: 1000, duty: 0.25});
+  sim.advanceTo(0.02);
+  const steady = sim.state('led1').brightness;
+  // Records between frames, at times that cut PWM periods in parts.
+  for (const t of [0.0213, 0.0251, 0.0318, 0.0407]) {
+    sim.advanceTo(t);
+    sim.set('btn1.pressed', t > 0.03 ? 1 : 0);
+    assert.equal(sim.state('led1').brightness, steady, `at ${t} s`);
+  }
+});
+
+test('a buzzer sounds on a changing current, not on DC', () => {
+  sim = new Simulation(example('esp32-pwm'));
+  sim.setPin('esp:D23', {volts: 3.3, ohms: 40});
+  sim.advanceTo(0.02);
+  assert.deepEqual(sim.state('bz1'), {hasSignal: false});
+  sim.setPin('esp:D23', {freqHz: 2000, duty: 0.5});
+  sim.advanceTo(0.04);
+  assert.deepEqual(sim.state('bz1'), {hasSignal: true});
+  sim.setPin('esp:D23', {freqHz: 0});
+  sim.advanceTo(0.06);
+  assert.deepEqual(sim.state('bz1'), {hasSignal: false});
+});
+
 test('an NPN transistor switches an RGB LED', () => {
   sim = new Simulation(
     diagram(
