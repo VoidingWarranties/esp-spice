@@ -9,64 +9,53 @@
 // currentColor, so the drawings follow the page text color, also in dark
 // mode.
 const STROKE = 'stroke="currentColor" stroke-width="2" fill="none"';
-const THIN = 'stroke="currentColor" stroke-width="1" fill="none"';
-
 // Pixels per mm, at the 96 dpi that diagrams use.
 const MM = 96 / 25.4;
 // Header pin pitch.
 const PITCH = 2.54;
+// Header pin pitch in the espboards.dev drawings, in their SVG units.
+const ART_PITCH = 25.986;
 
 /**
- * Returns a simple drawing of a devkit board with two pin headers.
+ * Returns a devkit board with two pin headers, drawn with a board
+ * illustration from espboards.dev (CC BY-NC 4.0).
  *
  * Sizes and pin positions are in mm and come from the board.json files in
  * github.com/wokwi/wokwi-boards, so that diagrams made in Wokwi keep their
- * wires. The drawing is our own.
+ * wires.
  *
- * @param {{chip: string, width: number, height: number,
- *     left: !Array, right: !Array}} spec Each header is [x, y, ...names],
- *     with y of the first pin.
+ * @param {{width: number, height: number, left: !Array, right: !Array,
+ *     art: {file: string, width: number, height: number,
+ *     center: !Array<number>}}} spec Each header is [x, y, ...names], with
+ *     y of the first pin. art gives the SVG size and the center of its pin
+ *     grid, in SVG units.
  * @return {!Object} A PARTS entry.
  */
-function board({chip, width, height, left, right}) {
+function board({width, height, left, right, art}) {
   const px = (mm) => +(mm * MM).toFixed(2);
-  // Whole pixels, because the renderer reads the size with offsetWidth and
-  // rotates around the center.
-  const w = Math.round(width * MM);
-  const h = Math.round(height * MM);
   const pins = [];
-  let pads = '';
-  // Each pin name goes on the inner side of its pad.
-  const header = ([x, y, ...names], anchor, dx) => {
-    names.forEach((name, i) => {
-      const [cx, cy] = [px(x), px(y + i * PITCH)];
-      pins.push([name, cx, cy]);
-      pads += `<circle cx="${cx}" cy="${cy}" r="3"/>
-        <text class="pin" x="${cx + dx}" y="${cy + 2}"
-            text-anchor="${anchor}">${name}</text>`;
-    });
-  };
-  header(left, 'start', 6);
-  header(right, 'end', -6);
-  // The module sits between the two columns of pin names, with a meander
-  // antenna at its top. The chip name runs down the board below it.
-  const mx = 36;
-  const mw = w - 2 * mx;
-  const mh = +(h * 0.3).toFixed(2);
-  const antenna = 'v-8h3v8h3'.repeat(Math.max(0, (mw - 8) / 6));
+  for (const [x, y, ...names] of [left, right]) {
+    names.forEach((name, i) => pins.push([name, px(x), px(y + i * PITCH)]));
+  }
+  // The drawings have the USB port at the top. Turn them 180 degrees, so
+  // that they match Wokwi, and put their pin grid on Wokwi's pin grid.
+  const xs = pins.map(([, x]) => x);
+  const ys = pins.map(([, , y]) => y);
+  const gx = (Math.min(...xs) + Math.max(...xs)) / 2;
+  const gy = (Math.min(...ys) + Math.max(...ys)) / 2;
+  const k = (PITCH * MM) / ART_PITCH;
+  const [w, h] = [art.width * k, art.height * k];
+  const x = gx - w + art.center[0] * k;
+  const y = gy - h + art.center[1] * k;
+  const href = new URL(`boards/${art.file}`, import.meta.url).href;
   return {
-    width: w,
-    height: h,
+    // Whole pixels, because the renderer reads the size with offsetWidth and
+    // rotates around the center.
+    width: Math.round(width * MM),
+    height: Math.round(height * MM),
     pins,
-    svg: `
-      <rect x="1" y="1" width="${w - 2}" height="${h - 2}" rx="4"
-          stroke="currentColor" fill="currentColor" fill-opacity="0.08"/>
-      <rect x="${mx}" y="4" width="${mw}" height="${mh}" ${STROKE}/>
-      <path d="M${mx + 4} 16${antenna}" ${THIN}/>
-      <text transform="translate(${w / 2 - 3} ${mh + 12}) rotate(90)"
-          >${chip}</text>
-      <rect x="${w / 2 - 15}" y="${h - 12}" width="30" height="12" ${STROKE}/>
-      <g ${THIN}>${pads}</g>`,
+    svg: `<image href="${href}" x="${x}" y="${y}" width="${w}" height="${h}"
+        transform="rotate(180 ${x + w / 2} ${y + h / 2})"/>`,
   };
 }
 
@@ -115,7 +104,8 @@ const PARTS = {
     label: {x: 34, y: 50, attr: 'model', fallback: '2N2222', anchor: 'start'},
   },
   'board-esp32-devkit-c-v4': board({
-    chip: 'ESP32',
+    art: {file: 'esp32-devkitc.svg', width: 310, height: 589.649,
+      center: [154.935, 268.82]},
     width: 27.9,
     height: 56.628,
     left: [1.22, 7.62, '3V3', 'EN', 'VP', 'VN', '34', '35', '32', '33', '25',
@@ -124,7 +114,8 @@ const PARTS = {
       '18', '5', '17', '16', '4', '0', '2', '15', 'D1', 'D0', 'CLK'],
   }),
   'board-esp32-s3-devkitc-1': board({
-    chip: 'ESP32-S3',
+    art: {file: 'esp32-s3-devkitc-1.svg', width: 284, height: 758.854,
+      center: [141.94, 394.37]},
     width: 25.527,
     height: 70.057,
     left: [1.343, 7.667, '3V3.1', '3V3.2', 'RST', '4', '5', '6', '7', '15',
@@ -135,7 +126,8 @@ const PARTS = {
       'GND.4'],
   }),
   'board-esp32-c3-devkitm-1': board({
-    chip: 'ESP32-C3',
+    art: {file: 'esp32-c3-devkitm-1.svg', width: 284, height: 481.964,
+      center: [141.94, 219.96]},
     width: 25.4,
     height: 42.91,
     left: [1, 5.16, 'GND.1', '3V3.1', '3V3.2', '2', '3', 'GND.2', 'RST',
@@ -144,7 +136,8 @@ const PARTS = {
       '6', '5', '4', 'GND.7', '18', '19', 'GND.6'],
   }),
   'board-esp32-c6-devkitc-1': board({
-    chip: 'ESP32-C6',
+    art: {file: 'esp32-c6-devkitc-1.svg', width: 284, height: 620.259,
+      center: [141.94, 336.345]},
     width: 26.214,
     height: 57.74,
     left: [1.45, 8.76, '3V3', 'RST', '4', '5', '6', '7', '0', '1', '8', '10',
@@ -160,7 +153,6 @@ sheet.replaceSync(`
   :host { display: inline-block; }
   svg { display: block; overflow: visible; }
   text { font: 9px sans-serif; fill: currentColor; }
-  .pin { font-size: 6px; stroke: none; }
 `);
 
 for (const [tag, {width, height, pins, svg, label}] of Object.entries(PARTS)) {
@@ -189,6 +181,13 @@ for (const [tag, {width, height, pins, svg, label}] of Object.entries(PARTS)) {
       this.shadowRoot.adoptedStyleSheets = [sheet];
       this.shadowRoot.append(template.content.cloneNode(true));
       this.#text = this.shadowRoot.querySelector('text');
+      // Board drawings load from a file. Wait for them before a capture.
+      const image = this.shadowRoot.querySelector('image');
+      if (image) {
+        this.updateComplete = new Promise((resolve) => {
+          image.onload = image.onerror = () => resolve(true);
+        });
+      }
     }
 
     connectedCallback() {
