@@ -74,6 +74,19 @@ test('draws spice parts with pins and no warnings', async () => {
   }
 });
 
+test('draws the ESP32 boards, and wires find their pins', async () => {
+  const dir = new URL('../examples/boards/', import.meta.url);
+  const warn = mock.method(console, 'warn', () => {});
+  const boards = await openCircuit(await readJson('diagram.json', dir));
+  try {
+    await boards.shoot(0);
+    assert.deepEqual(warn.mock.calls.map((c) => c.arguments), []);
+  } finally {
+    warn.mock.restore();
+    await boards.close();
+  }
+});
+
 test('draws hidden parts greyed out, or not at all', async () => {
   const dir = new URL('../examples/npn-switch/', import.meta.url);
   const diagram = await readJson('diagram.json', dir);

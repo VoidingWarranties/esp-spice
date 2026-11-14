@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "author": "esp-spice",
+  "editor": "esp-spice",
+  "parts": [
+    {"type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0},
+    {"type": "board-esp32-s3-devkitc-1", "id": "s3", "top": 0, "left": 160},
+    {"type": "board-esp32-c3-devkitm-1", "id": "c3", "top": 0, "left": 310},
+    {"type": "board-esp32-c6-devkitc-1", "id": "c6", "top": 0, "left": 460},
+    {"type": "wokwi-led", "id": "led1", "top": 250, "left": 60, "attrs": {"color": "red"}}
+  ],
+  "connections": [
+    ["esp:2", "led1:A", "green", ["v20", "*", "v-20"]],
+    ["led1:C", "esp:GND.1", "black", []],
+    ["s3:38", "s3:GND.4", "red", []],
+    ["c3:8", "c3:GND.10", "blue", []],
+    ["c6:NC1", "c6:3V3", "orange", []]
+  ]
+}
