@@ -54,7 +54,7 @@ export const LED_FULL_AMPS = 5e-3;
  * @property {(label: string) => number} i Amps through a sense source.
  * @property {(label: string) => number} [toggles] How many times the
  *     current through a sense source changed between low and high, in the
- *     last frame. Missing in a DC solve.
+ *     last 50 ms. Missing in a DC solve.
  * @property {(name: string) => number} control Value of a control.
  */
 
@@ -408,11 +408,12 @@ export const PARTS = {
       p.sense('i', p.node('1'), mid);
       p.add(`${p.el('r')} ${mid} ${p.node('2')} ${p.num('resistance', '42')}`);
     },
-    // A piezo buzzer sounds only while its current changes, so DC is
-    // silent. A DC solve has no toggles, so it reads any current.
+    // A piezo buzzer sounds only while its current goes up and down, so DC
+    // is silent. 3 toggles, so that one short DC pulse is silent too. A DC
+    // solve has no toggles, so it reads any current.
     state: (r) => ({
       hasSignal: r.toggles
-        ? r.toggles('i') >= 2
+        ? r.toggles('i') >= 3
         : Math.abs(r.i('i')) > TOGGLE_AMPS,
     }),
   },

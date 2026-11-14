@@ -146,6 +146,23 @@ test('PWM LED brightness does not depend on when it is read', () => {
   }
 });
 
+test('PWM on one pin does not slow other LEDs or slow PWM blinks', () => {
+  sim = new Simulation(example('esp32-pwm'));
+  sim.setPin('esp:D27', {volts: 3.3, ohms: 40, freqHz: 1000, duty: 0.5});
+  sim.setPin('esp:D32', {volts: 3.3, ohms: 40, freqHz: 1, duty: 0.5});
+  sim.advanceTo(0.0203);
+  const blue = sim.state('rgb1').ledBlue;
+  assert.ok(blue > 0.5, `blue is on in the first half second: ${blue}`);
+  sim.setPin('esp:D25', {volts: 3.3, ohms: 40});
+  sim.advanceTo(0.0213);
+  // A DC pin reads only the time since its change.
+  const green = sim.state('rgb1').ledGreen;
+  sim.advanceTo(0.04);
+  assert.equal(sim.state('rgb1').ledGreen, green);
+  sim.advanceTo(0.6);
+  assert.equal(sim.state('rgb1').ledBlue, 0);
+});
+
 test('a buzzer sounds on a changing current, not on DC', () => {
   sim = new Simulation(example('esp32-pwm'));
   sim.setPin('esp:D23', {volts: 3.3, ohms: 40});
@@ -154,8 +171,14 @@ test('a buzzer sounds on a changing current, not on DC', () => {
   sim.setPin('esp:D23', {freqHz: 2000, duty: 0.5});
   sim.advanceTo(0.04);
   assert.deepEqual(sim.state('bz1'), {hasSignal: true});
-  sim.setPin('esp:D23', {freqHz: 0});
-  sim.advanceTo(0.06);
+  sim.setPin('esp:D23', {freqHz: 0, volts: 0});
+  sim.advanceTo(0.1);
+  assert.deepEqual(sim.state('bz1'), {hasSignal: false});
+  // One short DC pulse is a click, not a tone.
+  sim.setPin('esp:D23', {volts: 3.3});
+  sim.advanceTo(0.103);
+  sim.setPin('esp:D23', {volts: 0});
+  sim.advanceTo(0.11);
   assert.deepEqual(sim.state('bz1'), {hasSignal: false});
 });
 

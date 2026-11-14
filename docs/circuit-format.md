@@ -119,8 +119,9 @@ Notes on the models:
   `brightness` is the LED current divided by 5 mA, limited to 0..1.
   `value` is `brightness > 0`.
 - A buzzer is a resistor. `hasSignal` is true when its current goes between
-  low and high at least twice in the last frame (10 ms), with a change of
-  1 mA or more. So DC is silent, as in a piezo buzzer.
+  low and high at least 3 times in the last 50 ms, with a change of 1 mA or
+  more. So DC is silent, as in a piezo buzzer, and tones from about 30 Hz
+  sound.
 - A closed switch is 0.05 ohm. An open switch is 1 Gohm.
 - `wokwi-vcc` is an ideal source with 0.01 ohm in series, so two sources on
   one net do not make an error.
@@ -217,9 +218,9 @@ Options:
 - `probes`: pins whose net voltage the trace records.
 
 `state()` and the trace use the mean part current since the last record.
-While a pin has PWM, they use the mean over the last whole PWM periods
-(at least one frame) of the slowest PWM pin, so an LED on a PWM pin has a
-steady brightness. Node voltages are the value now.
+While a pin has PWM with a period of one frame or less, that time grows to
+whole periods of the slowest such PWM, so an LED on a PWM pin has a steady
+brightness. Slower PWM shows as blinks. Node voltages are the value now.
 
 Ngspice keeps every time point in memory, so memory grows with the
 simulated time: about 50 MB for each simulated second with a 5 kHz PWM

@@ -8,6 +8,8 @@ import {ngspice} from './ngspice.js';
 import {OPEN_OHMS, TOGGLE_AMPS} from './parts.js';
 import {TraceRecorder} from './trace.js';
 
+/** Time over which toggles() counts, in seconds. */
+const TOGGLE_SECONDS = 0.05;
 /** Times closer than this are equal, in seconds. */
 const EPSILON = 1e-12;
 
@@ -252,25 +254,26 @@ export class Simulation {
 
   /**
    * Reads the circuit. Currents are the mean since the last record, or
-   * over the last frame if there are no new points. While a pin has PWM,
-   * the mean is over whole periods of the slowest PWM, so that it does not
-   * depend on the PWM phase. Toggles count over the last frame.
+   * over the last frame if there are no new points. While a pin has PWM
+   * that is faster than a frame, that time grows to whole periods of the
+   * slowest such PWM, so the mean does not depend on the PWM phase.
    * @return {import('./netlist.js').CircuitReader}
    */
   #reader() {
     const mark =
       this.#ng.length('time') > this.#mark ? this.#mark : this.#previousMark;
+    const last = this.#ng.vector('time', Math.max(0, mark - 1))?.[0] ?? 0;
     const period = this.#pwmPeriod();
     const meanStart =
       period > 0
         ? Math.max(
             0,
-            this.#time - period * Math.ceil(this.#frameInterval / period),
+            this.#time -
+              period * Math.ceil((this.#time - last) / period - 1e-6),
           )
-        : (this.#ng.vector('time', Math.max(0, mark - 1))?.[0] ?? 0);
-    const toggleStart = this.#time - this.#frameInterval;
-    const from = this.#indexBefore(Math.min(meanStart, toggleStart));
-    const times = this.#ng.vector('time', from) ?? [];
+        : last;
+    const toggleStart = this.#time - TOGGLE_SECONDS;
+    const {from, times} = this.#timesSince(Math.min(meanStart, toggleStart));
     /** @param {string} source */
     const values = (source) => this.#ng.vector(`${source}#branch`, from) ?? [];
     return {
@@ -280,32 +283,33 @@ export class Simulation {
     };
   }
 
-  /** @return {number} The longest period of a PWM pin, or 0, in seconds. */
+  /**
+   * @return {number} The longest period of a PWM pin that is not longer
+   *     than a frame, or 0, in seconds. Slower PWM shows as blinks.
+   */
   #pwmPeriod() {
     const controls = this.#circuit.controls;
     let period = 0;
     for (const name of Object.keys(controls)) {
-      if (!name.endsWith('.freqHz') || !(controls[name] > 0)) continue;
+      const p = 1 / controls[name];
+      if (!name.endsWith('.freqHz') || !(p <= this.#frameInterval)) continue;
       const duty = controls[name.replace(/freqHz$/, 'duty')];
-      if (duty > 0 && duty < 1) period = Math.max(period, 1 / controls[name]);
+      if (duty > 0 && duty < 1) period = Math.max(period, p);
     }
     return period;
   }
 
   /**
    * @param {number} t Seconds.
-   * @return {number} An index in the time vector at or before time t.
+   * @return {{from: number, times: number[]}} The time vector from an
+   *     index `from` at or before time t.
    */
-  #indexBefore(t) {
+  #timesSince(t) {
     const length = this.#ng.length('time');
     for (let n = 1024; ; n *= 4) {
       const from = Math.max(0, length - n);
-      if (
-        from === 0 ||
-        /** @type {number[]} */ (this.#ng.vector('time', from))[0] <= t
-      ) {
-        return from;
-      }
+      const times = this.#ng.vector('time', from) ?? [];
+      if (from === 0 || times[0] <= t) return {from, times};
     }
   }
 

@@ -111,7 +111,8 @@ for (const [tag, {width, height, pins, svg, label}] of Object.entries(PARTS)) {
 
 // wokwi-led-bar-graph draws a segment fully lit for any value above 0. The
 // sim gives a brightness, so mix each dim segment toward its off color, as
-// wokwi-led dims its glow.
+// wokwi-led dims its glow. The segment selector matches the markup of
+// @wokwi/elements 1.9.2; the capture test checks it.
 customElements.whenDefined('wokwi-led-bar-graph').then((BarGraph) => {
   const updated = BarGraph.prototype.updated;
   BarGraph.prototype.updated = function(changed) {
