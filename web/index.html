@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ESP Spice demo</title>
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+    body { margin: 16px; }
+    main { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start; }
+    td { padding: 2px 12px 2px 0; font-family: ui-monospace, monospace; }
+    td:last-child { text-align: right; }
+    pre { font-size: 12px; }
+  </style>
+  <script type="importmap">
+    {
+      "imports": {
+        "eecircuit-engine": "https://cdn.jsdelivr.net/npm/eecircuit-engine@1.9.0/dist/eecircuit-engine.mjs"
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@wokwi/elements@1.9.2/dist/wokwi-elements.bundle.min.js"></script>
+  <script type="module" src="demo.js"></script>
+</head>
+<body>
+  <h1>ESP Spice demo</h1>
+  <p>Turn the pot or hold the button. ngspice solves the circuit in this page.</p>
+  <main>
+    <div id="circuit"></div>
+    <section>
+      <p id="status">Loading…</p>
+      <table><tbody id="readout"></tbody></table>
+      <details>
+        <summary>Netlist</summary>
+        <pre id="netlist"></pre>
+      </details>
+    </section>
+  </main>
+</body>
+</html>

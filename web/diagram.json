@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "author": "esp-spice pot and button demo",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-potentiometer", "id": "pot1", "top": 10, "left": 180, "attrs": {} },
+    { "type": "wokwi-resistor", "id": "r1", "top": 120, "left": 270, "attrs": { "value": "220" } },
+    { "type": "wokwi-led", "id": "led1", "top": 60, "left": 350, "attrs": { "color": "red", "flip": true } },
+    { "type": "wokwi-pushbutton", "id": "btn1", "top": 200, "left": 180, "attrs": { "color": "green" } },
+    { "type": "wokwi-resistor", "id": "r2", "top": 226.35, "left": 270, "attrs": { "value": "220" } },
+    { "type": "wokwi-led", "id": "led2", "top": 170, "left": 350, "attrs": { "color": "green", "flip": true } }
+  ],
+  "connections": [
+    ["esp:3V3", "pot1:VCC", "red", []],
+    ["esp:GND.1", "pot1:GND", "black", []],
+    ["pot1:SIG", "r1:1", "orange", []],
+    ["r1:2", "led1:A", "orange", []],
+    ["esp:GND.1", "led1:C", "black", []],
+    ["esp:3V3", "btn1:1.l", "red", []],
+    ["btn1:2.r", "r2:1", "green", []],
+    ["r2:2", "led2:A", "green", []],
+    ["led2:C", "esp:GND.1", "black", ["v10", "h20"]]
+  ]
+}
