@@ -15,6 +15,16 @@ fn button_lights_led_s3() {
     button_lights_led(common::S3);
 }
 
+#[test]
+fn button_lights_led_c3() {
+    button_lights_led(common::C3);
+}
+
+#[test]
+fn button_lights_led_c6() {
+    button_lights_led(common::C6);
+}
+
 fn button_lights_led(example: &str) {
     let circuit = StubCircuit::default();
     let mut bridge = Bridge::new(

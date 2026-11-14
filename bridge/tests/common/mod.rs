@@ -13,6 +13,14 @@ pub const S3: &str = concat!(
     env!("CARGO_MANIFEST_DIR"),
     "/../examples/esp32-s3-button-led"
 );
+pub const C3: &str = concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/../examples/esp32-c3-button-led"
+);
+pub const C6: &str = concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/../examples/esp32-c6-button-led"
+);
 
 pub fn diagram(example: &str) -> String {
     std::fs::read_to_string(format!("{example}/diagram.json")).unwrap()

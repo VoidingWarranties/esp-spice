@@ -15,15 +15,27 @@ fn set(bridge: &mut Bridge<ProcessCircuit>, name: &str, value: i32) {
 
 #[test]
 fn firmware_reads_button_and_pot_in_ngspice_esp32() {
-    firmware_reads_button_and_pot_in_ngspice(common::ESP32);
+    firmware_reads_button_and_pot_in_ngspice(common::ESP32, 3500);
 }
 
 #[test]
 fn firmware_reads_button_and_pot_in_ngspice_s3() {
-    firmware_reads_button_and_pot_in_ngspice(common::S3);
+    firmware_reads_button_and_pot_in_ngspice(common::S3, 3500);
 }
 
-fn firmware_reads_button_and_pot_in_ngspice(example: &str) {
+#[test]
+fn firmware_reads_button_and_pot_in_ngspice_c3() {
+    firmware_reads_button_and_pot_in_ngspice(common::C3, 3500);
+}
+
+#[test]
+fn firmware_reads_button_and_pot_in_ngspice_c6() {
+    firmware_reads_button_and_pot_in_ngspice(common::C6, 3000);
+}
+
+/// `full_scale` is the lowest reading at 3.3 V. It differs with the ADC of
+/// each chip.
+fn firmware_reads_button_and_pot_in_ngspice(example: &str, full_scale: i32) {
     let root = concat!(env!("CARGO_MANIFEST_DIR"), "/..");
     let diagram = format!("{example}/diagram.json");
     let mut node = Command::new("node");
@@ -67,7 +79,7 @@ fn firmware_reads_button_and_pot_in_ngspice(example: &str) {
         .filter_map(|l| l.strip_prefix("pot ")?.parse().ok())
         .next_back()
         .unwrap();
-    assert!(pot > 3500, "{serial}");
+    assert!(pot > full_scale, "{serial}");
     let led = bridge
         .circuit()
         .request(&json!({ "cmd": "state", "part": "led2" }))

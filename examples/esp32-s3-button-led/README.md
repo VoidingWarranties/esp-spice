@@ -2,7 +2,8 @@
 
 The circuit of [esp32-button-led](../esp32-button-led) on the
 `board-esp32-s3-devkitc-1` board. The potentiometer is on GPIO 1, because
-the S3 has no ADC on GPIO 34.
+the S3 has no ADC on GPIO 34. The [C3](../esp32-c3-button-led) and
+[C6](../esp32-c6-button-led) examples are the same circuit on those chips.
 
 `firmware.bin` is the merged flash image of
 [`../esp32-button-led/firmware`](../esp32-button-led/firmware), built for
