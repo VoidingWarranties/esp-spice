@@ -89,7 +89,8 @@ its value until a later key frame changes it. Times are in seconds.
   wokwi-elements does not have: `wokwi-vcc`, `wokwi-gnd`, the `spice-*`
   types in [docs/circuit-format.md](../docs/circuit-format.md#supported-parts),
   from the `drawing` of each type in
-  [circuit/parts.js](../circuit/parts.js), and the boards `board-esp32-devkit-c-v4`, `board-esp32-s3-devkitc-1`,
+  [circuit/parts.js](../circuit/parts.js), and the boards
+  `board-esp32-devkit-c-v4`, `board-esp32-s3-devkitc-1`,
   `board-esp32-c3-devkitm-1` and `board-esp32-c6-devkitc-1`. The boards use
   Wokwi's pin names and pin positions, so Wokwi diagrams keep their wires.
   Their drawings in `src/boards/` are from
