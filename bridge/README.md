@@ -43,6 +43,9 @@ bridge.circuit().request(&json!({ "cmd": "set", "name": "btn1.pressed", "value":
 bridge.run_for(0.1)?;
 ```
 
+The board part in the diagram selects the chip. `rom_elf(&diagram)` gives
+the name of the mask ROM file that the chip boots from.
+
 A `Circuit` is anything that can set a pin drive and advance in time.
 `ProcessCircuit` speaks the process protocol. `DeferredCircuit` is for an
 async circuit, such as ngspice in a browser: the caller replays the drives
