@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "parts": [
+    {"type": "wokwi-led-bar-graph", "id": "bar1", "top": 0, "left": 0, "rotate": 90, "attrs": {"color": "GYR"}}
+  ],
+  "connections": []
+}
