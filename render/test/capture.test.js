@@ -121,3 +121,50 @@ test('draws the analog examples with no warnings', async () => {
     error.mock.restore();
   }
 });
+
+test('draws wires to unknown parts and pins, with warnings', async () => {
+  const dir = new URL('../examples/missing-pins/', import.meta.url);
+  const diagram = await readJson('diagram.json', dir);
+  // A transparent wire still places pins, so only the wire line changes.
+  const clear = (ref) => {
+    const d = structuredClone(diagram);
+    d.connections.find((c) => c.includes(ref))[2] = 'transparent';
+    return d;
+  };
+  const warn = mock.method(console, 'warn', () => {});
+  const shots = [];
+  try {
+    for (const d of [diagram, clear('sensor:SDA'), clear('led1:K')]) {
+      const view = await openCircuit(d, undefined, {scale: 1});
+      shots.push(await view.shoot(0));
+      await view.close();
+    }
+    assert.deepEqual(warn.mock.calls.slice(0, 2).map((c) => c.arguments), [
+      ['No element for part type: chip-bme280'],
+      ['Unknown pin: led1:K'],
+    ]);
+  } finally {
+    warn.mock.restore();
+  }
+  assert.notDeepEqual(shots[0], shots[1], 'wire to unknown part shows');
+  assert.notDeepEqual(shots[0], shots[2], 'wire to unknown pin shows');
+});
+
+test('dims bar graph segments by brightness', async () => {
+  const diagram = {
+    version: 1,
+    parts: [{type: 'wokwi-led-bar-graph', id: 'bar1', attrs: {}}],
+    connections: [],
+  };
+  const shots = [];
+  for (const value of [0, 0.2, 1]) {
+    const values = [value, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    const trace = {parts: {bar1: [{t: 0, values}]}};
+    const view = await openCircuit(diagram, trace, {scale: 1});
+    shots.push(await view.shoot(0));
+    await view.close();
+  }
+  const [off, dim, full] = shots;
+  assert.notDeepEqual(dim, off);
+  assert.notDeepEqual(dim, full);
+});

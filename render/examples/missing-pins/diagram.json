@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "author": "ESP Spice",
+  "editor": "esp-spice",
+  "parts": [
+    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    { "type": "chip-bme280", "id": "sensor", "top": 50, "left": 200, "attrs": {} },
+    { "type": "wokwi-led", "id": "led1", "top": 40, "left": -80, "attrs": { "color": "red" } }
+  ],
+  "connections": [
+    [ "esp:D21", "sensor:SDA", "blue", [] ],
+    [ "esp:D22", "sensor:SCL", "green", [] ],
+    [ "esp:3V3", "sensor:VCC", "red", [ "h20", "*", "h-10" ] ],
+    [ "esp:GND.1", "sensor:GND", "black", [ "h30", "*", "h-20" ] ],
+    [ "led1:A", "esp:D2", "green", [ "v100" ] ],
+    [ "led1:K", "esp:GND.2", "black", [] ]
+  ]
+}
