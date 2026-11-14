@@ -19,8 +19,9 @@ const PITCH = 2.54;
 /**
  * Returns a simple drawing of a devkit board with two pin headers.
  *
- * Sizes and pin positions are in mm and match Wokwi's boards, so that
- * diagrams made in Wokwi keep their wires. The drawing is our own.
+ * Sizes and pin positions are in mm and come from the board.json files in
+ * github.com/wokwi/wokwi-boards, so that diagrams made in Wokwi keep their
+ * wires. The drawing is our own.
  *
  * @param {{chip: string, width: number, height: number,
  *     left: !Array, right: !Array}} spec Each header is [x, y, ...names],
@@ -29,12 +30,14 @@ const PITCH = 2.54;
  */
 function board({chip, width, height, left, right}) {
   const px = (mm) => +(mm * MM).toFixed(2);
-  const w = px(width);
-  const h = px(height);
+  // Whole pixels, because the renderer reads the size with offsetWidth and
+  // rotates around the center.
+  const w = Math.round(width * MM);
+  const h = Math.round(height * MM);
   const pins = [];
   let pads = '';
-  for (const [[x, y, ...names], anchor, dx] of
-      [[left, 'start', 6], [right, 'end', -6]]) {
+  // Each pin name goes on the inner side of its pad.
+  const header = ([x, y, ...names], anchor, dx) => {
     names.forEach((name, i) => {
       const [cx, cy] = [px(x), px(y + i * PITCH)];
       pins.push([name, cx, cy]);
@@ -42,13 +45,15 @@ function board({chip, width, height, left, right}) {
         <text class="pin" x="${cx + dx}" y="${cy + 2}"
             text-anchor="${anchor}">${name}</text>`;
     });
-  }
+  };
+  header(left, 'start', 6);
+  header(right, 'end', -6);
   // The module sits between the two columns of pin names, with a meander
   // antenna at its top. The chip name runs down the board below it.
   const mx = 36;
   const mw = w - 2 * mx;
   const mh = +(h * 0.3).toFixed(2);
-  const antenna = 'v-8h3v8h3'.repeat(Math.floor((mw - 8) / 6));
+  const antenna = 'v-8h3v8h3'.repeat(Math.max(0, (mw - 8) / 6));
   return {
     width: w,
     height: h,
