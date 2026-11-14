@@ -13,8 +13,11 @@ the Apache License 2.0, in [LICENSES/Apache-2.0.txt](LICENSES/Apache-2.0.txt).
 `examples/esp32-c6-button-led/firmware.bin` (ESP32-C6) are builds of
 [`examples/esp32-button-led/firmware`](examples/esp32-button-led/firmware)
 with the pioarduino platform-espressif32 55.03.38-1.
-`examples/esp32-pot-button-leds/firmware.bin` is a link to the first. The
-repository and the web demo both distribute these images. Each contains:
+`examples/esp32-pot-button-leds/firmware.bin` is a link to the first.
+`examples/esp32-heap-leak/firmware.bin` and its `firmware.elf` are a build
+of [`examples/esp32-heap-leak/firmware`](examples/esp32-heap-leak/firmware)
+for the ESP32, with the same platform. The repository and the web demo
+distribute these images. Each contains:
 
 - [Arduino-ESP32 3.3.8](https://github.com/espressif/arduino-esp32/tree/3.3.8),
   Copyright Espressif Systems and others. Parts are under the GNU Lesser

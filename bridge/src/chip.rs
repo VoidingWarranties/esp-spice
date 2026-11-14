@@ -43,6 +43,8 @@ pub(crate) trait Esp {
     fn serial_input(&mut self, data: &[u8]);
     fn mode(&mut self, gpio: u8) -> Mode;
     fn set_analog(&mut self, gpio: u8, volts: f64);
+    /// A word of memory, or None if the address faults.
+    fn read_word(&mut self, addr: u32) -> Option<u32>;
 }
 
 impl<S: Chip> Esp for Machine<S> {
@@ -96,6 +98,10 @@ impl<S: Chip> Esp for Machine<S> {
 
     fn set_analog(&mut self, gpio: u8, volts: f64) {
         self.bus.analog_set(gpio, AnalogSource::Const(volts as f32));
+    }
+
+    fn read_word(&mut self, addr: u32) -> Option<u32> {
+        self.bus.read32_unpriced(addr).ok()
     }
 }
 
