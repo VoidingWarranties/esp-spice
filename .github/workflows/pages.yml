@@ -16,6 +16,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Runs the build without Pages access, because build scripts run code from
+  # dependencies.
   build:
     runs-on: ubuntu-latest
     steps:
@@ -38,7 +40,7 @@ jobs:
   deploy:
     if: github.ref == 'refs/heads/main'
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     permissions:
       pages: write
       id-token: write

@@ -37,3 +37,29 @@ the `captures` artifact.
 Reviewers can download it to see the change. An example with a `trace.json` shows the state at t = 0 of the
 trace. Other examples show no sim state, so upload a picture of the web demo
 when a change is about sim state.
+
+## Workflow lockfile
+
+`.github/workflows/actions.lock` locks each action that the workflows use to
+one commit. GitHub Actions runs only the locked commits, so a moved tag cannot
+change what runs. The `gh actions-lock` extension writes the file. Do not edit
+it by hand.
+
+After you add a workflow, or add, remove or change a `uses:` line, update the
+lockfile and commit it with the workflow change:
+
+```sh
+gh extension install github/gh-actions-lock   # One time only
+gh actions-lock --no-narrow
+```
+
+Use major version tags, such as `actions/checkout@v7`. Without `--no-narrow`,
+the tool changes a new tag to a full version, such as `v7.0.1`. The Verify
+lockfile check fails when the lockfile and the workflows do not agree.
+
+When a new release moves a major tag, the lockfile keeps the old commit. To
+move to the new commit, run `gh actions-lock --relock` and review the changed
+commits in the diff.
+
+The lockfile cannot lock Docker images. Pin an image by digest, such as
+`docker://rhysd/actionlint:1.7.12@sha256:…`.
