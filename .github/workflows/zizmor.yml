@@ -1,0 +1,23 @@
+# Checks the workflows for security problems. See https://zizmor.sh.
+name: zizmor
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  zizmor:
+    runs-on: ubuntu-slim
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      # Without Advanced Security, findings fail the job instead of only
+      # going to the Security tab.
+      - uses: zizmorcore/zizmor-action@v0.8.1
+        with:
+          advanced-security: false
