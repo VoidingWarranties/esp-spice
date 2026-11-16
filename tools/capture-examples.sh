@@ -4,7 +4,7 @@
 # Paths are from the repo root. Examples with no trace.json show t = 0.
 set -euo pipefail
 
-cd "$(git rev-parse --show-toplevel)"
+cd "$(dirname "$0")/.."
 out="${1:-captures}"
 mkdir -p "$out"
 for diagram in examples/*/diagram.json render/examples/*/diagram.json; do

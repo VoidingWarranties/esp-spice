@@ -35,6 +35,9 @@ time T. The serial output goes to stdout. `--trace` writes the circuit trace.
 `--probe PIN` adds the voltage of a pin's net to the trace, for example
 `--probe c1:1`.
 
+With Nix, `nix run github:VoidingWarranties/esp-spice -- DIAGRAM FIRMWARE ...`
+does the same with no set up. It brings its own ngspice, Node and ROMs.
+
 ## Free heap
 
 The bridge reads ESP-IDF's own heap counters from emulated memory, so the

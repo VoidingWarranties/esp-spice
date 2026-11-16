@@ -10,6 +10,16 @@ An ESP32 + Spice circuit sim toolkit built with [esp32sim] and [ngspice].
 Run `nix develop` to get a shell with the tools that this repo needs. Add new
 tools to `flake.nix`.
 
+The flake also builds each output from the pinned inputs in `flake.lock`, so
+CI and your machine get the same files:
+
+```sh
+nix build .#site       # The GitHub Pages site, with web/dist filled in
+nix build .#captures   # A PNG of each example, in light and dark mode
+nix run . -- examples/esp32-s3-button-led/diagram.json \
+    examples/esp32-s3-button-led/firmware.bin --seconds 1   # esp-spice-run
+```
+
 ## Circuit simulation
 
 [`circuit/`](circuit) changes a Wokwi `diagram.json` into an ngspice netlist
@@ -58,8 +68,9 @@ Without `?demo`, the page opens `examples/esp32-s3-button-led`. Demos
 without firmware do not need `tools/build-web.sh`. The page loads ngspice
 and wokwi-elements from a CDN, so it needs a network connection.
 
-`.github/workflows/pages.yml` publishes the demo to GitHub Pages on each
-push to `main`, when Pages is set to deploy from GitHub Actions.
+`.github/workflows/pages.yml` builds the demo with `nix build .#site`, and
+publishes it to GitHub Pages on each push to `main`, when Pages is set to
+deploy from GitHub Actions.
 
 [eecircuit-engine]: https://github.com/eelab-dev/EEcircuit-engine
 [wokwi-elements]: https://github.com/wokwi/wokwi-elements

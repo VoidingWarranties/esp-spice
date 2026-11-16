@@ -1,16 +1,18 @@
-# Publishes the web demo to GitHub Pages, at <pages URL>/web/.
+# Builds the web demo with Nix on each pull request, and publishes it to
+# GitHub Pages, at <pages URL>/web/, on each push to main.
 name: Pages
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -22,24 +24,21 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - name: Build the ESP32 module and get the ROM
-        run: tools/build-web.sh
-        env:
-          # Keeps the build files out of the published folder.
-          CARGO_TARGET_DIR: ${{ runner.temp }}/target
-      # LGPL-2.1 asks for the Arduino core source in the same place as
-      # firmware.bin.
-      - name: Get the Arduino-ESP32 source
-        run: |
-          curl -fsSL --retry 5 -o web/dist/esp32-core-3.3.8.tar.xz \
-            https://github.com/espressif/arduino-esp32/releases/download/3.3.8/esp32-core-3.3.8.tar.xz
-          echo "f7f63825cfb98269514b977ea78c17ab292904e47e1ca47329fbe0ccccc5a83d  web/dist/esp32-core-3.3.8.tar.xz" |
-            sha256sum -c
+      - uses: cachix/install-nix-action@v31
+      - uses: nix-community/cache-nix-action@v7
+        with:
+          primary-key: nix-site-${{ hashFiles('flake.*', '**/Cargo.lock') }}
+          restore-prefixes-first-match: nix-site-
+          gc-max-store-size-linux: 4G
+      - run: nix build .#site
+      # Lets anyone check that a local build gives the same files.
+      - run: sha256sum result/web/dist/*
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: .
+          path: result
 
   deploy:
+    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-slim
     permissions:
