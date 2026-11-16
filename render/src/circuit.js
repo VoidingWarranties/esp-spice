@@ -108,9 +108,14 @@ export async function renderCircuit(
      * @param {number} t Seconds.
      */
     async setTime(trace, t) {
-      for (const [id, props] of Object.entries(stateAt(trace, t))) {
+      for (const [id, all] of Object.entries(stateAt(trace, t))) {
         const el = elements.get(id);
         if (!el) continue;
+        // Only the element's own props, so a trace cannot set "innerHTML".
+        const known = el.constructor.elementProperties;
+        const props = Object.fromEntries(
+          Object.entries(all).filter(([key]) => known?.has(key)),
+        );
         const saved = defaults.get(el) ?? {};
         for (const key of Object.keys(props)) {
           if (!(key in saved)) saved[key] = el[key];
@@ -165,8 +170,11 @@ function createPart(part, pins) {
   if (customElements.get(tag)) {
     el = document.createElement(tag);
     const attrs = {...DEFAULT_ATTRS[tag], ...part.attrs};
+    // Only attributes that the element reads, so a diagram cannot add an
+    // event handler such as "onclick".
+    const known = customElements.get(tag).observedAttributes ?? [];
     for (const [name, value] of Object.entries(attrs)) {
-      el.setAttribute(name, value);
+      if (known.includes(name.toLowerCase())) el.setAttribute(name, value);
     }
   } else {
     // Show unknown parts, so that a missing element is easy to see.
