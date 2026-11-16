@@ -32,7 +32,10 @@ void loop() {
     Serial.println(pressed ? "pressed" : "released");
   }
   int pot = analogRead(kPotPin);
-  if (abs(pot - last_pot) > 40) {
+  // Skip small changes, which are often ADC noise. Always take a new end
+  // value, or the LED can stay a little on when the pot is at 0.
+  bool at_end = pot == 0 || pot == 4095;
+  if (abs(pot - last_pot) > 40 || (at_end && pot != last_pot)) {
     last_pot = pot;
     analogWrite(kGreenLedPin, pot / 16);
     Serial.printf("pot %d\n", pot);
